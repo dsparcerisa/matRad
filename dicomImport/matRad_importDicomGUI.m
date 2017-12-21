@@ -118,7 +118,7 @@ function scan(hObject, eventdata, handles)
 if iscell(patient_listbox)
     handles.fileList =  fileList;
     %handles.patient_listbox.String = patient_listbox;
-    set(handles.patient_listbox,'String',patient_listbox);
+    set(handles.patient_listbox,'String',patient_listbox,'Value',1);
     guidata(hObject, handles);
 end
 
@@ -176,7 +176,7 @@ if ~isempty(get(hObject,'String'))
         set(handles.ctseries_listbox,'String',unique(handles.fileList(strcmp(handles.fileList(:,2), 'CT') & strcmp(handles.fileList(:,3), selected_patient),5)));
         set(handles.rtseries_listbox,'Value',1); % set dummy value to one
         set(handles.rtseries_listbox,'String',handles.fileList(strcmp(handles.fileList(:,2), 'RTSTRUCT') & strcmp(handles.fileList(:,3), selected_patient),5));
-        set(handles.rtplan_listbox,'Value',1); % set dummy value to one
+        set(handles.rtplan_listbox,'Value',[]); % set dummy value to one
         set(handles.rtplan_listbox,'String',handles.fileList(strcmp(handles.fileList(:,2), 'RTPLAN') & strcmp(handles.fileList(:,3), selected_patient),5));
         set(handles.doseseries_listbox,'Value',[]); % set dummy value to none
         selectedCtSeriesString = get(handles.ctseries_listbox,'String');
@@ -320,7 +320,11 @@ if ~isempty(rtdose) && ~isempty(get(handles.doseseries_listbox,'Value'))
     selectedRtDose   = get(handles.doseseries_listbox,'String');
     selectedRtDoseIx = NaN*ones(1,numel(selectedRtDose));
     for i = 1:numel(selectedRtDose)
-        selectedRtDoseIx(i) = find(strcmp(rtdose(:,4),selectedRtDose{i}));
+        if get(handles.SeriesUID_radiobutton,'Value') == 1
+            selectedRtDoseIx(i) = find(strcmp(rtdose(:,4),selectedRtDose{i}));
+        elseif get(handles.SeriesNumber_radiobutton,'Value') == 1
+            selectedRtDoseIx(i) = find(strcmp(rtdose(:,5),selectedRtDose{i}));
+        end
     end
     files.rtdose = rtdose(selectedRtDoseIx,:);
 end
@@ -413,8 +417,8 @@ if isfield(handles, 'fileList')
     selected_patient = patient_listbox(get(handles.patient_listbox,'Value'));
     set(handles.ctseries_listbox,'String',unique(handles.fileList(strcmp(handles.fileList(:,2), 'CT') & strcmp(handles.fileList(:,3), selected_patient),5)));
     set(handles.rtseries_listbox,'String',unique(handles.fileList(strcmp(handles.fileList(:,2), 'RTSTRUCT') & strcmp(handles.fileList(:,3), selected_patient),5)));
-    set(handles.rtplan_listbox,'String',unique(handles.fileList(strcmp(handles.fileList(:,2), 'RTPLAN') & strcmp(handles.fileList(:,3), selected_patient),5)));
-    set(handles.doseseries_listbox,'String',handles.fileList(strcmp(handles.fileList(:,2), 'RTDOSE') & strcmp(handles.fileList(:,3), selected_patient),12));
+    set(handles.rtplan_listbox,'String',unique(handles.fileList(strcmp(handles.fileList(:,2), 'RTPLAN') & strcmp(handles.fileList(:,3), selected_patient),5)),'Value',[]);
+    set(handles.doseseries_listbox,'String',handles.fileList(strcmp(handles.fileList(:,2), 'RTDOSE') & strcmp(handles.fileList(:,3), selected_patient),5),'Value',[]);
 else
     fprintf('No patient loaded, so just switching default display option to SeriesNumber. \n');
 end
@@ -593,7 +597,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
 % --- Executes on selection change in rtplan_listbox.
 function rtplan_listbox_Callback(hObject, eventdata, handles)
 % hObject    handle to rtplan_listbox (see GCBO)
@@ -602,29 +605,59 @@ function rtplan_listbox_Callback(hObject, eventdata, handles)
 
 contents = cellstr(get(hObject,'String'));
 if ~isempty(get(hObject,'Value')) && numel(get(hObject,'Value')) == 1
+
     selectedPlan = contents{get(hObject,'Value')};
     % point at plan in listbox
     if get(handles.SeriesUID_radiobutton,'Value') == 1
         selectedPlanLoc = strcmp(handles.fileList(:,4),selectedPlan);
+    elseif get(handles.SeriesNumber_radiobutton,'Value') == 1
+        selectedPlanLoc = strcmp(handles.fileList(:,5),selectedPlan);
     else
         warning('Not yet supported');
     end
+    
     % show only the doses corresponding to the plan
-    corrDoses = handles.fileList{selectedPlanLoc,13};
-    numOfDoses = size(corrDoses,2);
+    corrDoses = [handles.fileList{selectedPlanLoc,13}];
+    numOfDoses = numel(corrDoses);
     corrDosesLoc = zeros(size(handles.fileList(:,1),1),1);
     for j = 1:numOfDoses
-        corrDosesLoc = corrDosesLoc | strcmp(handles.fileList(:,4),corrDoses(j));
+        if ~isnan(corrDoses{j})
+            if get(handles.SeriesUID_radiobutton,'Value') == 1
+                corrDosesLoc = corrDosesLoc | strcmp(handles.fileList(:,4),corrDoses{j});
+            elseif get(handles.SeriesNumber_radiobutton,'Value') == 1
+                corrDosesLoc = corrDosesLoc | strcmp(handles.fileList(:,5),corrDoses{j});
+            else
+                warning('Not yet supported');
+            end
+        end
     end
+    
+    if sum(corrDosesLoc) == 0
+        warndlg('no rt dose file directly associated to plan file. showing all rt dose files.');
+        corrDosesLoc = strcmp(handles.fileList(:,2),'RTDOSE');
+    end
+
+    set(handles.doseseries_listbox,'Value',[]); % set dummy value to one
     if get(handles.SeriesUID_radiobutton,'Value') == 1
-            set(handles.doseseries_listbox,'Value',[]); % set dummy value to one
             set(handles.doseseries_listbox,'String',handles.fileList(corrDosesLoc,4));
+    elseif get(handles.SeriesNumber_radiobutton,'Value') == 1
+            set(handles.doseseries_listbox,'String',handles.fileList(corrDosesLoc,5));
     end
+    % disable checkbox for use dose grid is currently checked
+    if get(handles.checkbox3,'Value') == 1
+        set(handles.checkbox3,'Value',0);
+        checkbox3_Callback(handles.checkbox3,[], handles);
+    end
+    
 elseif numel(get(hObject,'Value')) >=2
+    
     warning('More than one RTPLAN selected. Unsetting selection ...');
     patient_listbox_Callback(hObject, eventdata, handles)
+
 else
-    patient_listbox_Callback(hObject, eventdata, handles)    
+    
+    patient_listbox_Callback(hObject, eventdata, handles)
+
 end
 
 
@@ -667,9 +700,18 @@ if get(hObject,'Value')
     % retrieve and display resolution for DICOM dose cube
     doseFilesInList = get(handles.doseseries_listbox,'String');
     selectedDoseFiles = get(handles.doseseries_listbox,'Value');
+    if isempty(selectedDoseFiles)
+        set(hObject,'Value',0)
+        errordlg('no dose file selected');
+        return;
+    end
     for i = 1:numel(selectedDoseFiles)
         selectedDoseFile = doseFilesInList{selectedDoseFiles(i)};
-        dicomDoseInfo = dicominfo(handles.fileList{find(strcmp(handles.fileList(:,4),selectedDoseFile)),1});
+        if get(handles.SeriesUID_radiobutton,'Value') == 1
+            dicomDoseInfo = dicominfo(handles.fileList{find(strcmp(handles.fileList(:,4),selectedDoseFile)),1});
+        elseif get(handles.SeriesNumber_radiobutton,'Value') == 1
+            dicomDoseInfo = dicominfo(handles.fileList{find(strcmp(handles.fileList(:,5),selectedDoseFile)),1});
+        end
         res_x{i} = dicomDoseInfo.PixelSpacing(1);
         res_y{i} = dicomDoseInfo.PixelSpacing(2);
         res_z{i} = dicomDoseInfo.SliceThickness;
@@ -678,6 +720,9 @@ if get(hObject,'Value')
     if numel(unique(cell2mat(res_x)))*numel(unique(cell2mat(res_y)))*numel(unique(cell2mat(res_z))) ~= 1
         set(handles.checkbox3,'Value',0);
         warndlg('Different resolutions in dose file(s)');
+        set(handles.resx_edit,'Enable', 'on');
+        set(handles.resy_edit,'Enable', 'on');
+        set(handles.resz_edit,'Enable', 'on');
     else
         set(handles.resx_edit,'String',num2str(res_x{1}));
         set(handles.resy_edit,'String',num2str(res_y{1}));
