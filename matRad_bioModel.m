@@ -59,7 +59,7 @@ classdef matRad_bioModel
    
    % constant public properties which are visible outside of this class
    properties(Constant = true)
-      AvailableModels                 = {'none','constRBE','MCN','WED','LEM'};   % cell array determines available models - if cell is deleted then the corersponding model can not be generated
+      AvailableModels                 = {'none','constRBE','MCN','WED','LEM','UCM'};   % cell array determines available models - if cell is deleted then the corersponding model can not be generated
       AvailableradiationModealities   = {'photons','protons','carbon'};
       AvailableQuantitiesForOpt       = {'physicalDose','effect','RBExD'};
       
@@ -175,7 +175,15 @@ classdef matRad_bioModel
                     this.model              = 'WED';
                     this.description        = 'a model for the relative biological effectiveness of protons: the tissue specific parameter alpha/beta of photons is a predictor for the sensitivity to LET changes.';
                     this.quantityOpt        = 'RBExD';
-                    this.quantityVis        = 'RBExD';     
+                    this.quantityVis        = 'RBExD';  
+                    
+               elseif isequal(this.identifier,'UCM_RBExD')
+                   this.bioOpt             = true;
+                   this.model              = 'UCM';
+                   this.description        = 'Pendiente';
+                   this.quantityOpt        = 'RBExD';
+                   this.quantityVis        = 'RBExD';
+                   
                else
                     % issue warning if biological optimization not possible and use back up solution
                     warning(['matRad: Invalid biological optimization: ' this.identifier ' for ' this.radiationMode  '; using const_RBExD optimization instead'])
@@ -373,15 +381,33 @@ classdef matRad_bioModel
                bixelAlpha = RBEmax    .* vAlpha_x;
                bixelBeta  = RBEmin.^2 .* vBeta_x;
                
-            case {'protons_WED'}
-               
-               bixelLET = matRad_interp1(depths,baseDataEntry.LET,vRadDepths); 
-               bixelLET(isnan(bixelLET)) = 0;
-               
-               RBEmax     = this.p0_WED + ((this.p1_WED * bixelLET )./ vABratio);
-               RBEmin     = this.p2_WED;
-               bixelAlpha = RBEmax    .* vAlpha_x;
-               bixelBeta  = RBEmin.^2 .* vBeta_x;
+             case {'protons_WED'}
+                 
+                 bixelLET = matRad_interp1(depths,baseDataEntry.LET,vRadDepths);
+                 bixelLET(isnan(bixelLET)) = 0;
+                 
+                 RBEmax     = this.p0_WED + ((this.p1_WED * bixelLET )./ vABratio);
+                 RBEmin     = this.p2_WED;
+                 bixelAlpha = RBEmax    .* vAlpha_x;
+                 bixelBeta  = RBEmin.^2 .* vBeta_x;
+                 
+             case {'protons_UCM'}
+                 bixelLET = matRad_interp1(depths,baseDataEntry.LET,vRadDepths);
+                 bixelLET(isnan(bixelLET)) = 0;
+                 
+                 RBEmax     = this.p0_MCN + ((this.p1_MCN * bixelLET )./ vABratio);
+                 RBEmin     = this.p2_MCN + (this.p3_MCN  * sqrt(vABratio) .* bixelLET);
+                 RBEstandard = 1.1;
+                 
+                 for i = 1:size(mTissueClass)
+                     if mTissueClass(i) == 1
+                         bixelAlpha = RBEstandard .* vAlpha_x;
+                         bixelBeta  = RBEstandard .* vBeta_x;
+                     else
+                         bixelAlpha = RBEmax    .* vAlpha_x;
+                         bixelBeta  = RBEmin.^2 .* vBeta_x;
+                     end
+                 end
                
             case {'carbon_LEM'}
 
