@@ -399,15 +399,19 @@ classdef matRad_bioModel
                  RBEmin     = this.p2_MCN + (this.p3_MCN  * sqrt(vABratio) .* bixelLET);
                  RBEstandard = 1.1;
                  
-                 for i = 1:size(mTissueClass)
-                     if mTissueClass(i) == 1
-                         bixelAlpha = RBEstandard .* vAlpha_x;
-                         bixelBeta  = RBEstandard .* vBeta_x;
-                     else
+                % for i = 1:size(mTissueClass)
+                %     if mTissueClass(i) == 1
+                %         bixelAlpha = RBEstandard .* vAlpha_x;
+                %         bixelBeta  = RBEstandard .* vBeta_x;
+                %     else
+                %         bixelAlpha = RBEmax    .* vAlpha_x;
+                %         bixelBeta  = RBEmin.^2 .* vBeta_x;
+                %     end
+                % end
                          bixelAlpha = RBEmax    .* vAlpha_x;
                          bixelBeta  = RBEmin.^2 .* vBeta_x;
-                     end
-                 end
+                         bixelAlpha(mTissueClass==1) = RBEstandard .* vAlpha_x;
+                         bixelBeta(mTissueClass==1) = RBEstandard .* vBeta_x;
                
             case {'carbon_LEM'}
 
