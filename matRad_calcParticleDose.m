@@ -206,6 +206,17 @@ if pln.bioParam.bioOpt
     % generates tissue class matrix for biological optimization
     vTissueIndex = zeros(size(V,1),1);
     
+   if strcmp(pln.radiationMode, 'protons') && strcmp(pln.bioOptimization, 'UCM_RBExD')
+       for i = 1:size(cst,1)
+           % find indices of structures related to V
+           [~, row] = ismember(vertcat(cst{i,4}{:}),V,'rows');
+           % creación de la máscara de objetivos           
+           if strcmp (cst{i,3}, 'TARGET')
+               vTissueIndex (row) = 1;
+           end         
+       end
+   end
+
    if strcmp(pln.radiationMode,'carbon')
 
        for i = 1:size(cst,1)
