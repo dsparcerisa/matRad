@@ -5,6 +5,17 @@
 
 function  prueba_compDVH (Dose1, Dose2, Dose3, pln , cst, name0 ,name1, name2, name3)
 
+if isempty(Dose1)
+    Dose1 = zeros (size(Dose3));
+    emptyselec = 1;
+elseif isempty(Dose2)
+    Dose2 = zeros (size(Dose3));
+    emptyselec = 2;
+else
+    emptyselec = 0;
+end
+
+
 
 figure('Name','DVH','Color',[0.5 0.5 0.5],'Position',([0 30 1500 650]));
 hold on
@@ -42,17 +53,17 @@ for i = 1:numOfVois
             dvhaux(j) = sum(doseInVoiaux > dvhPoints(j));
             dvhaux2(j) = sum(doseInVoiaux2 > dvhPoints(j));
         end
-
+        
         dvh = dvh ./ numOfVoxels * 100;
         dvhaux = dvhaux ./ numOfVoxels * 100;
         dvhaux2 = dvhaux2 ./ numOfVoxels * 100;
-
-         plot(dvhPoints,dvh,'LineWidth',2,'Color',colorMx(i,:), ...
+        
+        plot(dvhPoints,dvh,'LineWidth',2,'Color',colorMx(i,:), ...
             'LineStyle','-.','DisplayName',cst{i,2});hold on
-         plot(dvhPoints,dvhaux,'LineWidth',2,'Color',colorMx(i,:), ...
+        plot(dvhPoints,dvhaux,'LineWidth',2,'Color',colorMx(i,:), ...
             'LineStyle',':','DisplayName',cst{i,2},'HandleVisibility','off');hold on
-         plot(dvhPoints,dvhaux2,'LineWidth',2,'Color',colorMx(i,:), ...
-            'LineStyle','-','DisplayName',cst{i,2},'HandleVisibility','off');hold on        
+        plot(dvhPoints,dvhaux2,'LineWidth',2,'Color',colorMx(i,:), ...
+            'LineStyle','-','DisplayName',cst{i,2},'HandleVisibility','off');hold on
     end
 end
 
@@ -69,8 +80,23 @@ grid on,grid minor
 box(gca,'on');
 set(gca,'LineWidth',1.5,'FontSize',fontSizeValue);
 
-title(sprintf('DVH comparation for optimized %s', name0));
-ylabel('Volume [%]','FontSize',fontSizeValue);
-xlabel(sprintf('%s model [RBEGy] (Dotted) // %s model [RBEGy] (Dashed)  // %s model [RBEGy] (Solid)', name1, name2, name3),'FontSize',fontSizeValue)
-hold off
+if emptyselec == 1
+    title(sprintf('DVH comparation for optimized %s', name0));
+    ylabel('Volume [%]','FontSize',fontSizeValue);
+    xlabel(sprintf('%s model [RBEGy] (Dashed)  // %s model [RBEGy] (Solid)', name2, name3),'FontSize',fontSizeValue)
+    hold off
+    
+elseif emptyselec == 2
+    title(sprintf('DVH comparation for optimized %s', name0));
+    ylabel('Volume [%]','FontSize',fontSizeValue);
+    xlabel(sprintf('%s model [RBEGy] (Dotted) // %s model [RBEGy] (Solid)', name1, name3),'FontSize',fontSizeValue)
+    hold off
+    
+else
+    title(sprintf('DVH comparation for optimized %s', name0));
+    ylabel('Volume [%]','FontSize',fontSizeValue);
+    xlabel(sprintf('%s model [RBEGy] (Dotted) // %s model [RBEGy] (Dashed)  // %s model [RBEGy] (Solid)', name1, name2, name3),'FontSize',fontSizeValue)
+    hold off
+end
+
 end

@@ -64,13 +64,10 @@ ResultConstRBE.Optimized.dij = dij;
 ResultConstRBE.Optimized.resultGUI = resultGUI;
 
 
-%% Recálculo de dosis para RBEMCN Y RBEUCM
+%% Recálculo de dosis para RBEMCN
 
 %[ResultConstRBE.RBEMCNreCalc.dij,ResultConstRBE.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(resultGUI, ct, stf, pln, cst, 'MCN_RBExD');
 [~ ,ResultConstRBE.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(resultGUI, ct, stf, pln, cst, 'MCN_RBExD');
-
-%[ResultConstRBE.RBEUCMreCalc.dij,ResultConstRBE.RBEUCMreCalc.resultGUI] = prueba_RecalcDose(ResultConstRBE.Optimized.resultGUI, ct, stf, pln, cst,'UCM_RBExD');
-[~ ,ResultConstRBE.RBEUCMreCalc.resultGUI] = prueba_RecalcDose(ResultConstRBE.Optimized.resultGUI, ct, stf, pln, cst,'UCM_RBExD');
 
 clear dij resultGUI 
 
@@ -105,13 +102,10 @@ ResultRBEMCN.Optimized.dij = dij;
 ResultRBEMCN.Optimized.resultGUI = resultGUI;
 
 
-%% Recálculo de dosis para ConstRBE Y RBEUCM
+%% Recálculo de dosis para ConstRBE
 
 %[ResultRBEMCN.ConstRBEreCalc.dij,ResultRBEMCN.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultRBEMCN.Optimized.resultGUI, ct, stf, pln, cst,'constRBE_RBExD');
 [~ ,ResultRBEMCN.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultRBEMCN.Optimized.resultGUI, ct, stf, pln, cst,'constRBE_RBExD');
-
-%[ResultRBEMCN.RBEUCMreCalc.dij,ResultRBEMCN.RBEUCMreCalc.resultGUI] = prueba_RecalcDose(ResultRBEMCN.Optimized.resultGUI, ct, stf, pln, cst,'UCM_RBExD');
-[~ ,ResultRBEMCN.RBEUCMreCalc.resultGUI] = prueba_RecalcDose(ResultRBEMCN.Optimized.resultGUI, ct, stf, pln, cst,'UCM_RBExD');
 
 clear dij resultGUI 
 
@@ -158,14 +152,12 @@ clear dij resultGUI
 %% Representación de las comparaciones de los DVH
 
 %Comparación para RBE constante optimizado
-prueba_compDVH (ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD,...
-    ResultConstRBE.RBEUCMreCalc.resultGUI.RBExD,...
-    ResultConstRBE.Optimized.resultGUI.RBExD, pln, cst,'Constant RBE','McNamara''s','UCM''s','Constant RBE');
+prueba_compDVH (ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD, [],...
+    ResultConstRBE.Optimized.resultGUI.RBExD, pln, cst,'Constant RBE','McNamara''s','','Constant RBE');
 
 %Comparación para el modelo de McNamara optimizado
-prueba_compDVH (ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD,...
-    ResultRBEMCN.RBEUCMreCalc.resultGUI.RBExD,...
-    ResultRBEMCN.Optimized.resultGUI.RBExD, pln, cst,'McNamara''s model','Constant RBE','UCM''s','McNamara''s');
+prueba_compDVH (ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD, [],...
+    ResultRBEMCN.Optimized.resultGUI.RBExD, pln, cst,'McNamara''s model','Constant RBE','','McNamara''s');
 
 %Comparación para el modelo UCM optimizado
 prueba_compDVH (ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD,...
@@ -183,15 +175,11 @@ clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRB
 
 % Estadisticas de dosis para el caso de ConstRBE optimizado
 DoseStatistics.ConstRBEOpt = prueba_DVHstatsComp (ResultConstRBE.Optimized.resultGUI.RBExD,...
-    ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD,...
-    ResultConstRBE.RBEUCMreCalc.resultGUI.RBExD,...
-    'ConstRBE',[],[],pln, cst,1,1);
+    ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD, [],'ConstRBE',[],[],pln, cst,1,1);
 
 % Estadísticas de dosis para el modelo de McNamara optimizado
 DoseStatistics.RBEMCNOpt = prueba_DVHstatsComp (ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD,...
-    ResultRBEMCN.Optimized.resultGUI.RBExD,...
-    ResultRBEMCN.RBEUCMreCalc.resultGUI.RBExD,...
-    'McNamara''s model',[],[],pln, cst,1,1);
+    ResultRBEMCN.Optimized.resultGUI.RBExD,[],'McNamara''s model',[],[],pln, cst,1,1);
 
 % Estadísticas de dosis para el modelo UCM optimizado
 DoseStatistics.RBEMCNOpt.NTCP_DVHStats = prueba_DVHstatsComp (ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD,...
@@ -222,15 +210,11 @@ end
 
 % Estadisticas de dosis para el caso de ConstRBE optimizado
 NTCP_DVHStats.ConstRBEOpt = prueba_DVHstatsComp (ResultConstRBE.Optimized.resultGUI.RBExD,...
-    ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD,...
-    ResultConstRBE.RBEUCMreCalc.resultGUI.RBExD,...
-    'ConstRBE', refGy, refVol, pln, cst,0, EasyStats);
+    ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD, [],'ConstRBE', refGy, refVol, pln, cst,0, EasyStats);
 
 % Estadísticas de dosis para el modelo de McNamara optimizado
 NTCP_DVHStats.RBEMCNOpt = prueba_DVHstatsComp (ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD,...
-    ResultRBEMCN.Optimized.resultGUI.RBExD,...
-    ResultRBEMCN.RBEUCMreCalc.resultGUI.RBExD,...
-    'McNamara''s model', refGy, refVol, pln, cst,0, EasyStats);
+    ResultRBEMCN.Optimized.resultGUI.RBExD, [], 'McNamara''s model', refGy, refVol, pln, cst,0, EasyStats);
 
 % Estadísticas de dosis para el modelo UCM optimizado
 NTCP_DVHStats.RBEMCNOpt = prueba_DVHstatsComp (ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD,...
@@ -247,18 +231,18 @@ NTCP_DVHStats.RBEMCNOpt = prueba_DVHstatsComp (ResultConstRBE.Optimized.resultGU
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics NTCP_DVHStats
 
 %% Cálculo y comparacion de ambos NTCP
-
-NTCP = cell(3,2);
-NTCP{1,1} = 'ConstRBE';
-NTCP{2,1} = 'MCN''s model';
-NTCP{3,1} = 'UCM''s model';
-
-
-NTCP{1,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.ConstRBEOpt, 'ConstRBE');
-
-NTCP{2,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEMCNOpt, 'McNamara''s  model');
-
-NTCP{3,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEUCMOpt, 'UCM''s model');
-
-
-clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics NTCP_DVHStats NTCP
+% 
+% NTCP = cell(3,2);
+% NTCP{1,1} = 'ConstRBE';
+% NTCP{2,1} = 'MCN''s model';
+% NTCP{3,1} = 'UCM''s model';
+% 
+% 
+% NTCP{1,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.ConstRBEOpt, 'ConstRBE');
+% 
+% NTCP{2,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEMCNOpt, 'McNamara''s  model');
+% 
+% NTCP{3,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEUCMOpt, 'UCM''s model');
+% 
+% 
+% clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics NTCP_DVHStats NTCP
