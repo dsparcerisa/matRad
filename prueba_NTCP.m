@@ -217,13 +217,13 @@ NTCP_DVHStats.RBEMCNOpt = prueba_DVHstatsComp (ResultRBEMCN.ConstRBEreCalc.resul
     ResultRBEMCN.Optimized.resultGUI.RBExD, [], 'McNamara''s model', refGy, refVol, pln, cst,0, EasyStats);
 
 % Estadísticas de dosis para el modelo UCM optimizado
-NTCP_DVHStats.RBEMCNOpt = prueba_DVHstatsComp (ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD,...
+NTCP_DVHStats.RBEUCMOpt = prueba_DVHstatsComp (ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD,...
     ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD,...
     ResultRBEUCM.Optimized.resultGUI.RBExD,...
     'UCM''s model', refGy, refVol, pln, cst,0, EasyStats);
 
 % Estadísticas para los 3 modelos optimizados
-NTCP_DVHStats.RBEMCNOpt = prueba_DVHstatsComp (ResultConstRBE.Optimized.resultGUI.RBExD,...
+NTCP_DVHStats.AllOpt = prueba_DVHstatsComp (ResultConstRBE.Optimized.resultGUI.RBExD,...
     ResultRBEMCN.Optimized.resultGUI.RBExD,...
     ResultRBEUCM.Optimized.resultGUI.RBExD,...
     '3 models', refGy, refVol, pln, cst,0, EasyStats);
@@ -231,18 +231,18 @@ NTCP_DVHStats.RBEMCNOpt = prueba_DVHstatsComp (ResultConstRBE.Optimized.resultGU
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics NTCP_DVHStats
 
 %% Cálculo y comparacion de ambos NTCP
-% 
-% NTCP = cell(3,2);
-% NTCP{1,1} = 'ConstRBE';
-% NTCP{2,1} = 'MCN''s model';
-% NTCP{3,1} = 'UCM''s model';
-% 
-% 
-% NTCP{1,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.ConstRBEOpt, 'ConstRBE');
-% 
-% NTCP{2,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEMCNOpt, 'McNamara''s  model');
-% 
-% NTCP{3,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEUCMOpt, 'UCM''s model');
-% 
-% 
-% clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics NTCP_DVHStats NTCP
+
+NTCP = cell(3,2);
+NTCP{1,1} = 'ConstRBE';
+NTCP{2,1} = 'MCN''s model';
+NTCP{3,1} = 'UCM''s model'; 
+
+
+NTCP{1,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.ConstRBEOpt, 0);
+
+NTCP{2,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEMCNOpt, 'McNamara''s  model');
+
+NTCP{3,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEUCMOpt, 1);
+
+
+clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics NTCP_DVHStats NTCP
