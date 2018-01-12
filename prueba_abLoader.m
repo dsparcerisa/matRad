@@ -47,6 +47,7 @@ end
 
 
 for i = 1:size(cst,1)
+    val = 0;
     % Carga de datos para OAR
     for j=1:size(AvailableAlphaXBetaX,1)
         if strcmpi (cst{i,2},AvailableAlphaXBetaX{j,1}) > 0
@@ -68,33 +69,33 @@ for i = 1:size(cst,1)
     end
     % Si alguno de los parámetros está vacío elegir los parámetros alpha y
     % beta de una lista
-    if isempty (cst{i,5}.alphaX) ||  isempty (cst{i,5}.betaX)
+    if isempty (cst{i,5}.alphaX) ||  cst{i,5}.alphaX == 0.1;
         while val < 1
-            fprintf('Data not found for the %s region, please, select one of the next list',cst{i,2});
-            fprintf('1 - Musc. Vascular\n 2 - Skin\n 3 - Brain\n 4 - Eye\ 5 - Salival gland\n 6 - Intestine\n ');
-            abselect = input('Region selected: ');
+            fprintf('Data not found for the %s region, please, select one of the next list:\n',cst{i,2});
+            fprintf('1 - Musc. Vascular\n 2 - Skin\n 3 - Brain\n 4 - Eye\n 5 - Salival gland\n 6 - Intestine\n ');
+            abselect = input('\nRegion selected: ');
             clc
-            if abselect == 1;
+            if abselect == 1
                 cst{i,5}.alphaX = 0.035;
                 cst{i,5}.betaX = 0.01;
                 val = 1;
-            elseif abselect == 2;
+            elseif abselect == 2
                 cst{i,5}.alphaX = 0.0474;
                 cst{i,5}.betaX = 0.0206;
                 val = 1;
-            elseif abselect == 3;
+            elseif abselect == 3
                 cst{i,5}.alphaX = 0.0499;
                 cst{i,5}.betaX = 0.0238;
                 val = 1;
-            elseif abselect == 4;
+            elseif abselect == 4
                 cst{i,5}.alphaX = 0.0586;
                 cst{i,5}.betaX = 0.0195;
                 val = 1;
-            elseif abselect == 5;
+            elseif abselect == 5
                 cst{i,5}.alphaX = 0.0628;
                 cst{i,5}.betaX = 0.0209;
                 val = 1;
-            elseif abselect == 6;
+            elseif abselect == 6
                 cst{i,5}.alphaX = 0.0845;
                 cst{i,5}.betaX = 0.0141;
                 val = 1;              

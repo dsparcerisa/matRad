@@ -5,9 +5,11 @@ clear
 if ispc
     opengl software
 end
-load PROSTATE.mat; phantomtype = 'Prostate';
+% load PROSTATE.mat; phantomtype = 'Prostate';
 %load HEAD_AND_neck.mat; phantomtype = 'Head and Neck';
-%load BOXPHANTOM.mat
+%load BOXPHANTOM.mat; phantomtype = 'Test';
+load TG119.mat; phantomtype = 'Test';
+
 
 %% Carga de parámetros alpha y beta
 
