@@ -5,10 +5,10 @@ clear
 if ispc
     opengl software
 end
-% load PROSTATE.mat; phantomtype = 'Prostate';
+ load PROSTATE.mat; phantomtype = 'Prostate';
 %load HEAD_AND_neck.mat; phantomtype = 'Head and Neck';
 %load BOXPHANTOM.mat; phantomtype = 'Test';
-load TG119.mat; phantomtype = 'Test';
+%load TG119.mat; phantomtype = 'Test';
 
 
 %% Carga de parámetros alpha y beta
@@ -199,8 +199,8 @@ clearvars -except ct cst phantomtype pln ResultRBEMCN ResultRBEUCM ResultConstRB
 
 %% Valores V_x y D_x necesarios para los cálculos de los modelos NTCP
 if strcmp(phantomtype, 'Prostate') > 0
-    refGy = [70];
-    refVol = [95 98];
+    refGy = [];
+    refVol = [70 95 98];
     EasyStats = 0;
     
     
@@ -235,16 +235,19 @@ clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRB
 %% Cálculo y comparacion de ambos NTCP
 
 NTCP = cell(3,2);
-NTCP{1,1} = 'ConstRBE';
-NTCP{2,1} = 'MCN''s model';
-NTCP{3,1} = 'UCM''s model'; 
+NTCP{1,1} = 'ConstRBEOpt';
+NTCP{2,1} = 'MCNOpt';
+NTCP{3,1} = 'UCMOpt model'; 
+NTCP{4,1} = '3 Models optimized';
 
 
-NTCP{1,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.ConstRBEOpt, 0);
+NTCP{1,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.ConstRBEOpt, NTCP_DVHStats.ConstRBEOpt, NTCP_DVHStats.ConstRBEOpt, 0);
 
-NTCP{2,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEMCNOpt, 'McNamara''s  model');
+NTCP{2,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEMCNOpt, NTCP_DVHStats.RBEMCNOpt, NTCP_DVHStats.RBEMCNOpt, 0);
 
-NTCP{3,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEUCMOpt, 1);
+NTCP{3,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEUCMOpt, NTCP_DVHStats.RBEUCMOpt, NTCP_DVHStats.RBEUCMOpt, 1);
+
+NTCP{4,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.ConstRBEOpt, NTCP_DVHStats.RBEMCNOpt, NTCP_DVHStats.RBEUCMOpt, 1);
 
 
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics NTCP_DVHStats NTCP

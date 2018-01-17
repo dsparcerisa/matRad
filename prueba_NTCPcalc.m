@@ -1,6 +1,6 @@
 %% Función para los cálculos de los daños NTCP
 
-function [NTCP_final] = prueba_NTCPcalc (cst, phantomtype, DoseStatistics, UCMcalc)
+function [NTCP_final] = prueba_NTCPcalc (cst, phantomtype, DoseStats_1, DoseStats_2, DoseStats_3, UCMcalc)
 
 if  UCMcalc == 1
     if strcmp (phantomtype, 'Prostate')>0
@@ -10,9 +10,9 @@ if  UCMcalc == 1
             if strcmpi(cst{i,2},'Rectum')
                 NTCP_final.Model = 'Shaake''s model';
                 NTCP_final.Risk = 'Rectal bleeding';
-                V70_anorectum(1) = DoseStatistics.ConstRBE.D70;
-                V70_anorectum(2) = DoseStatistics.RBEMCN.D70;
-                V70_anorectum(3)= DoseStatistics.RBEUCM.D70;
+                V70_anorectum(1) = DoseStats_1.ConstRBE.V70Gy;
+                V70_anorectum(2) = DoseStats_2.RBEMCN.V70Gy;
+                V70_anorectum(3)= DoseStats_3.RBEUCM.V70Gy;
                 
             end
         end
@@ -35,8 +35,8 @@ else
             if strcmpi(cst{i,2},'Rectum')
                 NTCP_final.Model = 'Shaake''s model';
                 NTCP_final.Risk = 'Rectal bleeding';
-                V70_anorectum(1) = DoseStatistics.ConstRBE.D70;
-                V70_anorectum(2) = DoseStatistics.RBEMCN.D70;                
+                V70_anorectum(1) = DoseStats_1.ConstRBE.V70Gy;
+                V70_anorectum(2) = DoseStats_2.RBEMCN.V70Gy;                
             end
         end
         
