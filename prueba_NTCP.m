@@ -151,14 +151,18 @@ ResultRBEUCM.Optimized.resultGUI = resultGUI;
 
 clear dij resultGUI 
 
-%% Gráficas de perfil de dosis
+%% Gráficas de perfil e intensidad de dosis
+
 
 %ProfileType = longitudinal // lateral
 %DisplayOption = physicalDose // RBExD // physical_vs_RBExD
-
 %Para hacer comparaciones entre modelos DisplayOption == RBExD // physical_vs_RBExD
+% prueba_DoseGraphs (ct, pln, cst, NumBeam, ProfileType, DisplayOption, Result, Model1, Result2, Model2)
 
 prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultConstRBE.Optimized.resultGUI, 'ConstRBE',[],[])
+%%
+% prueba_DoseIntens (ct, pln, Dose, z_cut, TypeDose, Model)
+prueba_DoseIntens (ct, pln, ResultConstRBE.Optimized.resultGUI.RBExD, [], 'RBExD', 'ConstRBE')
 
 
 %% Representación de las comparaciones de los DVH

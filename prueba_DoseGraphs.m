@@ -117,7 +117,7 @@ WEPL_Target_Exit  = vX(find(vProfile,1,'last'));
 PlotHandles{Cnt,2} =[VOI 'boundary'];
 
 mdylim = Result.(['RBExD' Suffix]);
-ysuplim = max(max(max(mdylim)))*pln.numOfFractions; % boundaries line limits
+ysuplim = max(mdylim(:))*pln.numOfFractions;  % boundaries line limits
 
 if ~isempty(WEPL_Target_Entry) && ~isempty(WEPL_Target_Exit)
     hold on
@@ -137,5 +137,7 @@ legend([Lines1{:} Lines2{:}],Labels{:});
 
 xlabel('radiological depth [mm]','FontSize',8);
 grid on, grid minor
+
+hold off
 
 end
