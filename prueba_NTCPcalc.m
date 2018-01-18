@@ -18,7 +18,7 @@ if  UCMcalc == 1
         end
         
         for delta = 1:2
-            S = -8.09 + 0.32 .* V70_anorectum + 1.19 .* (delta-1);
+            S = -8.09 + 0.32 .* V70_anorectum .*100 + 1.19 .* (delta-1);
             NTCP(delta).NTCP = 1./(1+exp(-S));
             NTCP_final.Calc(delta).AnticUse = delta-1;
             NTCP_final.Calc(delta).NTCP_ConstRBE = NTCP(delta).NTCP(1);

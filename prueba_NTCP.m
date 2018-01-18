@@ -5,10 +5,10 @@ clear
 if ispc
     opengl software
 end
- load PROSTATE.mat; phantomtype = 'Prostate';
+%load PROSTATE.mat; phantomtype = 'Prostate';
 %load HEAD_AND_neck.mat; phantomtype = 'Head and Neck';
 %load BOXPHANTOM.mat; phantomtype = 'Test';
-%load TG119.mat; phantomtype = 'Test';
+load TG119.mat; phantomtype = 'Test';
 
 
 %% Carga de parámetros alpha y beta
@@ -150,6 +150,16 @@ ResultRBEUCM.Optimized.resultGUI = resultGUI;
 [~ ,ResultRBEUCM.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(ResultRBEUCM.Optimized.resultGUI, ct, stf, pln, cst, 'MCN_RBExD');
 
 clear dij resultGUI 
+
+%% Gráficas de perfil de dosis
+
+%ProfileType = longitudinal // lateral
+%DisplayOption = physicalDose // RBExD // physical_vs_RBExD
+
+%Para hacer comparaciones entre modelos DisplayOption == RBExD // physical_vs_RBExD
+
+prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultConstRBE.Optimized.resultGUI, 'ConstRBE',[],[])
+
 
 %% Representación de las comparaciones de los DVH
 
