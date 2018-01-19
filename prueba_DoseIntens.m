@@ -1,6 +1,6 @@
 function prueba_DoseIntens (ct, pln, Dose, z_cut, TypeDose, Model)
  figure
-% Selector de corte de CT para dosis máxima
+% Selector de corte de CT para dosis maxima
 if isempty(z_cut)
     [~,I] = max(Dose(:));
     [~,~,z_dijmax] = ind2sub(size(Dose),I);
@@ -8,8 +8,12 @@ if isempty(z_cut)
     z_cut = z_dijmax;
 end
 
-cd plotting\
-% Gráfica de intesidad de dosis
+if ispc
+    cd plotting\
+elseif isunix
+    cd plotting
+    
+% Grafica de intesidad de dosis
 axis off
 title(sprintf('%s map for %s model', TypeDose, Model));
 axesHandle = axes;
@@ -24,5 +28,6 @@ colormap(axesHandle, jet(64));
 caxis([cmin cmax]);
 matRad_plotDoseSlice(axesHandle,Total_dose,3,z_cut,0.01,0.8,jet(64), [cmin cmax+0.05]);
 axis off
+
 cd ..
 end

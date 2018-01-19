@@ -53,7 +53,7 @@ end
 % plot counter
 Cnt=2;
 
-%plots physical, RBExD and physical vs RBExD
+% plots physical, RBExD and physical vs RBExD
 if strcmp(handles.popupDisplayOption, 'physicalDose')
     mPhysDose = Result.(['physicalDose' Suffix]);
     PlotHandles{1} = plot(vX,pln.numOfFractions .* mPhysDose(ix),'color',cColor{1,1},'LineWidth',3); hold on;
