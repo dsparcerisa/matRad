@@ -150,7 +150,7 @@ ResultRBEMCN.Optimized.resultGUI = resultGUI;
 
 clear dij resultGUI 
 
-%% Cambio a modelo UCM, cï¿½lculo de dosis y optimizaciï¿½n de este
+%% Cambio a modelo UCM, calculo de dosis y optimizacion de este
 
 pln.bioOptimization = 'UCM_RBExD';           % none_physicalDose: physical optimization;                              constRBE_RBExD; constant RBE of 1.1;  
                                              % MCN_effect; McNamara-variable RBE model for protons (effect based)     MCN_RBExD; McNamara-variable RBE model for protons (RBExD) based
@@ -230,27 +230,92 @@ prueba_DoseIntens (ct, pln, ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD, [], 'RB
 prueba_DoseIntens (ct, pln, ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD, [], 'RBExD', 'RBEMCN');
 
 
-%% Representacion de las comparaciones de los DVH
+%% Representacion DVH todas las VOI
 
 %Comparacion para RBE constante optimizado
-prueba_compDVH (ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD, [],...
-    ResultConstRBE.Optimized.resultGUI.RBExD, pln, cst,'Constant RBE','McNamara''s','','Constant RBE');
+OptModel = cell(3,2);
+OptModel(1,1) = {'ConstRBE Optimized'};
+OptModel(1,2) = {'ConstRBE'};
+OptModel(2,2) = {'RBEMCN'};
+
+Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
+Dose{2,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
+
+prueba_compDVH ( pln , cst, Dose, [], OptModel);
+clear OptModel
 
 %Comparacion para el modelo de McNamara optimizado
-prueba_compDVH (ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD, [],...
-    ResultRBEMCN.Optimized.resultGUI.RBExD, pln, cst,'McNamara''s model','Constant RBE','','McNamara''s');
+OptModel = cell(3,2);
+OptModel(1,1) = {'RBEMCN Optimized'};
+OptModel(1,2) = {'ConstRBE'};
+OptModel(2,2) = {'RBEMCN'};
 
-%Comparacionn para el modelo UCM optimizado
-prueba_compDVH (ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD,...
-    ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD,...
-    ResultRBEUCM.Optimized.resultGUI.RBExD, pln, cst,'UCM''s model','Constant RBE','McNamara''s','UCM''s');
+Dose{1,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
+Dose{2,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
 
-%Comparacionn entre los tres modelos optimizados
-prueba_compDVH (ResultConstRBE.Optimized.resultGUI.RBExD,...
-    ResultRBEMCN.Optimized.resultGUI.RBExD,...
-    ResultRBEUCM.Optimized.resultGUI.RBExD, pln, cst,'3 models','Constant RBE','McNamara''s','UCM''s');
+prueba_compDVH ( pln , cst, Dose, [], OptModel);
+clear OptModel
+
+%Comparacion para el modelo UCM optimizado
+OptModel = cell(3,2);
+OptModel(1,1) = {'UCMMCN Optimized'};
+OptModel(1,2) = {'ConstRBE'};
+OptModel(2,2) = {'RBEMCN'};
+OptModel(3,2) = {'UCMMCN'};
+
+Dose{1,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
+Dose{2,1} = ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
+Dose{3,1} = ResultRBEUCM.Optimized.resultGUI.RBExD;
+
+prueba_compDVH ( pln , cst, Dose, [], OptModel);
+clear OptModel
+
+
+%Comparacion entre los tres modelos optimizados
+OptModel = cell(3,2);
+OptModel(1,1) = {'3 Models Optimized'};
+OptModel(1,2) = {'ConstRBE'};
+OptModel(2,2) = {'RBEMCN'};
+OptModel(3,2) = {'UCMMCN'};
+
+Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
+Dose{2,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
+Dose{3,1} = ResultRBEUCM.Optimized.resultGUI.RBExD;
+
+prueba_compDVH ( pln , cst, Dose, [], OptModel);
+
 
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE 
+
+%% Comparacion DVH para VOIs específicas 
+
+if strcmp(phantomtype, 'Prostate') >0
+    Regions{1,1} = 'Rectum';
+    Regions{2,1} = 'PTV 68';
+    
+elseif strcmp(phantomtype, 'Head and Neck') >0
+    Regions = [];
+end 
+
+OptModel = cell(6,2);
+OptModel([1,2],1) = {' ConstRBE Model '};
+OptModel([3,4],1) = {' RBEMCN Model '};
+OptModel([5,6],1) = {' RBEUCM Plan '};
+OptModel([1,3,5],2) = {' ConstRBE '};
+OptModel([2,4,6],2) = {' RBEMCN '};
+
+Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
+Dose{2,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
+Dose{3,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
+Dose{4,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
+Dose{5,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
+Dose{6,1}= ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
+
+prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
+
+
+clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE 
+
 
 %% Calculo de las estadisticas de dosis
 

@@ -3,69 +3,74 @@
 
 %recomendado que la tercera sea la optimizada
 
-function  prueba_compDVH (Dose1, Dose2, Dose3, pln , cst, name0 ,name1, name2, name3)
-
-if isempty(Dose1)
-    Dose1 = zeros (size(Dose3));
-    emptyselec = 1;
-elseif isempty(Dose2)
-    Dose2 = zeros (size(Dose3));
-    emptyselec = 2;
-else
-    emptyselec = 0;
-end
-
-
+function  prueba_compDVH ( pln , cst, Dose, VOI, OptModel)
 
 figure('Name','DVH','Color',[0.5 0.5 0.5],'Position',([0 30 1500 650]));
 hold on
-lineStyleIndicator = 1;
 numOfVois = size(cst,1);
+LineStyle(1:6,1) = {'-' ':' '--' '-.' '-o' ':p'};
 
 % calculate and print the dvh
 colorMx    = colorcube;
 colorMx    = colorMx(1:floor(64/numOfVois):64,:);
-lineStyles = {'-',':','--','-.'};
 
 n = 1000;
 
-maxDose1 = max(pln.numOfFractions.*Dose1(:))*1.05;
-maxDose2 = max(pln.numOfFractions.*Dose2(:))*1.05;
-maxDose3 = max(pln.numOfFractions.*Dose3(:))*1.05;
-
-maxDose = [maxDose1 maxDose2 maxDose3];
-
-dvhPoints = linspace(0,max(maxDose(:))*1.05,n);
-dvh       = nan(1,n);
-dvhaux    = nan(1,n);
-dvhaux2   = nan(1,n);
-
-for i = 1:numOfVois
-    if cst{i,5}.Visible
-        indices     = cst{i,4}{1};
-        numOfVoxels = numel(indices);
-        doseInVoi   = pln.numOfFractions.*Dose1(indices);
-        doseInVoiaux  = pln.numOfFractions.*Dose2(indices);
-        doseInVoiaux2 = pln.numOfFractions.*Dose3(indices);
-        
-        for j = 1:n
-            dvh(j) = sum(doseInVoi > dvhPoints(j));
-            dvhaux(j) = sum(doseInVoiaux > dvhPoints(j));
-            dvhaux2(j) = sum(doseInVoiaux2 > dvhPoints(j));
-        end
-        
-        dvh = dvh ./ numOfVoxels * 100;
-        dvhaux = dvhaux ./ numOfVoxels * 100;
-        dvhaux2 = dvhaux2 ./ numOfVoxels * 100;
-        
-        plot(dvhPoints,dvh,'LineWidth',2,'Color',colorMx(i,:), ...
-            'LineStyle','-.','DisplayName',cst{i,2});hold on
-        plot(dvhPoints,dvhaux,'LineWidth',2,'Color',colorMx(i,:), ...
-            'LineStyle',':','DisplayName',cst{i,2},'HandleVisibility','off');hold on
-        plot(dvhPoints,dvhaux2,'LineWidth',2,'Color',colorMx(i,:), ...
-            'LineStyle','-','DisplayName',cst{i,2},'HandleVisibility','off');hold on
-    end
+for i = 1:size(Dose,1)
+    maxDose{i,1} = max(Dose{i,1}(:));
+    dvh{i,1} = nan(1,n);
 end
+
+dvhPoints = linspace(0,pln.numOfFractions.*max(maxDose{:})*1.05,n);
+
+
+
+if ~isempty (VOI)
+    for i = 1:size(Dose,1)
+        for j = 1:numOfVois
+            for l = 1:size(VOI,1)
+                if cst{j,5}.Visible && strcmpi(VOI(l,1),cst{j,2}) > 0
+                    indices     = cst{j,4}{1};
+                    numOfVoxels = numel(indices);
+                    doseInVoi   = pln.numOfFractions.*Dose{i,1}(indices);
+                    for k = 1:n
+                        dvh{i,1}(k) = sum(doseInVoi > dvhPoints(k));
+                    end
+                    dvh{i,1} = dvh{i,1} ./ numOfVoxels * 100;
+                    plot(dvhPoints,dvh{i,1}, LineStyle{i,1},'MarkerSize',2,...
+                        'LineWidth',2,'Color',colorMx(j,:),'DisplayName',...
+                        strcat(cst{j,2}, OptModel{i,2},' (Opt', OptModel{i,1},')'));hold on
+                end
+            end
+        end
+    end
+    
+else
+    for i = 1:size(Dose,1)
+        for j = 1:numOfVois
+            if cst{j,5}.Visible
+                indices     = cst{j,4}{1};
+                numOfVoxels = numel(indices);
+                doseInVoi   = pln.numOfFractions.*Dose{i,1}(indices);
+                for k = 1:n
+                    dvh{i,1}(k) = sum(doseInVoi > dvhPoints(k));
+                end
+                if i>1
+                    dvh{i,1} = dvh{i,1} ./ numOfVoxels * 100;
+                    plot(dvhPoints,dvh{i,1}, LineStyle{i,1},'MarkerSize',2,...
+                        'LineWidth',2,'Color',colorMx(j,:),'DisplayName',cst{j,2},...
+                        'HandleVisibility','off');hold on
+                else
+                    dvh{i,1} = dvh{i,1} ./ numOfVoxels * 100;
+                    plot(dvhPoints,dvh{i,1}, LineStyle{i,1},'MarkerSize',2,...
+                        'LineWidth',2,'Color',colorMx(j,:),'DisplayName',cst{j,2});hold on
+                end
+            end
+        end
+    end
+    
+end
+
 
 fontSizeValue = 11;
 myLegend = legend('show','location','NorthWestOutside');
@@ -80,23 +85,19 @@ grid on,grid minor
 box(gca,'on');
 set(gca,'LineWidth',1.5,'FontSize',fontSizeValue);
 
-if emptyselec == 1
-    title(sprintf('DVH comparation for optimized %s', name0));
-    ylabel('Volume [%]','FontSize',fontSizeValue);
-    xlabel(sprintf('%s model [RBEGy] (Dashed)  // %s model [RBEGy] (Solid)', name2, name3),'FontSize',fontSizeValue)
-    hold off
-    
-elseif emptyselec == 2
-    title(sprintf('DVH comparation for optimized %s', name0));
-    ylabel('Volume [%]','FontSize',fontSizeValue);
-    xlabel(sprintf('%s model [RBEGy] (Dotted) // %s model [RBEGy] (Solid)', name1, name3),'FontSize',fontSizeValue)
-    hold off
-    
+ylabel('Volume [%]','FontSize',fontSizeValue);
+
+if ~isempty (VOI)
+    title(sprintf('DVH comparation'));
+    xlabel('Dose [RBEGy]','FontSize',fontSizeValue);
 else
-    title(sprintf('DVH comparation for optimized %s', name0));
-    ylabel('Volume [%]','FontSize',fontSizeValue);
-    xlabel(sprintf('%s model [RBEGy] (Dotted) // %s model [RBEGy] (Dashed)  // %s model [RBEGy] (Solid)', name1, name2, name3),'FontSize',fontSizeValue)
-    hold off
+    title(sprintf('DVH comparation for %s',OptModel{1,1}));
+    if size(Dose,1) == 2
+        xlabel(sprintf('Dose [RBEGy]  [%s (Solid) // %s (Dotted)]', OptModel{1,2}, OptModel{2,2}),'FontSize',fontSizeValue);
+    elseif size(Dose,1) == 3
+        xlabel(sprintf('Dose [RBEGy]  [%s (Solid) // %s (Dotted) // %s (Dashed)]', OptModel{1,2}, OptModel{2,2}, OptModel{3,2}),'FontSize',fontSizeValue);
+    end
 end
+
 
 end
