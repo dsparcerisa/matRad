@@ -287,7 +287,7 @@ prueba_compDVH ( pln , cst, Dose, [], OptModel);
 
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE 
 
-%% Comparacion DVH para VOIs específicas 
+%% Comparacion DVH para VOIs específicas (Todos los modelos juntos)
 
 if strcmp(phantomtype, 'Prostate') >0
     Regions{1,1} = 'Rectum';
@@ -320,78 +320,49 @@ clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRB
 %% Calculo de las estadisticas de dosis
 
 % Estadisticas de dosis para el caso de ConstRBE optimizado
-DoseStatistics.ConstRBEOpt = prueba_DVHstatsComp (ResultConstRBE.Optimized.resultGUI.RBExD,...
-    ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD, [],'ConstRBE',[],[],pln, cst,1,1);
+Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
+Dose{2,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
+Models{1,1} = 'ConstRBE'; Models{1,2} = 'Optimized';
+Models{2,1} = 'RBEMCN';Models{2,2} = 'RBEMCNreCalc';
+
+DoseStatistics.ConstRBEOpt = prueba_DVHstatsComp(pln, cst, Dose,[],[], Models, 'ConstRBEOpt',0);
+clear Dose Models
 
 % Estadisticas de dosis para el modelo de McNamara optimizado
-DoseStatistics.RBEMCNOpt = prueba_DVHstatsComp (ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD,...
-    ResultRBEMCN.Optimized.resultGUI.RBExD,[],'McNamara''s model',[],[],pln, cst,1,1);
+Dose{1,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
+Dose{2,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
+Models{1,1} = 'ConstRBE'; Models{1,2} = 'ConstRBEreCalc';
+Models{2,1} = 'RBEMCN';Models{2,2} = 'Optimized';
+
+DoseStatistics.RBEMCNOpt = prueba_DVHstatsComp(pln, cst, Dose,[],[], Models, 'RBEMCNOpt',0);
+clear Dose Models
 
 % Estadisticas de dosis para el modelo UCM optimizado
-DoseStatistics.RBEUCMOpt.NTCP_DVHStats = prueba_DVHstatsComp (ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD,...
-    ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD,...
-    ResultRBEUCM.Optimized.resultGUI.RBExD,...
-    'UCM''s model',[],[],pln, cst,1,1);
+Dose{1,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
+Dose{2,1} = ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
+%Dose{3,1} = ResultRBEUCM.Optimized.resultGUI.RBExD;
+Models{1,1} = 'ConstRBE'; Models{1,2} = 'ConstRBEreCalc';
+Models{2,1} = 'RBEMCN';Models{2,2} = 'RBEMCNreCalc';
+%Models{3,1} = 'RBEUCM';Models{3,2} = 'Optimized';
 
-% Estadisticas para los 3 modelos optimizados
-DoseStatistics.AllOpt = prueba_DVHstatsComp (ResultConstRBE.Optimized.resultGUI.RBExD,...
-    ResultRBEMCN.Optimized.resultGUI.RBExD,...
-    ResultRBEUCM.Optimized.resultGUI.RBExD,...
-    '3 models',[],[],pln, cst,1,1);
+DoseStatistics.RBEUCMOpt = prueba_DVHstatsComp(pln, cst, Dose,[],[], Models, 'RBEUCMOpt',0);
+clear Dose Models
 
 clearvars -except ct cst phantomtype pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics
 
-%% Valores V_x y D_x necesarios para los calculos de los modelos NTCP
-if strcmp(phantomtype, 'Prostate') > 0
-    refGy = [];
-    refVol = [70 95 98];
-    EasyStats = 0;
-    
-    
-elseif strcmp(phantomtype, 'Head and Neck') >0
-    refGy = [];
-    refVol = [95 98];
-    EasyStats = 1;
-end
-
-% Estadisticas de dosis para el caso de ConstRBE optimizado
-NTCP_DVHStats.ConstRBEOpt = prueba_DVHstatsComp (ResultConstRBE.Optimized.resultGUI.RBExD,...
-    ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD, [],'ConstRBE', refGy, refVol, pln, cst,0, EasyStats);
-
-% Estadisticas de dosis para el modelo de McNamara optimizado
-NTCP_DVHStats.RBEMCNOpt = prueba_DVHstatsComp (ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD,...
-    ResultRBEMCN.Optimized.resultGUI.RBExD, [], 'McNamara''s model', refGy, refVol, pln, cst,0, EasyStats);
-
-% Estadisticas de dosis para el modelo UCM optimizado
-NTCP_DVHStats.RBEUCMOpt = prueba_DVHstatsComp (ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD,...
-    ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD,...
-    ResultRBEUCM.Optimized.resultGUI.RBExD,...
-    'UCM''s model', refGy, refVol, pln, cst,0, EasyStats);
-
-% Estadisticas para los 3 modelos optimizados
-NTCP_DVHStats.AllOpt = prueba_DVHstatsComp (ResultConstRBE.Optimized.resultGUI.RBExD,...
-    ResultRBEMCN.Optimized.resultGUI.RBExD,...
-    ResultRBEUCM.Optimized.resultGUI.RBExD,...
-    '3 models', refGy, refVol, pln, cst,0, EasyStats);
-
-clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics NTCP_DVHStats
 
 %% Calculo y comparacion de ambos NTCP
 
-NTCP = cell(3,2);
-NTCP{1,1} = 'ConstRBEOpt';
-NTCP{2,1} = 'MCNOpt';
-NTCP{3,1} = 'UCMOpt model'; 
-NTCP{4,1} = '3 Models optimized';
+% Calculos NTCP para ConstRBEOpt
+NTCP.ConstRBEOpt.Optimized = prueba_NTCPcalc(pln, cst, phantomtype, ResultConstRBE.Optimized.resultGUI.RBExD);
+NTCP.ConstRBEOpt.RBEMCNreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD);
 
+% Calculos NTCP para RBEMCNOpt
+NTCP.RBEMCNOpt.ConstRBEreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEMCNOpt.ConstRBEreCalc.resultGUI.RBExD);
+NTCP.RBEMCNOpt.Optimized = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEMCNOpt.Optimized.resultGUI.RBExD);
 
-NTCP{1,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.ConstRBEOpt, NTCP_DVHStats.ConstRBEOpt, NTCP_DVHStats.ConstRBEOpt, 0);
+% Calculos NTCP para RBEUCMOpt
+NTCP.RBEUCMOpt.ConstRBEreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEUCMOpt.ConstRBEreCalc.resultGUI.RBExD);
+NTCP.RBEUCMOpt.RBEMCNreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEUCMOpt.RBEMCNreCalc.resultGUI.RBExD);
 
-NTCP{2,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEMCNOpt, NTCP_DVHStats.RBEMCNOpt, NTCP_DVHStats.RBEMCNOpt, 0);
-
-NTCP{3,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.RBEUCMOpt, NTCP_DVHStats.RBEUCMOpt, NTCP_DVHStats.RBEUCMOpt, 1);
-
-NTCP{4,2} = prueba_NTCPcalc (cst, phantomtype, NTCP_DVHStats.ConstRBEOpt, NTCP_DVHStats.RBEMCNOpt, NTCP_DVHStats.RBEUCMOpt, 1);
-
-
-clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics NTCP_DVHStats NTCP
+clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics NTCP
