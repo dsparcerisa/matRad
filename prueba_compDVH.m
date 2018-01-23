@@ -1,18 +1,18 @@
-%%Función para hacer comparaciones entre DVHs para los diferentes cálculos
+%%Funciï¿½n para hacer comparaciones entre DVHs para los diferentes cï¿½lculos
 %%de dosis
 
 %recomendado que la tercera sea la optimizada
 
-function  prueba_compDVH ( pln , cst, Dose, VOI, OptModel)
+function image = prueba_compDVH ( pln , cst, Dose, VOI, OptModel)
 
 figure('Name','DVH','Color',[0.5 0.5 0.5],'Position',([0 30 1500 650]));
 hold on
 numOfVois = size(cst,1);
-LineStyle(1:6,1) = {'-' ':' '--' '-.' '-o' ':p'};
+LineStyle(1:4,1) = {'-' ':' '--','-.'};
 
 % calculate and print the dvh
 colorMx    = colorcube;
-colorMx    = colorMx(1:floor(64/numOfVois):64,:);
+colorMx    = colorMx(1:floor(64/(numOfVois+6)):64,:);
 
 n = 1000;
 
@@ -21,7 +21,8 @@ for i = 1:size(Dose,1)
     dvh{i,1} = nan(1,n);
 end
 
-dvhPoints = linspace(0,pln.numOfFractions.*max(maxDose{:})*1.05,n);
+dvhPoints = linspace (0, pln.numOfFractions.* max([maxDose{i,1}])*1.05, n);
+
 
 
 
@@ -37,9 +38,19 @@ if ~isempty (VOI)
                         dvh{i,1}(k) = sum(doseInVoi > dvhPoints(k));
                     end
                     dvh{i,1} = dvh{i,1} ./ numOfVoxels * 100;
-                    plot(dvhPoints,dvh{i,1}, LineStyle{i,1},'MarkerSize',2,...
-                        'LineWidth',2,'Color',colorMx(j,:),'DisplayName',...
-                        strcat(cst{j,2}, OptModel{i,2},' (Opt', OptModel{i,1},')'));hold on
+                    if i>4 && i<7
+                        plot(dvhPoints,dvh{i,1}, LineStyle{i-3,1},'MarkerSize',2,...
+                            'LineWidth',2,'Color',colorMx(j+5,:),'DisplayName',...
+                            strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
+                    elseif i>2 && i<5
+                        plot(dvhPoints,dvh{i,1}, LineStyle{i,1},'MarkerSize',2,...
+                            'LineWidth',2,'Color',colorMx(j+1,:),'DisplayName',...
+                            strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
+                    else
+                        plot(dvhPoints,dvh{i,1}, LineStyle{i,1},'MarkerSize',2,...
+                            'LineWidth',2,'Color',colorMx(j-2,:),'DisplayName',...
+                            strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
+                    end
                 end
             end
         end
@@ -99,5 +110,6 @@ else
     end
 end
 
+image = figure(1);
 
 end

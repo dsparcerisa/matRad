@@ -33,7 +33,7 @@ pln.runDAO          = false; % 1/true: run DAO, 0/false: don't / will be ignored
 pln.machine         = 'Generic';
 pln.robOpt          = false;
 
-%% Cálculo y optimización para dosis fisica
+%% Cï¿½lculo y optimizaciï¿½n para dosis fisica
 
 pln.bioOptimization = 'none_physicalDose';   % none_physicalDose: physical optimization;                              constRBE_RBExD; constant RBE of 1.1;  
                                              % MCN_effect; McNamara-variable RBE model for protons (effect based)     MCN_RBExD; McNamara-variable RBE model for protons (RBExD) based
@@ -198,13 +198,16 @@ clear dij resultGUI
 % prueba_DoseGraphs (ct, pln, cst, NumBeam, ProfileType, DisplayOption, Result, Model1, Result2, Model2)
 
 prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultPhysical.ConstRBEreCalc.resultGUI, 'ConstRBE',ResultPhysical.RBEMCNreCalc.resultGUI,'RBEMCN')
+title('Physical dose optimized')
 
-prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultConstRBE.Optimized.resultGUI, 'ConstRBE', ResultConstRBE.RBEMCNreCalc, 'RBEMCN')
+prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultConstRBE.Optimized.resultGUI, 'ConstRBE', ResultConstRBE.RBEMCNreCalc.resultGUI, 'RBEMCN')
+title('ConstRBE optimized')
 
 prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultRBEMCN.Optimized.resultGUI, 'RBEMCN',ResultRBEMCN.ConstRBEreCalc.resultGUI,'ConstRBE')
+title('RBEMCN optimized')
 
 prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultRBEUCM.RBEMCNreCalc.resultGUI, 'RBEMCN',ResultRBEUCM.ConstRBEreCalc.resultGUI,'ConstRBE')
-
+title('RBEUCM optimized')
 
 %% Graficas 2D de dosis
 % prueba_DoseIntens (ct, pln, Dose, z_cut, TypeDose, Model)
@@ -212,12 +215,12 @@ prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultRB
 % physicalDose Optimized
 prueba_DoseIntens (ct, pln, ResultPhysical.Optimized.resultGUI.physicalDose, [], 'Physical', 'Physical');
 prueba_DoseIntens (ct, pln, ResultPhysical.ConstRBEreCalc.resultGUI.RBExD, [], 'RBExD', 'ConstRBE');
-prueba_DoseIntens (ct, pln, ResultPhysical.RBEMCNreCalc.resultGUI.RBExD, [], 'RBExD', 'MCN');
+prueba_DoseIntens (ct, pln, ResultPhysical.RBEMCNreCalc.resultGUI.RBExD, [], 'RBExD', 'RBEMCN');
 
 % ConstRBE Optimized
 prueba_DoseIntens (ct, pln, ResultConstRBE.Optimized.resultGUI.physicalDose, [], 'Physical', 'Physical');
 prueba_DoseIntens (ct, pln, ResultConstRBE.Optimized.resultGUI.RBExD, [], 'RBExD', 'ConstRBE');
-prueba_DoseIntens (ct, pln, ResultConstRBE.RBEMCN.resultGUI.RBExD, [], 'RBExD', 'RBEMCN');
+prueba_DoseIntens (ct, pln, ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD, [], 'RBExD', 'RBEMCN');
 
 % MCN Optimized
 prueba_DoseIntens (ct, pln, ResultRBEMCN.Optimized.resultGUI.physicalDose, [], 'Physical', 'Physical');
@@ -228,7 +231,6 @@ prueba_DoseIntens (ct, pln, ResultRBEMCN.Optimized.resultGUI.RBExD, [], 'RBExD',
 prueba_DoseIntens (ct, pln, ResultRBEUCM.Optimized.resultGUI.physicalDose, [], 'Physical', 'Physical');
 prueba_DoseIntens (ct, pln, ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD, [], 'RBExD', 'ConstRBE');
 prueba_DoseIntens (ct, pln, ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD, [], 'RBExD', 'RBEMCN');
-
 
 %% Representacion DVH todas las VOI
 
@@ -258,36 +260,20 @@ clear OptModel
 
 %Comparacion para el modelo UCM optimizado
 OptModel = cell(3,2);
-OptModel(1,1) = {'UCMMCN Optimized'};
+OptModel(1,1) = {'RBEUCM Optimized'};
 OptModel(1,2) = {'ConstRBE'};
 OptModel(2,2) = {'RBEMCN'};
-OptModel(3,2) = {'UCMMCN'};
 
 Dose{1,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
 Dose{2,1} = ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
-Dose{3,1} = ResultRBEUCM.Optimized.resultGUI.RBExD;
 
 prueba_compDVH ( pln , cst, Dose, [], OptModel);
 clear OptModel
 
 
-%Comparacion entre los tres modelos optimizados
-OptModel = cell(3,2);
-OptModel(1,1) = {'3 Models Optimized'};
-OptModel(1,2) = {'ConstRBE'};
-OptModel(2,2) = {'RBEMCN'};
-OptModel(3,2) = {'UCMMCN'};
-
-Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
-Dose{2,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
-Dose{3,1} = ResultRBEUCM.Optimized.resultGUI.RBExD;
-
-prueba_compDVH ( pln , cst, Dose, [], OptModel);
-
-
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE 
 
-%% Comparacion DVH para VOIs específicas (Todos los modelos juntos)
+%% Comparacion DVH para VOIs especï¿½ficas (Todos los modelos juntos)
 
 if strcmp(phantomtype, 'Prostate') >0
     Regions{1,1} = 'Rectum';
@@ -298,9 +284,9 @@ elseif strcmp(phantomtype, 'Head and Neck') >0
 end 
 
 OptModel = cell(6,2);
-OptModel([1,2],1) = {' ConstRBE Model '};
-OptModel([3,4],1) = {' RBEMCN Model '};
-OptModel([5,6],1) = {' RBEUCM Plan '};
+OptModel([1,2],1) = {' ConstRBEOpt '};
+OptModel([3,4],1) = {' RBEMCNOpt '};
+OptModel([5,6],1) = {' RBEUCMOpt '};
 OptModel([1,3,5],2) = {' ConstRBE '};
 OptModel([2,4,6],2) = {' RBEMCN '};
 
@@ -311,7 +297,9 @@ Dose{4,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
 Dose{5,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
 Dose{6,1}= ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
 
-prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
+image = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
+
+saveas(image, 'DVHRecPTVComp.png');
 
 
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE 
@@ -351,18 +339,18 @@ clear Dose Models
 clearvars -except ct cst phantomtype pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics
 
 
-%% Calculo y comparacion de ambos NTCP
+%% Calculo y comparacion de NTCP
 
 % Calculos NTCP para ConstRBEOpt
 NTCP.ConstRBEOpt.Optimized = prueba_NTCPcalc(pln, cst, phantomtype, ResultConstRBE.Optimized.resultGUI.RBExD);
 NTCP.ConstRBEOpt.RBEMCNreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD);
 
 % Calculos NTCP para RBEMCNOpt
-NTCP.RBEMCNOpt.ConstRBEreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEMCNOpt.ConstRBEreCalc.resultGUI.RBExD);
-NTCP.RBEMCNOpt.Optimized = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEMCNOpt.Optimized.resultGUI.RBExD);
+NTCP.RBEMCNOpt.ConstRBEreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD);
+NTCP.RBEMCNOpt.Optimized = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEMCN.Optimized.resultGUI.RBExD);
 
 % Calculos NTCP para RBEUCMOpt
-NTCP.RBEUCMOpt.ConstRBEreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEUCMOpt.ConstRBEreCalc.resultGUI.RBExD);
-NTCP.RBEUCMOpt.RBEMCNreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEUCMOpt.RBEMCNreCalc.resultGUI.RBExD);
+NTCP.RBEUCMOpt.ConstRBEreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD);
+NTCP.RBEUCMOpt.RBEMCNreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD);
 
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics NTCP

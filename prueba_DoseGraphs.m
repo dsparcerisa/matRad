@@ -1,6 +1,6 @@
 function prueba_DoseGraphs (ct, pln, cst, NumBeam, ProfileType, DisplayOption, Result, Model1, Result2, Model2)
 
-figure 
+figure
 
 handles.selectedBeam = NumBeam;
 handles.ProfileType = ProfileType;
