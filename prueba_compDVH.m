@@ -8,11 +8,11 @@ function image = prueba_compDVH ( pln , cst, Dose, VOI, OptModel)
 figure('Name','DVH','Color',[0.5 0.5 0.5],'Position',([0 30 1500 650]));
 hold on
 numOfVois = size(cst,1);
-LineStyle(1:4,1) = {'-' ':' '--','-.'};
+LineStyle(1:3,1) = {'-' ':' '--'};
 
 % calculate and print the dvh
 colorMx    = colorcube;
-colorMx    = colorMx(1:floor(64/(numOfVois+6)):64,:);
+colorMx    = colorMx(1:floor(64/(numOfVois)):64,:);
 
 n = 1000;
 
@@ -38,19 +38,30 @@ if ~isempty (VOI)
                         dvh{i,1}(k) = sum(doseInVoi > dvhPoints(k));
                     end
                     dvh{i,1} = dvh{i,1} ./ numOfVoxels * 100;
-                    if i>4 && i<7
-                        plot(dvhPoints,dvh{i,1}, LineStyle{i-3,1},'MarkerSize',2,...
-                            'LineWidth',2,'Color',colorMx(j+5,:),'DisplayName',...
-                            strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
-                    elseif i>2 && i<5
-                        plot(dvhPoints,dvh{i,1}, LineStyle{i,1},'MarkerSize',2,...
-                            'LineWidth',2,'Color',colorMx(j+1,:),'DisplayName',...
-                            strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
-                    else
-                        plot(dvhPoints,dvh{i,1}, LineStyle{i,1},'MarkerSize',2,...
-                            'LineWidth',2,'Color',colorMx(j-2,:),'DisplayName',...
-                            strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
+                    
+                    % Line type
+                    if strcmp (OptModel{i,1}, ' ConstRBEOpt ')
+                        LineStyle = '-';
+                    elseif strcmp (OptModel{i,1}, ' RBEMCNOpt ')
+                        LineStyle = ':';
+                    elseif strcmp(OptModel{i,1}, ' RBEUCMOpt ')
+                        LineStyle = '--';
                     end
+                    
+                    % Line color
+                    if strcmp (cst{j,2}, 'Rectum') && strcmp (OptModel{i,2}, ' ConstRBE ')
+                        ColorLine = 'c';
+                    elseif strcmp (cst{j,2}, 'Rectum') && strcmp (OptModel{i,2}, ' RBEMCN ')
+                        ColorLine = 'b';
+                    elseif strcmp (cst{j,2}, 'PTV 68') && strcmp (OptModel{i,2}, ' ConstRBE ')
+                        ColorLine = 'm';
+                    elseif strcmp (cst{j,2}, 'PTV 68') && strcmp (OptModel{i,2}, ' RBEMCN ')
+                        ColorLine = 'r';
+                    end
+                    
+                    plot(dvhPoints,dvh{i,1}, LineStyle,'MarkerSize',2,...
+                            'LineWidth',2,'Color', ColorLine,'DisplayName',...
+                            strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
                 end
             end
         end

@@ -273,8 +273,9 @@ clear OptModel
 
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE 
 
-%% Comparacion DVH para VOIs espec�ficas (Todos los modelos juntos)
+%% Comparacion DVH para VOIs espec�ficas 
 
+% Todos los modelos juntos
 if strcmp(phantomtype, 'Prostate') >0
     Regions{1,1} = 'Rectum';
     Regions{2,1} = 'PTV 68';
@@ -292,14 +293,45 @@ OptModel([2,4,6],2) = {' RBEMCN '};
 
 Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
 Dose{2,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
-Dose{3,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
-Dose{4,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
+Dose{3,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
+Dose{4,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
 Dose{5,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
 Dose{6,1}= ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
 
-image = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
+image_All = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
+clear OptModel Dose
 
-saveas(image, 'DVHRecPTVComp.png');
+% Solo ConstRBE
+OptModel = cell(6,2);
+OptModel(1,1) = {' ConstRBEOpt '};
+OptModel(2,1) = {' RBEMCNOpt '};
+OptModel(3,1) = {' RBEUCMOpt '};
+OptModel([1,2,3],2) = {' ConstRBE '};
+
+Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
+Dose{2,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
+Dose{3,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
+
+image_ConstRBE = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
+clear OptModel Dose
+
+% Solo RBEMCN
+OptModel = cell(6,2);
+OptModel(1,1) = {' ConstRBEOpt '};
+OptModel(2,1) = {' RBEMCNOpt '};
+OptModel(3,1) = {' RBEUCMOpt '};
+OptModel([1,2,3],2) = {' RBEMCN '};
+
+Dose{1,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
+Dose{2,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
+Dose{3,1}= ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
+
+image_RBEMCN = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
+
+saveas(image_All, 'DVHComp_All.png');
+saveas(image_ConstRBE, 'DVHComp_ConstRBE.png');
+saveas(image_RBEMCN, 'DVHComp_RBEMCN.png')
+
 
 
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE 
