@@ -6,7 +6,8 @@
 % 3 - Cheung (2004) y (2007)
 % 4 - Liu (2010)
 % 5 - Tucker (2007)
-% 6 - Shaacke (2016)
+% 6 - Peeters (2006)
+% 7 - Shaacke (2016)
 
 function [NTCP] = prueba_NTCPcalc (pln, cst, phantomtype, Dose)
 
@@ -21,8 +22,6 @@ LKM = @(x)(exp (-0.5.*x.^2/2));
 % for j = 1:numOfVois
 %     if strcmpi('Rectum',cst{j,2}) > 0
 %         indices     = cst{j,4}{1};
-%         numOfVoxels = numel(indices);
-%         doseInVoi   = pln.numOfFractions.*Dose(indices);
 %         EUD = (1/numel(indices).*sum(Dose(indices).^(1/n))^n);
 %         t =  (EUD - TD_50)/(m * TD_50);
 %         NTCP = integral(LKM, -inf, t);

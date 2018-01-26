@@ -54,9 +54,32 @@ end
 Cnt=2;
 
 % plots physical, RBExD and physical vs RBExD
-if strcmp(handles.popupDisplayOption, 'physicalDose')
+if strcmp(handles.popupDisplayOption, 'RBE')
+    if isempty(Model2) && isempty(Result2)
+        RBE = Result.(['RBExD' Suffix])./ Result.(['physicalDose' Suffix]);
+        RBE(isnan(RBE)>0) = 1.1;
+        PlotHandles{1,1} = plot(vX, RBE(ix),'color',cColor{1,1},'LineWidth',3); hold on;
+        PlotHandles{1,2} ='RBE';
+        ylabel('RBE');
+        
+    else
+        yyaxis left
+        ylabel('RBE');
+        RBE = Result.(['RBExD' Suffix])./ Result.(['physicalDose' Suffix]);
+        RBE(isnan(RBE)>0) = 1.1;
+        PlotHandles{1,1} = plot(vX, RBE(ix),'color',cColor{1,1},'LineWidth',3); hold on;
+        PlotHandles{1,2} ='RBE';
+        
+        yyaxis right
+        ylabel('Dose [Gy(RBE)]');
+        mRBExD2 = Result2.(['RBExD' Suffix]);
+        PlotHandles{3,1} = plot(vX,pln.numOfFractions .* mRBExD2(ix),'color',cColor{1,7},'LineWidth',3); hold on;
+        PlotHandles{3,2} = strcat( Model2,' RBExD');
+    end
+    
+elseif strcmp(handles.popupDisplayOption, 'physicalDose')
     mPhysDose = Result.(['physicalDose' Suffix]);
-    PlotHandles{1} = plot(vX,pln.numOfFractions .* mPhysDose(ix),'color',cColor{1,1},'LineWidth',3); hold on;
+    PlotHandles{1,1} = plot(vX,pln.numOfFractions .* mPhysDose(ix),'color',cColor{1,1},'LineWidth',3); hold on;
     PlotHandles{1,2} ='physicalDose';
     ylabel('dose in [Gy]');
     
@@ -133,7 +156,7 @@ Lines1  = PlotHandles(~cellfun(@isempty,PlotHandles(:,1)),1);
 Lines2  = PlotHandles(~cellfun(@isempty,PlotHandles(:,2)),1);
 Labels = PlotHandles(~cellfun(@isempty,PlotHandles(:,1)),2);
 
-legend([Lines1{:} Lines2{:}],Labels{:});
+legend([Lines1{:} Lines2{:}],Labels{:}, 'Location', 'northwest');
 
 xlabel('radiological depth [mm]','FontSize',8);
 grid on, grid minor

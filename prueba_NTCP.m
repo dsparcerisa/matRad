@@ -1,19 +1,28 @@
-%% Hacer carga del phantom
+% %% Hacer carga del phantom
+% 
+% close all
+% clear
+% if ispc
+%     opengl software
+% end
+ load PROSTATE.mat; phantomtype = 'Prostate';
+% %load HEAD_AND_neck.mat; phantomtype = 'Head and Neck';
+% %load BOXPHANTOM.mat; phantomtype = 'Test';
+% %load TG119.mat; phantomtype = 'Test';
 
-close all
-clear
-if ispc
-    opengl software
-end
-load PROSTATE.mat; phantomtype = 'Prostate';
-%load HEAD_AND_neck.mat; phantomtype = 'Head and Neck';
-%load BOXPHANTOM.mat; phantomtype = 'Test';
-%load TG119.mat; phantomtype = 'Test';
+%phantomtype = 'Prostate';
+
+% Force penalties
+cst{2,6}.penalty = 100;
+cst{8,6}.penalty = 100;
+cst{5,6}.penalty = 5000;
+cst{6,6}.penalty = 5000;
 
 
 %% Carga de parametros alpha y beta
 
 cst = prueba_abLoader (cst, phantomtype);
+
 
 %% Introduccion de los datos 
 
@@ -33,7 +42,8 @@ pln.runDAO          = false; % 1/true: run DAO, 0/false: don't / will be ignored
 pln.machine         = 'Generic';
 pln.robOpt          = false;
 
-%% C�lculo y optimizaci�n para dosis fisica
+
+%% Calculo y optimizacion para dosis fisica
 
 pln.bioOptimization = 'none_physicalDose';   % none_physicalDose: physical optimization;                              constRBE_RBExD; constant RBE of 1.1;  
                                              % MCN_effect; McNamara-variable RBE model for protons (effect based)     MCN_RBExD; McNamara-variable RBE model for protons (RBExD) based
@@ -74,6 +84,7 @@ ResultPhysical.Optimized.resultGUI = resultGUI;
 
 clear dij resultGUI 
 
+
 %% Calculo y optimizacion de dosis considerando el RBE = 1.1
 
 pln.bioOptimization = 'constRBE_RBExD';      % none_physicalDose: physical optimization;                              constRBE_RBExD; constant RBE of 1.1;  
@@ -112,6 +123,7 @@ ResultConstRBE.Optimized.resultGUI = resultGUI;
 
 clear dij resultGUI 
 
+
 %% Cambio a modelo McNamara, calculo de dosis y optimizacion de este
 
 
@@ -149,6 +161,7 @@ ResultRBEMCN.Optimized.resultGUI = resultGUI;
 [~ ,ResultRBEMCN.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultRBEMCN.Optimized.resultGUI, ct, stf, pln, cst,'constRBE_RBExD');
 
 clear dij resultGUI 
+
 
 %% Cambio a modelo UCM, calculo de dosis y optimizacion de este
 
@@ -190,11 +203,12 @@ ResultRBEUCM.Optimized.resultGUI = resultGUI;
 
 clear dij resultGUI 
 
+
 %% Graficas de perfil de dosis
 
-%ProfileType = longitudinal // lateral
-%DisplayOption = physicalDose // RBExD // physical_vs_RBExD
-%Para hacer comparaciones entre modelos DisplayOption == RBExD // physical_vs_RBExD
+% ProfileType = longitudinal // lateral
+% DisplayOption = physicalDose // RBExD // physical_vs_RBExD
+% Para hacer comparaciones entre modelos DisplayOption == RBExD // physical_vs_RBExD
 % prueba_DoseGraphs (ct, pln, cst, NumBeam, ProfileType, DisplayOption, Result, Model1, Result2, Model2)
 
 prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultPhysical.ConstRBEreCalc.resultGUI, 'ConstRBE',ResultPhysical.RBEMCNreCalc.resultGUI,'RBEMCN')
@@ -208,6 +222,25 @@ title('RBEMCN optimized')
 
 prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultRBEUCM.RBEMCNreCalc.resultGUI, 'RBEMCN',ResultRBEUCM.ConstRBEreCalc.resultGUI,'ConstRBE')
 title('RBEUCM optimized')
+
+clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical
+
+
+%% Graficas de perfil de dosis vs RBE
+% ProfileType = longitudinal // lateral
+% DisplayOption = RBE // physicalDose // RBExD // physical_vs_RBExD
+% Para hacer comparaciones entre modelos DisplayOption == RBExD // physical_vs_RBExD
+% prueba_DoseGraphs (ct, pln, cst, NumBeam, ProfileType, DisplayOption, Result, Model1, Result2, Model2)
+
+prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'RBE', ResultConstRBE.RBEMCNreCalc.resultGUI, 'RBE', ResultConstRBE.RBEMCNreCalc.resultGUI, 'RBEMCN')
+title('RBE vs RBExD (ConstRBE optimized)')
+
+prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'RBE', ResultRBEMCN.Optimized.resultGUI, 'RBE', ResultRBEMCN.Optimized.resultGUI, 'RBEMCN')
+title('RBE vs RBExD (RBEMCN optimized)')
+
+prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'RBE', ResultRBEUCM.RBEMCNreCalc.resultGUI, 'RBE', ResultRBEUCM.RBEMCNreCalc.resultGUI, 'RBEUCM')
+title('RBE vs RBExD (RBEUCM optimized)')
+
 
 %% Graficas 2D de dosis
 % prueba_DoseIntens (ct, pln, Dose, z_cut, TypeDose, Model)
@@ -231,6 +264,9 @@ prueba_DoseIntens (ct, pln, ResultRBEMCN.Optimized.resultGUI.RBExD, [], 'RBExD',
 prueba_DoseIntens (ct, pln, ResultRBEUCM.Optimized.resultGUI.physicalDose, [], 'Physical', 'Physical');
 prueba_DoseIntens (ct, pln, ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD, [], 'RBExD', 'ConstRBE');
 prueba_DoseIntens (ct, pln, ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD, [], 'RBExD', 'RBEMCN');
+
+clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical
+
 
 %% Representacion DVH todas las VOI
 
@@ -271,9 +307,48 @@ prueba_compDVH ( pln , cst, Dose, [], OptModel);
 clear OptModel
 
 
-clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE 
+clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical
 
-%% Comparacion DVH para VOIs espec�ficas 
+
+%% Calculo de RBE medio para RBEMCN y representaciones de perfil del RBE y de RBExD en VOIs especificas
+
+if strcmp(phantomtype, 'Prostate') >0
+    Regions{1,1} = 'Rectum';
+    Regions{2,1} = 'PTV 68';
+    
+elseif strcmp(phantomtype, 'Head and Neck') >0
+    Regions = [];
+end
+
+
+Dose{1,1} = ResultConstRBE.RBEMCNreCalc.resultGUI;
+Dose{2,1} = ResultRBEMCN.Optimized.resultGUI;
+Dose{3,1} = ResultRBEUCM.RBEMCNreCalc.resultGUI;
+midRBE(1).OptModel = 'ConstRBE';
+midRBE(2).OptModel = 'RBEMCN';
+midRBE(3).OptModel = 'RBEUCM';
+
+for i = 1:size(Regions,1)
+    for j = 1: size (Dose,1)
+        for k = 1:size(cst,1)
+            if strcmp (Regions{i,1},cst{k,2}) > 0
+                indices     = cst{k,4}{1};
+                RBE = Dose{j,1}.RBExD(indices) ./ Dose{j,1}.physicalDose(indices);
+                RBE(isnan(RBE)>0) = 1.1;
+                if strcmpi (Regions{i,1}(1:3),'PTV') > 0 
+                    midRBE(j).(strcat('PTV',Regions{i,1}(5:6))) = sum(RBE) / numel(indices);
+                else
+                    midRBE(j).(Regions{i,1}) = sum(RBE) / numel(indices);
+                end               
+            end      
+        end
+    end
+end
+
+clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE
+
+
+%% Comparacion DVH para VOIs especificas
 
 % Todos los modelos juntos
 if strcmp(phantomtype, 'Prostate') >0
@@ -282,7 +357,7 @@ if strcmp(phantomtype, 'Prostate') >0
     
 elseif strcmp(phantomtype, 'Head and Neck') >0
     Regions = [];
-end 
+end
 
 OptModel = cell(6,2);
 OptModel([1,2],1) = {' ConstRBEOpt '};
@@ -299,6 +374,8 @@ Dose{5,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
 Dose{6,1}= ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
 
 image_All = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
+%saveas(image_All, 'DVHComp_All.png');
+close
 clear OptModel Dose
 
 % Solo ConstRBE
@@ -313,6 +390,8 @@ Dose{2,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
 Dose{3,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
 
 image_ConstRBE = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
+%saveas(image_ConstRBE, 'DVHComp_ConstRBE.png');
+close
 clear OptModel Dose
 
 % Solo RBEMCN
@@ -328,13 +407,9 @@ Dose{3,1}= ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
 
 image_RBEMCN = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
 
-saveas(image_All, 'DVHComp_All.png');
-saveas(image_ConstRBE, 'DVHComp_ConstRBE.png');
-saveas(image_RBEMCN, 'DVHComp_RBEMCN.png')
+%saveas(image_RBEMCN, 'DVHComp_RBEMCN.png')
 
-
-
-clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE 
+clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE midRBE ResultPhysical
 
 
 %% Calculo de las estadisticas de dosis
@@ -368,10 +443,10 @@ Models{2,1} = 'RBEMCN';Models{2,2} = 'RBEMCNreCalc';
 DoseStatistics.RBEUCMOpt = prueba_DVHstatsComp(pln, cst, Dose,[],[], Models, 'RBEUCMOpt',0);
 clear Dose Models
 
-clearvars -except ct cst phantomtype pln ResultRBEMCN ResultRBEUCM ResultConstRBE DoseStatistics
+clearvars -except ct cst phantomtype pln ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics
 
 
-%% Calculo y comparacion de NTCP
+%% Calculo de NTCP
 
 % Calculos NTCP para ConstRBEOpt
 NTCP.ConstRBEOpt.Optimized = prueba_NTCPcalc(pln, cst, phantomtype, ResultConstRBE.Optimized.resultGUI.RBExD);
