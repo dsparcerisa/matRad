@@ -1,10 +1,10 @@
-% %% Hacer carga del phantom
-% 
-% close all
-% clear
-% if ispc
-%     opengl software
-% end
+%% Hacer carga del phantom
+
+close all
+clear
+if ispc
+    opengl software
+end
  load PROSTATE.mat; phantomtype = 'Prostate';
 % %load HEAD_AND_neck.mat; phantomtype = 'Head and Neck';
 % %load BOXPHANTOM.mat; phantomtype = 'Test';
@@ -374,10 +374,8 @@ Dose{3,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
 Dose{4,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
 Dose{5,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
 Dose{6,1}= ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
-
 image_All = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
-%saveas(image_All, 'DVHComp_All.png');
-close
+%saveas(image_All, 'DVHComp_All.png'); close;
 clear OptModel Dose
 
 % Solo ConstRBE
@@ -392,8 +390,7 @@ Dose{2,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
 Dose{3,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
 
 image_ConstRBE = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
-%saveas(image_ConstRBE, 'DVHComp_ConstRBE.png');
-close
+%saveas(image_ConstRBE, 'DVHComp_ConstRBE.png'); close;
 clear OptModel Dose
 
 % Solo RBEMCN
@@ -415,6 +412,8 @@ clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRB
 
 
 %% Calculo de las estadisticas de dosis
+
+%prueba_DVHstatsComp (pln, cst, Dose, refVol, refGy, Models, Name, FigRem)
 
 % Estadisticas de dosis para el caso de ConstRBE optimizado
 Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;

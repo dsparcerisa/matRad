@@ -18,7 +18,7 @@ end
 
 set(gca,'YDir','normal');
 ylabel('{\color{black}dose [Gy]}')
-cColor ={'black','green','magenta','cyan','yellow','red','blue', 'orange', 'limegreen', 'lavender', 'banana', 'beige', 'wheat'};
+cColor ={'black','green','magenta','cyan','yellow','red','blue'};
 
 % Rotate the system into the beam.
 % passive rotation & row vector multiplication & inverted rotation requires triple matrix transpose
