@@ -50,9 +50,6 @@ else
     Suffix = SelectedCube(Idx:end);
 end
 
-% plot counter
-Cnt=2;
-
 % plots physical, RBExD and physical vs RBExD
 if strcmp(handles.popupDisplayOption, 'RBE')
     if isempty(Model2) && isempty(Result2)
@@ -64,17 +61,17 @@ if strcmp(handles.popupDisplayOption, 'RBE')
         
     else
         yyaxis left
-        ylabel('RBE');
         RBE = Result.(['RBExD' Suffix])./ Result.(['physicalDose' Suffix]);
         RBE(isnan(RBE)>0) = 1.1;
         PlotHandles{1,1} = plot(vX, RBE(ix),'color',cColor{1,1},'LineWidth',3); hold on;
         PlotHandles{1,2} ='RBE';
+        ylabel('RBE');
         
         yyaxis right
         ylabel('Dose [Gy(RBE)]');
         mRBExD2 = Result2.(['RBExD' Suffix]);
-        PlotHandles{3,1} = plot(vX,pln.numOfFractions .* mRBExD2(ix),'color',cColor{1,7},'LineWidth',3); hold on;
-        PlotHandles{3,2} = strcat( Model2,' RBExD');
+        PlotHandles{2,1} = plot(vX,pln.numOfFractions .* mRBExD2(ix),'color',cColor{1,7},'LineWidth',3); hold on;
+        PlotHandles{2,2} = strcat( Model2,' RBExD');
     end
     
 elseif strcmp(handles.popupDisplayOption, 'physicalDose')
@@ -111,45 +108,6 @@ elseif  strcmp(handles.popupDisplayOption, 'physical_vs_RBExD')
         PlotHandles{3,1} = plot(vX,pln.numOfFractions .* mRBExD2(ix),'color',cColor{1,7},'LineWidth',3); hold on;
         PlotHandles{3,2} = strcat( Model2,' RBExD');
     end
-    
-    Cnt=Cnt+2;
-end
-
-%%
-% asses target coordinates
-tmpPrior = intmax;
-tmpSize = 0;
-for i=1:size(cst,1)
-    if strcmp(cst{i,3},'TARGET') && tmpPrior >= cst{i,5}.Priority && tmpSize<numel(cst{i,4}{1})
-        linIdxTarget = unique(cst{i,4}{1});
-        tmpPrior=cst{i,5}.Priority;
-        tmpSize=numel(cst{i,4}{1});
-        VOI = cst{i,2};
-    end
-end
-
-str = sprintf('profile plot - central axis of %d beam gantry angle %d? couch angle %d?',...
-    handles.selectedBeam ,pln.gantryAngles(handles.selectedBeam),pln.couchAngles(handles.selectedBeam));
-
-% plot target boundaries
-mTargetCube = zeros(ct.cubeDim);
-mTargetCube(linIdxTarget) = 1;
-vProfile = mTargetCube(ix);
-WEPL_Target_Entry = vX(find(vProfile,1,'first'));
-WEPL_Target_Exit  = vX(find(vProfile,1,'last'));
-PlotHandles{Cnt,2} =[VOI 'boundary'];
-
-mdylim = Result.(['RBExD' Suffix]);
-ysuplim = max(mdylim(:))*pln.numOfFractions;  % boundaries line limits
-
-if ~isempty(WEPL_Target_Entry) && ~isempty(WEPL_Target_Exit)
-    hold on
-    PlotHandles{Cnt,1} = ...
-        line([WEPL_Target_Entry WEPL_Target_Entry], [0 ysuplim+10], 'LineStyle','--','Linewidth',3,'color','k');hold on
-    line([WEPL_Target_Exit WEPL_Target_Exit], [0 ysuplim+10], 'LineStyle','--','Linewidth',3,'color','k');hold on
-    
-else
-    PlotHandles{Cnt,1} =[];
 end
 
 Lines1  = PlotHandles(~cellfun(@isempty,PlotHandles(:,1)),1);
@@ -162,5 +120,5 @@ xlabel('radiological depth [mm]','FontSize',8);
 grid on, grid minor
 
 hold off
-
+clc
 end

@@ -124,7 +124,7 @@ ResultConstRBE.Optimized.resultGUI = resultGUI;
 clear dij resultGUI 
 
 
-%% Cambio a modelo McNamara, calculo de dosis y optimizacion de este
+    %% Cambio a modelo McNamara, calculo de dosis y optimizacion de este
 
 
 pln.bioOptimization = 'MCN_RBExD';           % none_physicalDose: physical optimization;                              constRBE_RBExD; constant RBE of 1.1;  
@@ -243,27 +243,29 @@ title('RBE vs RBExD (RBEUCM optimized)')
 
 
 %% Graficas 2D de dosis
-% prueba_DoseIntens (ct, pln, Dose, z_cut, TypeDose, Model)
+% prueba_DoseIntens (ct, pln, Dose, IsoDose_Levels, z_cut, TypeDose, Model)
+
+IsoDose_Levels = [10 20 30 40 50 60 65]; %(Gy)
 
 % physicalDose Optimized
-prueba_DoseIntens (ct, pln, ResultPhysical.Optimized.resultGUI.physicalDose, [], 'Physical', 'Physical');
-prueba_DoseIntens (ct, pln, ResultPhysical.ConstRBEreCalc.resultGUI.RBExD, [], 'RBExD', 'ConstRBE');
-prueba_DoseIntens (ct, pln, ResultPhysical.RBEMCNreCalc.resultGUI.RBExD, [], 'RBExD', 'RBEMCN');
+prueba_DoseIntens (ct, pln, ResultPhysical.Optimized.resultGUI.physicalDose, IsoDose_Levels, [], 'Physical', 'Physical');
+prueba_DoseIntens (ct, pln, ResultPhysical.ConstRBEreCalc.resultGUI.RBExD, IsoDose_Levels, [], 'RBExD', 'ConstRBE');
+prueba_DoseIntens (ct, pln, ResultPhysical.RBEMCNreCalc.resultGUI.RBExD, IsoDose_Levels, [], 'RBExD', 'RBEMCN');
 
 % ConstRBE Optimized
-prueba_DoseIntens (ct, pln, ResultConstRBE.Optimized.resultGUI.physicalDose, [], 'Physical', 'Physical');
-prueba_DoseIntens (ct, pln, ResultConstRBE.Optimized.resultGUI.RBExD, [], 'RBExD', 'ConstRBE');
-prueba_DoseIntens (ct, pln, ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD, [], 'RBExD', 'RBEMCN');
+prueba_DoseIntens (ct, pln, ResultConstRBE.Optimized.resultGUI.physicalDose, IsoDose_Levels, [], 'Physical', 'Physical');
+prueba_DoseIntens (ct, pln, ResultConstRBE.Optimized.resultGUI.RBExD, IsoDose_Levels, [], 'RBExD', 'ConstRBE');
+prueba_DoseIntens (ct, pln, ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD, IsoDose_Levels, [], 'RBExD', 'RBEMCN');
 
 % MCN Optimized
-prueba_DoseIntens (ct, pln, ResultRBEMCN.Optimized.resultGUI.physicalDose, [], 'Physical', 'Physical');
-prueba_DoseIntens (ct, pln, ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD, [], 'RBExD', 'ConstRBE');
-prueba_DoseIntens (ct, pln, ResultRBEMCN.Optimized.resultGUI.RBExD, [], 'RBExD', 'RBEMCN');
+prueba_DoseIntens (ct, pln, ResultRBEMCN.Optimized.resultGUI.physicalDose, IsoDose_Levels, [], 'Physical', 'Physical');
+prueba_DoseIntens (ct, pln, ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD, IsoDose_Levels, [], 'RBExD', 'ConstRBE');
+prueba_DoseIntens (ct, pln, ResultRBEMCN.Optimized.resultGUI.RBExD, IsoDose_Levels, [], 'RBExD', 'RBEMCN');
 
 % UCM Optimized
-prueba_DoseIntens (ct, pln, ResultRBEUCM.Optimized.resultGUI.physicalDose, [], 'Physical', 'Physical');
-prueba_DoseIntens (ct, pln, ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD, [], 'RBExD', 'ConstRBE');
-prueba_DoseIntens (ct, pln, ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD, [], 'RBExD', 'RBEMCN');
+prueba_DoseIntens (ct, pln, ResultRBEUCM.Optimized.resultGUI.physicalDose,IsoDose_Levels, [], 'Physical', 'Physical');
+prueba_DoseIntens (ct, pln, ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD, IsoDose_Levels, [], 'RBExD', 'ConstRBE');
+prueba_DoseIntens (ct, pln, ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD, IsoDose_Levels, [], 'RBExD', 'RBEMCN');
 
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical
 
