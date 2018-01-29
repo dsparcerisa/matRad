@@ -8,9 +8,9 @@ if isempty(z_cut)
     z_cut = z_dijmax;
 end
 
-if isunix > 1
-    cd plotting
-end
+ruta = ['plotting' filesep];
+cd(ruta)
+
 
 % Grafica de intesidad de dosis
 axis off
@@ -38,9 +38,7 @@ IsoDose_Contours = matRad_computeIsoDoseContours(Total_dose ,IsoDose_Levels);
 matRad_plotIsoDoseLines(axesHandle,Total_dose,IsoDose_Contours,IsoDose_Levels,...
    0,3,z_cut,jet(64),[cmin cmax+0.05],'LineWidth',1.5);
 
+cd ..
 
-if isunix > 1
-    cd ..
-end
 
 end

@@ -9,16 +9,6 @@ end
 % %load HEAD_AND_neck.mat; phantomtype = 'Head and Neck';
 % %load BOXPHANTOM.mat; phantomtype = 'Test';
 % %load TG119.mat; phantomtype = 'Test';
-
-%phantomtype = 'Prostate';
-
-% Force penalties
-cst{2,6}.penalty = 100;
-cst{8,6}.penalty = 100;
-cst{5,6}.penalty = 5000;
-cst{6,6}.penalty = 5000;
-
-
 %% Carga de parametros alpha y beta
 
 cst = prueba_abLoader (cst, phantomtype);
@@ -41,6 +31,7 @@ pln.runSequencing   = false; % 1/true: run sequencing, 0/false: don't / will be 
 pln.runDAO          = false; % 1/true: run DAO, 0/false: don't / will be ignored for particles
 pln.machine         = 'Generic';
 pln.robOpt          = false;
+pln.calcLET = true;
 
 
 %% Calculo y optimizacion para dosis fisica
@@ -245,7 +236,7 @@ title('RBE vs RBExD (RBEUCM optimized)')
 %% Graficas 2D de dosis
 % prueba_DoseIntens (ct, pln, Dose, IsoDose_Levels, z_cut, TypeDose, Model)
 
-IsoDose_Levels = [10 20 30 40 50 60 65]; %(Gy)
+IsoDose_Levels = [10 20 30 40 50 60 68]; %(Gy)
 
 % physicalDose Optimized
 prueba_DoseIntens (ct, pln, ResultPhysical.Optimized.resultGUI.physicalDose, IsoDose_Levels, [], 'Physical', 'Physical');
@@ -333,15 +324,34 @@ midRBE(3).OptModel = 'RBEUCM';
 for i = 1:size(Regions,1)
     for j = 1: size (Dose,1)
         for k = 1:size(cst,1)
+            
             if strcmp (Regions{i,1},cst{k,2}) > 0
                 indices     = cst{k,4}{1};
-                RBE = Dose{j,1}.RBExD(indices) ./ Dose{j,1}.physicalDose(indices);
-                RBE(isnan(RBE)>0) = 1.1;
+                % midRBE point by point
+                RBE_pbp = Dose{j,1}.RBExD(indices) ./ Dose{j,1}.physicalDose(indices);
+                RBE_pbp(isnan(RBE_pbp)>0) = 1.1;
+                
+                % midRBE sum points
+                RBE_sum = sum(Dose{j,1}.RBExD(indices)) / sum(Dose{j,1}.physicalDose(indices));
+                
+                % midRBE over threshold              
+                RBE_thr = Dose{j,1}.RBExD(indices) ./ Dose{j,1}.physicalDose(indices);
+                phyDose = Dose{j,1}.physicalDose(indices);
+                thr_dose = 0.5;
+                thr_index = phyDose < thr_dose;  
+                RBE_thr(thr_index) = 1.1;
+                RBE_thr(isnan(RBE_thr)>0) = 1.1;
+                  
                 if strcmpi (Regions{i,1}(1:3),'PTV') > 0 
-                    midRBE(j).(strcat('PTV',Regions{i,1}(5:6))) = sum(RBE) / numel(indices);
+                    midRBE(j).(strcat('PTV',Regions{i,1}(5:6),'_pbp')) = sum(RBE_pbp) / numel(indices);
+                    midRBE(j).(strcat('PTV',Regions{i,1}(5:6),'_sum')) = RBE_sum;
+                    midRBE(j).(strcat('PTV',Regions{i,1}(5:6),'_thr')) = sum(RBE_thr) / numel(indices);
                 else
-                    midRBE(j).(Regions{i,1}) = sum(RBE) / numel(indices);
+                    midRBE(j).(strcat(Regions{i,1},'_pbp')) = sum(RBE_pbp) / numel(indices);
+                    midRBE(j).(strcat(Regions{i,1},'_sum')) = RBE_sum;
+                    midRBE(j).(strcat(Regions{i,1},'_thr')) = sum(RBE_thr) / numel(indices);
                 end               
+                
             end      
         end
     end

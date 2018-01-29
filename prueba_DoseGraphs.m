@@ -50,10 +50,14 @@ else
     Suffix = SelectedCube(Idx:end);
 end
 
-% plots physical, RBExD and physical vs RBExD
+% plots RBE, physical, RBExD and physical vs RBExD
 if strcmp(handles.popupDisplayOption, 'RBE')
     if isempty(Model2) && isempty(Result2)
         RBE = Result.(['RBExD' Suffix])./ Result.(['physicalDose' Suffix]);
+        phyDose = Result.(['physicalDose' Suffix]);
+        thr_dose = 0.5;
+        thr_index = phyDose < thr_dose;
+        RBE(thr_index) = 1.1;
         RBE(isnan(RBE)>0) = 1.1;
         PlotHandles{1,1} = plot(vX, RBE(ix),'color',cColor{1,1},'LineWidth',3); hold on;
         PlotHandles{1,2} ='RBE';
@@ -62,6 +66,10 @@ if strcmp(handles.popupDisplayOption, 'RBE')
     else
         yyaxis left
         RBE = Result.(['RBExD' Suffix])./ Result.(['physicalDose' Suffix]);
+        phyDose = Result.(['physicalDose' Suffix]);
+        thr_dose = 0.5;
+        thr_index = phyDose < thr_dose;
+        RBE(thr_index) = 1.1;
         RBE(isnan(RBE)>0) = 1.1;
         PlotHandles{1,1} = plot(vX, RBE(ix),'color',cColor{1,1},'LineWidth',3); hold on;
         PlotHandles{1,2} ='RBE';
