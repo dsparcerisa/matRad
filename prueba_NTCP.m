@@ -1,14 +1,17 @@
 %% Hacer carga del phantom
 
 close all
-clear
-if ispc
+% clear
+if ispc > 0 || isunix > 0
     opengl software
 end
- load PROSTATE.mat; phantomtype = 'Prostate';
+% load PROSTATE.mat; phantomtype = 'Prostate';
 % %load HEAD_AND_neck.mat; phantomtype = 'Head and Neck';
 % %load BOXPHANTOM.mat; phantomtype = 'Test';
 % %load TG119.mat; phantomtype = 'Test';
+
+phantomtype = 'Prostate';
+
 %% Carga de parametros alpha y beta
 
 cst = prueba_abLoader (cst, phantomtype);
@@ -31,7 +34,7 @@ pln.runSequencing   = false; % 1/true: run sequencing, 0/false: don't / will be 
 pln.runDAO          = false; % 1/true: run DAO, 0/false: don't / will be ignored for particles
 pln.machine         = 'Generic';
 pln.robOpt          = false;
-pln.calcLET = true;
+%pln.calcLET = true;
 
 
 %% Calculo y optimizacion para dosis fisica

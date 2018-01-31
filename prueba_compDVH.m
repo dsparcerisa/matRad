@@ -66,7 +66,7 @@ if ~isempty (VOI)
                             strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
                         
                         
-                    % Marcadores específicos
+                    % Marcadores especï¿½ficos
                     
                     % Dosis del PTV
                     if strcmp (cst{j,2}, 'PTV 68')
@@ -74,14 +74,14 @@ if ~isempty (VOI)
                         % Restricciones 
                         for m = 1:size(cst{j,6},1)
                             if i==1
-                                if strcmp(cst{j,6}(m).type,'max DVH constraint') > 0
-                                    line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'PTV 68 max DVH constraint',...
+                                if strcmp(cst{j,6}(m).type,'max DVH constraint') > 0 || strcmp(cst{j,6}(m).type,'max DVH objective') > 0
+                                    line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'PTV 68 max DVH objective',...
                                         'LineStyle' , '--' ,'Color','k','LineWidth',2); hold on
                                 elseif strcmp(cst{j,6}(m).type,'square deviation') > 0
                                     line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'PTV 68 square deviation',...
-                                        'LineStyle' , '--' ,'Color','k','LineWidth',2); hold on
-                                elseif strcmp(cst{j,6}(m).type,'min DVH constraint') > 0
-                                    line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'PTV 68 min DVH constraint',...
+                                        'LineStyle' , '-.' ,'Color','k','LineWidth',2); hold on
+                                elseif strcmp(cst{j,6}(m).type,'min DVH objective') > 0 
+                                    line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'PTV 68 min DVH objective',...
                                         'LineStyle' , '--' ,'Color',[0.38,0.38,0.38],'LineWidth',2); hold on
                                 end
                             end
@@ -103,14 +103,14 @@ if ~isempty (VOI)
                             plot(dvhPoints(V_Points),dvh{i,1}(V_Points),'.', 'MarkerSize',15,'LineWidth',2,'Color', 'k','HandleVisibility','off');hold on
                         end
                         
-                        % Restricciones maximas y mínimas del DVH
+                        % Restricciones maximas y mï¿½nimas del DVH
                         for m = 1:size(cst{j,6},1)
                             if i==1
-                                if strcmp(cst{j,6}(m).type,'max DVH constraint') > 0
-                                    line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'Rectum max DVH constraint',...
+                                if strcmp(cst{j,6}(m).type,'max DVH constraint') > 0 || strcmp(cst{j,6}(m).type,'max DVH objective') > 0
+                                    line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'Rectum max DVH objective',...
                                         'LineStyle' , '--' ,'Color',[0,0.4,0],'LineWidth',2); hold on
-                                elseif strcmp(cst{j,6}(m).type,'min DVH constraint') > 0
-                                    line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'Rectum min DVH constraint',...
+                                elseif strcmp(cst{j,6}(m).type,'min DVH constraint') > 0 || strcmp(cst{j,6}(m).type,'min DVH objective') > 0
+                                    line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'Rectum min DVH objective',...
                                         'LineStyle' , '--' ,'Color',[0,1,0],'LineWidth',2); hold on
                                 end
                             end

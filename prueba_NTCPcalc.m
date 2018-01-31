@@ -13,7 +13,7 @@ function [NTCP] = prueba_NTCPcalc (pln, cst, phantomtype, Dose)
 
 
 % Modelo LKB
-LKM = @(x)(exp (-0.5.*x.^2/2));
+LKM = @(x)(exp (-0.5.*x.^2))*(1/sqrt(2*pi));
 
 % Example LKB model
 % Dose = ResultConstRBE.Optimized.resultGUI.RBExD;
@@ -53,7 +53,7 @@ if strcmp (phantomtype, 'Prostate')>0
         for j = 1:numOfVois
             if strcmpi('Rectum',cst{j,2}) > 0
                 indices     = cst{j,4}{1};
-                EUD = (1/numel(indices).*sum(pln.numOfFractions.*Dose(indices).^(1/n))^n);
+                EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
                 t =  (EUD - TD_50)/(m * TD_50);
                 NTCP.Fukahori.NTCP(Grade).NTCP = integral(LKM, -inf, t);
             end
@@ -79,7 +79,7 @@ if strcmp (phantomtype, 'Prostate')>0
             m = 0.15;
             TD_50 = 80;
             indices     = cst{j,4}{1};
-            EUD = (1/numel(indices).*sum(pln.numOfFractions.*Dose(indices).^(1/n))^n);
+            EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
             NTCP.Burman.Rectum.NTCP = integral(LKM, -inf, t);
             
@@ -88,7 +88,7 @@ if strcmp (phantomtype, 'Prostate')>0
             m = 0.11;
             TD_50 = 80;
             indices     = cst{j,4}{1};
-            EUD = (1/numel(indices).*sum(pln.numOfFractions.*Dose(indices).^(1/n))^n);
+            EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
             NTCP.Burman.Bladder.NTCP = integral(LKM, -inf, t);
             
@@ -98,7 +98,7 @@ if strcmp (phantomtype, 'Prostate')>0
             m = 0.12;
             TD_50 = 65;
             indices     = cst{j,4}{1};
-            EUD = (1/numel(indices).*sum(pln.numOfFractions.*Dose(indices).^(1/n))^n);
+            EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
             if strcmpi('Rt femoral head',cst{j,2}) > 0
                 NTCP.Burman.Femoral_Head.NTCP_RT = integral(LKM, -inf, t);
@@ -125,7 +125,7 @@ if strcmp (phantomtype, 'Prostate')>0
             m = 0.11;
             TD_50 = 80;
             indices     = cst{j,4}{1};
-            EUD = (1/numel(indices).*sum(pln.numOfFractions.*Dose(indices).^(1/n))^n);
+            EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
             NTCP.Cheung.Bladder.NTCP = integral(LKM, -inf, t);
             
@@ -142,7 +142,7 @@ if strcmp (phantomtype, 'Prostate')>0
                 end
                 
                 indices     = cst{j,4}{1};
-                EUD = (1/numel(indices).*sum(pln.numOfFractions.*Dose(indices).^(1/n))^n);
+                EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
                 t =  (EUD - TD_50)/(m * TD_50);
                 NTCP.Cheung.Rectum.NTCP(delta).Hemorrhoids_Pres = delta-1;
                 NTCP.Cheung.Rectum.NTCP(delta).NTCP = integral(LKM, -inf, t);
@@ -163,7 +163,7 @@ if strcmp (phantomtype, 'Prostate')>0
             m = 0.15;
             TD_50 = 80;
             indices     = cst{j,4}{1};
-            EUD = (1/numel(indices).*sum(pln.numOfFractions.*Dose(indices).^(1/n))^n);
+            EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
             NTCP.Liu.NTCP = integral(LKM, -inf, t);
         end
@@ -182,7 +182,7 @@ if strcmp (phantomtype, 'Prostate')>0
             m = 0.14;
             TD_50 = 78;
             indices     = cst{j,4}{1};
-            EUD = (1/numel(indices).*sum(pln.numOfFractions.*Dose(indices).^(1/n))^n);
+            EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
             NTCP.Tucker.NTCP = integral(LKM, -inf, t);
         end
@@ -201,7 +201,7 @@ if strcmp (phantomtype, 'Prostate')>0
             m = 0.14;
             TD_50 = 81;
             indices     = cst{j,4}{1};
-            EUD = (1/numel(indices).*sum(pln.numOfFractions.*Dose(indices).^(1/n))^n);
+            EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
             NTCP.Peeters.Bleeding.NTCP = integral(LKM, -inf, t);
         end
@@ -216,7 +216,7 @@ if strcmp (phantomtype, 'Prostate')>0
             m = 0.24;
             TD_50 = 84;
             indices     = cst{j,4}{1};
-            EUD = (1/numel(indices).*sum(pln.numOfFractions.*Dose(indices).^(1/n))^n);
+            EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
             NTCP.Peeters.Dep_Freq_Incr.NTCP = integral(LKM, -inf, t);
         end
@@ -231,7 +231,7 @@ if strcmp (phantomtype, 'Prostate')>0
             m = 0.46;
             TD_50 = 105;
             indices     = cst{j,4}{1};
-            EUD = (1/numel(indices).*sum(pln.numOfFractions.*Dose(indices).^(1/n))^n);
+            EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
             NTCP.Peeters.Fecal_Inc.NTCP = integral(LKM, -inf, t);
         end
@@ -242,27 +242,23 @@ if strcmp (phantomtype, 'Prostate')>0
     % Schaake (2016) -> NTCP rectal bleeding
     
     NTCP.Schaake.Model = 'Shaake''s model';
-    NTCP.Schaake.Risk = 'Rectal bleeding';
+    NTCP.Schaake.Risk = 'Rectal bleeding grade 2';
     NTCP.Schaake.VOI = 'Rectum';
     
-    refGy = [70];
+    refGy = 70;
     for i = 1:size(cst,1)
         if strcmpi(cst{i,2},'Rectum')          
                 indices     = cst{i,4}{1};
                 numOfVoxels = numel(indices);
                 doseInVoi = pln.numOfFractions .* Dose(indices);
                 VX = @(x) numel(doseInVoi(doseInVoi >= x)) / numOfVoxels;
-                for runVX = 1:numel(refGy)
-                    DoseStatistics.V70Gy = VX(refGy(runVX));
-                end      
-                
-            V70_anorectum = DoseStatistics.V70Gy;%
+                V70_anorectum = VX(refGy) * 100;
         end
      end
      for delta = 1:2
-         S = -8.09 + 0.32 .* V70_anorectum .*100 + 1.19 .* (delta-1);
+         S = -8.09 + 0.32 * V70_anorectum + 1.19 .* (delta-1);
          NTCP.Schaake.NTCP(delta).AnticUse = delta-1;
-         NTCP.Schaake.NTCP(delta).NTCP = 1./(1+exp(-S));      
+         NTCP.Schaake.NTCP(delta).NTCP = 1/(1+exp(-S));      
      end
     
 end
