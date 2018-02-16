@@ -86,13 +86,24 @@ pln.machine       = 'Generic';
 
 %%
 % Define the flavor of optimization along with the quantity that should be
-% used for optimization. Possible values are (none: physical optimization; 
-% const_RBExD: constant RBE of 1.1; LEMIV_effect: effect-based 
-% optimization; LEMIV_RBExD: optimization of RBE-weighted dose. As we are 
-% using photons, we simply set the parameter to 'none' thereby indicating 
-% the physical dose should be optimized.
-pln.bioOptimization = 'none';    
+% used for optimization. Possible quantities used for optimization are: 
+% physicalDose: physical dose based optimization; 
+% effect: biological effect based optimization;
+% RBExD: RBE weighted dose based optimzation;
+% Possible biological models are:
+% none:        use no specific biological model
+% constRBE:    use a constant RBE
+% MCN:         use the variable RBE McNamara model for protons
+% WED:         use the variable RBE Wedenberg model for protons
+% LEM:         use the biophysical variable RBE Local Effect model for carbons
+% As we are  using photons, we simply set the parameter to 'physicalDose' and
+% and 'none'
+quantityOpt    = 'physicalDose';                                     
+modelName      = 'none';  
 
+% disable robust optimization
+pln.robOpt       = false;
+pln.scenGenType  = 'nomScen';
 %%
 % Now we have to set some beam parameters. We can define multiple beam 
 % angles for the treatment and pass these to the plan as a vector. matRad 
@@ -122,6 +133,12 @@ pln.isoCenter       = ones(pln.numOfBeams,1) * matRad_getIsoCenter(cst,ct,0);
 % A DAO optimization is shown in a seperate example.
 pln.runSequencing = 1;
 pln.runDAO        = 0;
+
+% retrieve bio model parameters
+pln.bioParam = matRad_bioModel(pln.radiationMode,quantityOpt, modelName);
+
+% retrieve scenarios for dose calculation and optimziation
+pln.multScen = matRad_multScen(ct,pln.scenGenType);
 
 %%
 % and et voila our treatment plan structure is ready. Lets have a look:
@@ -162,8 +179,8 @@ imagesc(resultGUI.physicalDose(:,:,slice)),colorbar, colormap(jet);
 pln.gantryAngles = [0:50:359];
 pln.couchAngles  = zeros(1,numel(pln.gantryAngles));
 pln.numOfBeams   = numel(pln.gantryAngles);
+pln.isoCenter    = ones(pln.numOfBeams,1) * matRad_getIsoCenter(cst,ct,0);
 stf              = matRad_generateStf(ct,cst,pln);
-pln.isoCenter    = stf.isoCenter;
 dij              = matRad_calcPhotonDose(ct,stf,pln,cst);
 resultGUI_coarse = matRad_fluenceOptimization(dij,cst,pln);
 
@@ -190,21 +207,14 @@ matRad_plotSliceWrapper(gca,ct,cst,1,absDiffCube,plane,slice,[],[],colorcube);
 %% Obtain dose statistics
 % Two more columns will be added to the cst structure depicting the DVH and
 % standard dose statistics such as D95,D98, mean dose, max dose etc.
-cst        = matRad_indicatorWrapper(cst,pln,resultGUI);
-cst_coarse = matRad_indicatorWrapper(cst,pln,resultGUI_coarse);
+[dvh,qi]               = matRad_indicatorWrapper(cst,pln,resultGUI);
+[dvh_coarse,qi_coarse] = matRad_indicatorWrapper(cst,pln,resultGUI_coarse);
 
 %%
 % The treatment plan using more beams should in principle result in a
 % better OAR sparing. Therefore lets have a look at the D95 of the OAR of 
 % both plans
 ixOAR = 2;
-display(cst{ixOAR,9}{1}.D_95);
-display(cst_coarse{ixOAR,9}{1}.D_95);
-
-%%
-% Indeed, the coarse beam plan yields a higher D95 in the OAR. Finally, 
-% let's plot the DVH 
-matRad_showDVH(cst,pln);
-
-
+display(qi(ixOAR).D_95);
+display(qi_coarse(ixOAR).D_95);
 

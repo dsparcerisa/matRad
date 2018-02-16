@@ -38,11 +38,20 @@ function varargout = matRadGUI(varargin)
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % abort for octave
-if exist('OCTAVE_VERSION','builtin');
-    fprintf('matRad GUI not available for Octave.\n');
-    return;
-end
-    
+matRadRootDir = fileparts(mfilename('fullpath'));
+addpath(fullfile(matRadRootDir,'tools'))
+[env, versionString] = matRad_getEnvironment();
+
+switch env
+     case 'MATLAB'
+         
+     case 'OCTAVE'
+         fprintf(['matRad GUI not available for ' env ' ' versionString ' \n']);
+         return;
+     otherwise
+         fprintf(['not yet tested']);
+ end
+        
 % Begin initialization code - DO NOT EDIT
 % set platform specific look and feel
 if ispc
@@ -148,7 +157,7 @@ if isfield(handles,'VOIPlotFlag')
 end
 
 %search for availabes machines
-handles.Modalities = {'photons','protons','carbon'};
+handles.Modalities = {'photons','protons','helium','carbon'};
 for i = 1:length(handles.Modalities)
   pattern = [handles.Modalities{1,i} '_*'];
   if isdeployed
@@ -280,8 +289,20 @@ handles.DijCalcWarning = false;
 
 % set slice slider
 if handles.State > 0
+    if evalin('base','exist(''pln'',''var'')')
+        currPln = evalin('base','pln');
+        if handles.plane == 1
+            currSlice = ceil(currPln.isoCenter(1,2)/ct.resolution.x);
+        elseif handles.plane == 2
+            currSlice = ceil(currPln.isoCenter(1,1)/ct.resolution.y);
+        elseif handles.plane == 3
+            currSlice = ceil(currPln.isoCenter(1,3)/ct.resolution.z);
+        end 
+    else % no pln -> no isocenter -> use middle
+        currSlice = ceil(ct.cubeDim(handles.plane)/2);
+    end
     set(handles.sliderSlice,'Min',1,'Max',ct.cubeDim(handles.plane),...
-            'Value',ceil(ct.cubeDim(handles.plane)/2),...
+            'Value',currSlice,...
             'SliderStep',[1/(ct.cubeDim(handles.plane)-1) 1/(ct.cubeDim(handles.plane)-1)]);      
     
     % define context menu for structures
@@ -344,6 +365,11 @@ function matRadGUI_OpeningFcn(hObject, ~, handles, varargin)
 % loaded, since resetGUI needs to distinguish at one point
 
 handles.initialGuiStart = true;
+
+%If devMode is true, error dialogs will include the full stack trace of the error
+%If false, only the basic error message is shown (works for errors that
+%handle the MException object)
+handles.devMode = true;
 
 handles = resetGUI(hObject, handles);
 
@@ -703,7 +729,7 @@ try
     pln = evalin('base','pln');
 
     if length(pln.gantryAngles) ~= length(pln.couchAngles) 
-        handles = showWarning(handles,warndlg('number of gantryAngles != number of couchAngles')); 
+        handles = showWarning(handles,'number of gantryAngles != number of couchAngles'); 
     end
     %%
     if ~checkRadiationComposition(handles);
@@ -715,7 +741,7 @@ try
 
     %% check if isocenter is already set
     if ~isfield(pln,'isoCenter')
-        handles = showWarning(handles,warning('no iso center set - using center of gravity based on structures defined as TARGET'));
+        handles = showWarning(handles,'no iso center set - using center of gravity based on structures defined as TARGET');
         pln.isoCenter = ones(pln.numOfBeams,1) * matRad_getIsoCenter(evalin('base','cst'),evalin('base','ct'));
         assignin('base','pln',pln);
     elseif ~get(handles.checkIsoCenter,'Value')
@@ -725,7 +751,7 @@ try
     end
 
 catch ME
-    handles = showError(handles,{'CalcDoseCallback: Error in preprocessing!',ME.message}); 
+    handles = showError(handles,'CalcDoseCallback: Error in preprocessing!',ME); 
     % change state from busy to normal
     set(Figures, 'pointer', 'arrow');
     set(InterfaceObj,'Enable','on');
@@ -741,7 +767,7 @@ try
                                      evalin('base','pln'));
     assignin('base','stf',stf);
 catch ME
-    handles = showError(handles,{'CalcDoseCallback: Error in steering file generation!',ME.message}); 
+    handles = showError(handles,'CalcDoseCallback: Error in steering file generation!',ME); 
     % change state from busy to normal
     set(Figures, 'pointer', 'arrow');
     set(InterfaceObj,'Enable','on');
@@ -773,7 +799,7 @@ try
     UpdatePlot(handles);
     guidata(hObject,handles);
 catch ME
-    handles = showError(handles,{'CalcDoseCallback: Error in dose calculation!',ME.message}); 
+    handles = showError(handles,'CalcDoseCallback: Error in dose calculation!',ME); 
     % change state from busy to normal
     set(Figures, 'pointer', 'arrow');
     set(InterfaceObj,'Enable','on');
@@ -1472,6 +1498,14 @@ try
     if  ismember('resultGUI',AllVarNames)
         resultGUI = evalin('base','resultGUI');
         sNames = fieldnames(resultGUIcurrentRun);
+        oldNames = fieldnames(resultGUI);
+        if(length(oldNames) > length(sNames))
+            for j = 1:length(oldNames)
+            if strfind(oldNames{j}, 'beam')
+                resultGUI = rmfield(resultGUI, oldNames{j});
+            end
+            end
+        end
         for j = 1:length(sNames)
             resultGUI.(sNames{j}) = resultGUIcurrentRun.(sNames{j});
         end
@@ -1504,7 +1538,7 @@ try
     end
     
 catch ME
-    handles = showError(handles,{'OptimizeCallback: Could not optimize!',ME.message}); 
+    handles = showError(handles,'OptimizeCallback: Could not optimize!',ME); 
     % change state from busy to normal
     set(Figures, 'pointer', 'arrow');
     set(InterfaceObj,'Enable','on');
@@ -1528,7 +1562,7 @@ try
     end
         
 catch ME
-    handles = showError(handles,{'OptimizeCallback: Could not perform sequencing',ME.message}); 
+    handles = showError(handles,'OptimizeCallback: Could not perform sequencing',ME); 
     % change state from busy to normal
     set(Figures, 'pointer', 'arrow');
     set(InterfaceObj,'Enable','on');
@@ -1539,7 +1573,7 @@ end
 try
     %% DAO
     if strcmp(pln.radiationMode,'photons') && pln.runDAO
-        handles = showWarning(handles,{'Observe: You are running direct aperture optimization','This is experimental code that has not been thoroughly debugged - especially in combination with constrained optimization.'});
+        handles = showWarning(handles,['Observe: You are running direct aperture optimization' filesep 'This is experimental code that has not been thoroughly debugged - especially in combination with constrained optimization.']);
        [resultGUI,ipoptInfo] = matRad_directApertureOptimization(evalin('base','dij'),evalin('base','cst'),...
            resultGUI.apertureInfo,resultGUI,pln);
        assignin('base','resultGUI',resultGUI);
@@ -1552,7 +1586,7 @@ try
     end
    
 catch ME
-    handles = showError(handles,{'OptimizeCallback: Could not perform direct aperture optimization',ME.message}); 
+    handles = showError(handles,'OptimizeCallback: Could not perform direct aperture optimization',ME); 
     % change state from busy to normal
     set(Figures, 'pointer', 'arrow');
     set(InterfaceObj,'Enable','on');
@@ -2547,7 +2581,7 @@ pln.machine         = contents{get(handles.popUpMachine,'Value')};
 cellBioModel        = get(handles.popMenuBioOpt,'String');
 cellQuantOpt        = get(handles.popMenuQuantOpt,'String');
 
-pln.bioParam        = matRad_bioModel(pln.radiationMode,[cellBioModel{get(handles.popMenuBioOpt,'Value'),1} '_' cellQuantOpt{get(handles.popMenuQuantOpt,'Value'),1}]);
+pln.bioParam        = matRad_bioModel(pln.radiationMode, cellQuantOpt{get(handles.popMenuQuantOpt,'Value'),1}, cellBioModel{get(handles.popMenuBioOpt,'Value'),1}); 
 pln.bioOptimization = pln.bioParam.identifier;
 
 scenGenTypes    = get(handles.popupmenuScenGen,'String');
@@ -2598,7 +2632,17 @@ end
 
 
 % show error
-function handles = showError(handles,Message)
+function handles = showError(handles,Message,ME)
+
+if nargin == 3
+    %Add exception message
+    if isfield(handles,'devMode') && handles.devMode
+        meType = 'extended';
+    else 
+        meType = 'basic';
+    end
+    Message = {Message,ME.getReport(meType,'hyperlinks','off')};    
+end
 
 if isfield(handles,'ErrorDlg')
     if ishandle(handles.ErrorDlg)
@@ -2608,7 +2652,17 @@ end
 handles.ErrorDlg = errordlg(Message);
 
 % show warning
-function handles = showWarning(handles,Message)
+function handles = showWarning(handles,Message,ME)
+
+if nargin == 3
+    %Add exception message
+    if isfield(handles,'devMode') && handles.devMode
+        meType = 'extended';
+    else 
+        meType = 'basic';
+    end
+    Message = {Message,ME.getReport(meType,'hyperlinks','off')};    
+end
 
 if isfield(handles,'WarnDlg')
     if ishandle(handles.WarnDlg)
@@ -3003,7 +3057,7 @@ try
     guidata(hObject,handles);
 
 catch ME
-    handles = showError(handles,{'CalcDoseCallback: Error in dose recalculation!',ME.message}); 
+    handles = showError(handles,'CalcDoseCallback: Error in dose recalculation!',ME); 
 
     % change state from busy to normal
     set(Figures, 'pointer', 'arrow');
@@ -4084,7 +4138,7 @@ function popMenuBioOpt_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-bioParam = matRad_bioModel('photons','none_physicalDose');
+bioParam = matRad_bioModel('photons','physicalDose','none');
 set(hObject,'String',bioParam.AvailableModels);
 
 
@@ -4095,7 +4149,7 @@ function popMenuQuantOpt_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-bioParam = matRad_bioModel('photons','none_physicalDose');
+bioParam = matRad_bioModel('photons','physicalDose','none');
 set(hObject,'String',bioParam.AvailableQuantitiesForOpt);
 
 % --- Executes on selection change in popMenuQuantOpt.

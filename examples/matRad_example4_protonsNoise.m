@@ -35,8 +35,7 @@ load('PROSTATE.mat');
 % the most important cornerstones of your treatment plan.
 
 pln.radiationMode   = 'protons';           
-pln.machine         = 'Generic';
-pln.bioOptimization = 'const_RBExD';     
+pln.machine         = 'Generic';  
 pln.gantryAngles    = [90 270];
 pln.couchAngles     = [0 0];
 pln.bixelWidth      = 3;
@@ -45,8 +44,30 @@ pln.numOfBeams      = numel(pln.gantryAngles);
 pln.numOfVoxels     = prod(ct.cubeDim);
 pln.voxelDimensions = ct.cubeDim;
 pln.isoCenter       = ones(pln.numOfBeams,1) * matRad_getIsoCenter(cst,ct,0);
-pln.runDAO        = 0;
-pln.runSequencing = 0;
+pln.runDAO          = 0;
+pln.runSequencing   = 0;
+pln.scenGenType     = 'nomScen'; % optimize on the nominal scenario
+pln.robOpt          = false;
+%%
+% Define the biological optimization model for treatment planning along
+% with the quantity that should be used for optimization. Possible model values 
+% are:
+%('none': physical optimization;
+%'constRBE': constant RBE of 1.1; 
+% 'MCN': McNamara-variable RBE model for protons; 
+% 'WED':  Wedenberg-variable RBE model for protons
+% 'LEM': local effect model 
+% As we use protons, we follow here the clinical 
+% standard and use a constant relative biological effectiveness of 1.1. 
+% Therefore we set modelName to constRBE
+modelName           = 'constRBE';
+quantityOpt         = 'RBExD';   
+
+% retrieve bio model parameters
+pln.bioParam = matRad_bioModel(pln.radiationMode,quantityOpt,modelName);
+
+% retrieve scenarios for dose calculation and optimziation
+pln.multScen = matRad_multScen(ct,pln.scenGenType);
 
 %% Generate Beam Geometry STF
 stf = matRad_generateStf(ct,cst,pln);
@@ -58,9 +79,9 @@ dij = matRad_calcParticleDose(ct,stf,pln,cst);
 resultGUI = matRad_fluenceOptimization(dij,cst,pln);
 
 %% Calculate quality indicators 
-cst       = matRad_indicatorWrapper(cst,pln,resultGUI);
-ixRectum  = 8;
-D5_rectum = cst{ixRectum,9}{1}.D_5
+[dvh,qi]       = matRad_indicatorWrapper(cst,pln,resultGUI);
+ixRectum       = 8;
+display(qi(ixRectum).D_5);
 
 %%
 % Let's change the optimization parameter of the rectum in such a way that it
@@ -70,14 +91,14 @@ D5_rectum = cst{ixRectum,9}{1}.D_5
 cst{ixRectum,6}.penalty = 500;
 cst{ixRectum,6}.dose    = 40;
 resultGUI               = matRad_fluenceOptimization(dij,cst,pln);
-cst                     = matRad_indicatorWrapper(cst,pln,resultGUI);
-D5_rectum               = cst{ixRectum,9}{1}.D_5
+[dvh2,qi2]              = matRad_indicatorWrapper(cst,pln,resultGUI);
+display(qi2(ixRectum).D_5);
 
 %% Plot the Resulting Dose Slice
 % Let's plot the transversal iso-center dose slice
 slice = round(pln.isoCenter(1,3)./ct.resolution.z);
 figure
-imagesc(resultGUI.RBExDose(:,:,slice)),colorbar, colormap(jet)
+imagesc(resultGUI.RBExD(:,:,slice)),colorbar, colormap(jet)
 
 %%
 % Now let's simulate a range undershoot by scaling the relative stopping power cube by 3.5% percent
@@ -91,19 +112,19 @@ resultGUI_noise = matRad_calcDoseDirect(ct_manip,stf,pln,cst,resultGUI.w);
 
 %%  Visual Comparison of results
 % Let's compare the new recalculation against the optimization result.
-plane = 3;
-doseWindow = [0 max([resultGUI.RBExDose(:); resultGUI_noise.RBExDose(:)])];
+plane      = 3;
+doseWindow = [0 max([resultGUI.RBExD(:); resultGUI_noise.RBExD(:)])];
 
 figure,title('original plan')
-matRad_plotSliceWrapper(gca,ct,cst,1,resultGUI.RBExDose,plane,slice,[],0.75,colorcube,[],doseWindow,[]);
+matRad_plotSliceWrapper(gca,ct,cst,1,resultGUI.RBExD,plane,slice,[],0.75,colorcube,[],doseWindow,[]);
 figure,title('manipulated plan')
-matRad_plotSliceWrapper(gca,ct_manip,cst,1,resultGUI_noise.RBExDose,plane,slice,[],0.75,colorcube,[],doseWindow,[]);
+matRad_plotSliceWrapper(gca,ct_manip,cst,1,resultGUI_noise.RBExD,plane,slice,[],0.75,colorcube,[],doseWindow,[]);
 
 % Let's plot single profiles along the beam direction
 ixProfileY = round(pln.isoCenter(1,1)./ct.resolution.x);
 
-profileOrginal = resultGUI.RBExDose(:,ixProfileY,slice);
-profileNoise   = resultGUI_noise.RBExDose(:,ixProfileY,slice);
+profileOrginal = resultGUI.RBExD(:,ixProfileY,slice);
+profileNoise   = resultGUI_noise.RBExD(:,ixProfileY,slice);
 
 figure,plot(profileOrginal,'LineWidth',2),grid on,hold on, 
        plot(profileNoise,'LineWidth',2),legend({'original profile','noise profile'}),
@@ -112,12 +133,15 @@ figure,plot(profileOrginal,'LineWidth',2),grid on,hold on,
 %% Quantitative Comparison of results
 % Compare the two dose cubes using a gamma-index analysis.
 
+% add tools subdirectory
+addpath([fileparts(fileparts(mfilename('fullpath'))) filesep 'tools']);
+
 doseDifference   = 2;
 distToAgreement  = 2;
-n        = 1;
+n                = 1;
 
 [gammaCube,gammaPassRateCell] = matRad_gammaIndex(...
-    resultGUI_noise.RBExDose,resultGUI.RBExDose,...
+    resultGUI_noise.RBExD,resultGUI.RBExD,...
     [ct.resolution.x, ct.resolution.y, ct.resolution.z],...
     [doseDifference distToAgreement],slice,n,'global',cst);
 
