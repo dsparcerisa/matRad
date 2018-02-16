@@ -35,7 +35,7 @@ pln.numOfBeams      = numel(pln.gantryAngles);
 pln.numOfVoxels     = prod(ct.cubeDim);
 pln.isoCenter       = ones(pln.numOfBeams,1) * matRad_getIsoCenter(cst,ct,0);
 pln.voxelDimensions = ct.cubeDim;
-pln.radiationMode   = 'photons';           % either photons / protons / helium / carbon
+pln.radiationMode   = 'protons';           % either photons / protons / helium / carbon
 
 pln.scenGenType     = 'nomScen';           % scenario creation type'nomScen'  'wcScen' 'impScen' 'rndScen'
 

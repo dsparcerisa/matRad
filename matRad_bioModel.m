@@ -59,7 +59,7 @@ classdef matRad_bioModel
     
     % constant public properties which are visible outside of this class
     properties(Constant = true)
-        AvailableModels                 = {'none','constRBE','MCN','WED','LEM'};   % cell array determines available models - if cell is deleted then the corersponding model can not be generated
+        AvailableModels                 = {'none','constRBE','MCN','WED','LEM', 'UCM'};   % cell array determines available models - if cell is deleted then the corersponding model can not be generated
         AvailableradiationModealities   = {'photons','protons','helium','carbon'};
         AvailableQuantitiesForOpt       = {'physicalDose','effect','RBExD'};
         
@@ -187,7 +187,7 @@ classdef matRad_bioModel
                                 end
                                 
                             case {'effect'}
-                                if sum(strcmp( this.model, {'MCN','WED'})) == 1
+                                if sum(strcmp( this.model, {'MCN','WED', 'UCM'})) == 1
                                     boolCHECK           = true;
                                     this.bioOpt         = true;
                                     this.quantityVis    = 'RBExD';
@@ -396,6 +396,22 @@ classdef matRad_bioModel
                     RBEmin     = this.p2_MCN + (this.p3_MCN  * sqrt(vABratio) .* bixelLET);
                     bixelAlpha = RBEmax    .* vAlpha_x;
                     bixelBeta  = RBEmin.^2 .* vBeta_x;
+                    
+                case {'protons_UCM'}
+                    
+                    bixelLET = matRad_interp1(depths,baseDataEntry.LET,vRadDepths);
+                    bixelLET(isnan(bixelLET)) = 0;
+                    
+                    RBEmax     = this.p0_MCN + ((this.p1_MCN * bixelLET )./ vABratio);
+                    RBEmin     = this.p2_MCN + (this.p3_MCN  * sqrt(vABratio) .* bixelLET);
+                    
+                    bixelAlpha = RBEmax    .* vAlpha_x;
+                    bixelBeta  = RBEmin.^2 .* vBeta_x;
+                    
+                    bixelAlpha (mTissueClass > 0) = this.constRBE_protons .* vAlpha_x(mTissueClass > 0);
+                    bixelBeta (mTissueClass > 0) = this.constRBE_protons .* vBeta_x(mTissueClass > 0);
+                    
+                    
                     
                 case {'protons_WED'}
                     

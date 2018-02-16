@@ -1,12 +1,12 @@
-%% Función de recálculo de dosis en un modelo diferente respecto a uno ya optimizado.
+%% Funciï¿½n de recï¿½lculo de dosis en un modelo diferente respecto a uno ya optimizado.
 
-function [dijreCalc,resultGUIreCalc] = prueba_RecalcDose (resultGUI, ct, stf, pln, cst, bioOpt)
+function [dijreCalc,resultGUIreCalc] = prueba_RecalcDose (resultGUI, ct, stf, pln, cst, quantityOpt, modelName)
 % recalculation only makes sense if ...
 evalin('base','exist(''pln'',''var'')') && ...
     evalin('base','exist(''stf'',''var'')') && ...
     evalin('base','exist(''ct'',''var'')') && ...
     evalin('base','exist(''cst'',''var'')') && ...
-    evalin('base','exist(''resultGUI'',''var'')')
+    evalin('base','exist(''resultGUI'',''var'')');
 
 % get all data from workspace
 pln       = evalin('base','pln');
@@ -15,9 +15,8 @@ ct        = evalin('base','ct');
 cst       = evalin('base','cst');
 resultGUI = evalin('base','resultGUI');
 
-pln.bioOptimization = bioOpt;
 % retrieve model parameters
-pln.bioParam = matRad_bioModel(pln.radiationMode,pln.bioOptimization);
+pln.bioParam = matRad_bioModel(pln.radiationMode, quantityOpt, modelName);
 % retrieve scenarios for dose calculation and optimziation
 pln.multScen = matRad_multScen(ct,pln.scenGenType);
 

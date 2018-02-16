@@ -166,7 +166,7 @@ end
 
 % book keeping - this is necessary since pln is not used in optimization or
 % matRad_calcCubes
-if strcmp(pln.bioParam.model,'constRBE');
+if strcmp(pln.bioParam.model,'constRBE')
    dij.RBE = pln.bioParam.RBE;
 end
 
@@ -206,11 +206,11 @@ if pln.bioParam.bioOpt
     % generates tissue class matrix for biological optimization
     vTissueIndex = zeros(size(V,1),1);
     
-   if strcmp(pln.radiationMode, 'protons') && strcmp(pln.bioOptimization, 'UCM_RBExD')
+   if strcmp(pln.radiationMode, 'protons') && strcmp(pln.bioParam.model, 'UCM')
        for i = 1:size(cst,1)
            % find indices of structures related to V
            [~, row] = ismember(vertcat(cst{i,4}{:}),V,'rows');
-           % creación de la máscara de objetivos           
+           % creaciï¿½n de la mï¿½scara de objetivos           
            if strcmp (cst{i,3}, 'TARGET')
                vTissueIndex (row) = 1;
            end         

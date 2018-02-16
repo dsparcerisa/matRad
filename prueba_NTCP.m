@@ -5,12 +5,12 @@ close all
 if ispc > 0 || isunix > 0
     opengl software
 end
-% load PROSTATE.mat; phantomtype = 'Prostate';
+load PROSTATE.mat; phantomtype = 'Prostate';
 % %load HEAD_AND_neck.mat; phantomtype = 'Head and Neck';
 % %load BOXPHANTOM.mat; phantomtype = 'Test';
 % %load TG119.mat; phantomtype = 'Test';
 
-phantomtype = 'Prostate';
+%phantomtype = 'Prostate';
 
 %% Carga de parametros alpha y beta
 
@@ -26,7 +26,7 @@ pln.numOfBeams      = numel(pln.gantryAngles);
 pln.numOfVoxels     = prod(ct.cubeDim);
 pln.isoCenter       = ones(pln.numOfBeams,1) * matRad_getIsoCenter(cst,ct,0);
 pln.voxelDimensions = ct.cubeDim;
-pln.radiationMode   = 'protons';             % either photons / protons / carbonm
+pln.radiationMode   = 'protons';             % either photons / protons / helium / carbon
 pln.scenGenType     = 'nomScen';             % scenario creation type'nomScen'  'wcScen' 'impScen' 'rndScen'
 
 pln.numOfFractions  = 30;
@@ -39,13 +39,13 @@ pln.robOpt          = false;
 
 %% Calculo y optimizacion para dosis fisica
 
-pln.bioOptimization = 'none_physicalDose';   % none_physicalDose: physical optimization;                              constRBE_RBExD; constant RBE of 1.1;  
-                                             % MCN_effect; McNamara-variable RBE model for protons (effect based)     MCN_RBExD; McNamara-variable RBE model for protons (RBExD) based
-                                             % WED_effect; Wedenberg-variable RBE model for protons (effect based)    WED_RBExD; Wedenberg-variable RBE model for protons (RBExD) based
-                                             % LEM_effect: effect-based optimization;                                 LEM_RBExD: optimization of RBE-weighted dose
+
+quantityOpt         = 'physicalDose';     % options: physicalDose, constRBE, effect, RBExD
+modelName           = 'none';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
+                                          % WED: Wedenberg-variable RBE model for protons 
 
 % retrieve model parameters
-pln.bioParam = matRad_bioModel(pln.radiationMode,pln.bioOptimization);
+pln.bioParam = matRad_bioModel(pln.radiationMode,quantityOpt, modelName);
 % retrieve scenarios for dose calculation and optimziation
 pln.multScen = matRad_multScen(ct,pln.scenGenType); 
 % generate steering file
@@ -54,7 +54,7 @@ stf = matRad_generateStf(ct,cst,pln);
 % dose calculation
 if strcmp(pln.radiationMode,'photons')
     dij = matRad_calcPhotonDose(ct,stf,pln,cst);
-elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'carbon')
+elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'helium') || strcmp(pln.radiationMode,'carbon')
     dij = matRad_calcParticleDose(ct,stf,pln,cst);
 end
 
@@ -70,24 +70,20 @@ ResultPhysical.Optimized.resultGUI = resultGUI;
 
 %% Recalculo de dosis para ConstRBE Y RBEMCN
 
-%[ResultRBEUCM.ConstRBEreCalc.dij,ResultRBEUCM.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultRBEUCM.Optimized.resultGUI, ct, stf, pln, cst, 'constRBE_RBExD');
-[~ ,ResultPhysical.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultPhysical.Optimized.resultGUI, ct, stf, pln, cst, 'constRBE_RBExD');
+[~ ,ResultPhysical.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultPhysical.Optimized.resultGUI, ct, stf, pln, cst, 'RBExD','constRBE');
 
-%[ResultRBEUCM.RBEMCNreCalc.dij,ResultRBEUCM.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(ResultRBEUCM.Optimized.resultGUI, ct, stf, pln, cst, 'MCN_RBExD');
-[~ ,ResultPhysical.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(ResultPhysical.Optimized.resultGUI, ct, stf, pln, cst, 'MCN_RBExD');
+[~ ,ResultPhysical.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(ResultPhysical.Optimized.resultGUI, ct, stf, pln, cst,'effect', 'MCN' );
 
-clear dij resultGUI 
+clear dij resultGUI quantityOpt modelName
 
 
 %% Calculo y optimizacion de dosis considerando el RBE = 1.1
 
-pln.bioOptimization = 'constRBE_RBExD';      % none_physicalDose: physical optimization;                              constRBE_RBExD; constant RBE of 1.1;  
-                                             % MCN_effect; McNamara-variable RBE model for protons (effect based)     MCN_RBExD; McNamara-variable RBE model for protons (RBExD) based
-                                             % WED_effect; Wedenberg-variable RBE model for protons (effect based)    WED_RBExD; Wedenberg-variable RBE model for protons (RBExD) based
-                                             % LEM_effect: effect-based optimization;                                 LEM_RBExD: optimization of RBE-weighted dose
-
+quantityOpt         = 'RBExD';     % options: physicalDose, constRBE, effect, RBExD
+modelName           = 'constRBE';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
+                                          % WED: Wedenberg-variable RBE model for protons 
 % retrieve model parameters
-pln.bioParam = matRad_bioModel(pln.radiationMode,pln.bioOptimization);
+pln.bioParam = matRad_bioModel(pln.radiationMode, quantityOpt, modelName);
 % retrieve scenarios for dose calculation and optimziation
 pln.multScen = matRad_multScen(ct,pln.scenGenType); 
 % generate steering file
@@ -96,7 +92,7 @@ stf = matRad_generateStf(ct,cst,pln);
 % dose calculation
 if strcmp(pln.radiationMode,'photons')
     dij = matRad_calcPhotonDose(ct,stf,pln,cst);
-elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'carbon')
+elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'helium') || strcmp(pln.radiationMode,'carbon')
     dij = matRad_calcParticleDose(ct,stf,pln,cst);
 end
 
@@ -112,22 +108,19 @@ ResultConstRBE.Optimized.resultGUI = resultGUI;
 
 %% Recalculo de dosis para RBEMCN
 
-%[ResultConstRBE.RBEMCNreCalc.dij,ResultConstRBE.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(resultGUI, ct, stf, pln, cst, 'MCN_RBExD');
-[~ ,ResultConstRBE.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(resultGUI, ct, stf, pln, cst, 'MCN_RBExD');
+[~ ,ResultConstRBE.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(resultGUI, ct, stf, pln, cst, 'effect', 'MCN');
 
-clear dij resultGUI 
+clear dij resultGUI quantityOpt modelName
 
 
     %% Cambio a modelo McNamara, calculo de dosis y optimizacion de este
 
-
-pln.bioOptimization = 'MCN_RBExD';           % none_physicalDose: physical optimization;                              constRBE_RBExD; constant RBE of 1.1;  
-                                             % MCN_effect; McNamara-variable RBE model for protons (effect based)     MCN_RBExD; McNamara-variable RBE model for protons (RBExD) based
-                                             % WED_effect; Wedenberg-variable RBE model for protons (effect based)    WED_RBExD; Wedenberg-variable RBE model for protons (RBExD) based
-                                             % LEM_effect: effect-based optimization;      
-                                             
+quantityOpt         = 'effect';     % options: physicalDose, constRBE, effect, RBExD
+modelName           = 'MCN';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
+                                          % WED: Wedenberg-variable RBE model for protons
+                                                
 % retrieve model parameters
-pln.bioParam = matRad_bioModel(pln.radiationMode,pln.bioOptimization);
+pln.bioParam = matRad_bioModel(pln.radiationMode,quantityOpt, modelName);
 
 % retrieve scenarios for dose calculation and optimziation
 pln.multScen = matRad_multScen(ct,pln.scenGenType); 
@@ -136,7 +129,7 @@ stf = matRad_generateStf(ct,cst,pln);
 
 if strcmp(pln.radiationMode,'photons')
     dij = matRad_calcPhotonDose(ct,stf,pln,cst);
-elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'carbon')
+elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'helium') || strcmp(pln.radiationMode,'carbon')
     dij = matRad_calcParticleDose(ct,stf,pln,cst);
 end
 
@@ -151,21 +144,19 @@ ResultRBEMCN.Optimized.resultGUI = resultGUI;
 
 %% Recalculo de dosis para ConstRBE
 
-%[ResultRBEMCN.ConstRBEreCalc.dij,ResultRBEMCN.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultRBEMCN.Optimized.resultGUI, ct, stf, pln, cst,'constRBE_RBExD');
-[~ ,ResultRBEMCN.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultRBEMCN.Optimized.resultGUI, ct, stf, pln, cst,'constRBE_RBExD');
+[~ ,ResultRBEMCN.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultRBEMCN.Optimized.resultGUI, ct, stf, pln, cst,'RBExD','constRBE');
 
-clear dij resultGUI 
+clear dij resultGUI quantityOpt modelName
 
 
 %% Cambio a modelo UCM, calculo de dosis y optimizacion de este
 
-pln.bioOptimization = 'UCM_RBExD';           % none_physicalDose: physical optimization;                              constRBE_RBExD; constant RBE of 1.1;  
-                                             % MCN_effect; McNamara-variable RBE model for protons (effect based)     MCN_RBExD; McNamara-variable RBE model for protons (RBExD) based
-                                             % WED_effect; Wedenberg-variable RBE model for protons (effect based)    WED_RBExD; Wedenberg-variable RBE model for protons (RBExD) based
-                                             % LEM_effect: effect-based optimization;      
+quantityOpt         = 'effect';     % options: physicalDose, constRBE, effect, RBExD
+modelName           = 'UCM';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
+                                          % WED: Wedenberg-variable RBE model for protons   
                                              
 % retrieve model parameters
-pln.bioParam = matRad_bioModel(pln.radiationMode,pln.bioOptimization);
+pln.bioParam = matRad_bioModel(pln.radiationMode,quantityOpt, modelName);
 
 % retrieve scenarios for dose calculation and optimziation
 pln.multScen = matRad_multScen(ct,pln.scenGenType); 
@@ -174,7 +165,7 @@ stf = matRad_generateStf(ct,cst,pln);
 
 if strcmp(pln.radiationMode,'photons')
     dij = matRad_calcPhotonDose(ct,stf,pln,cst);
-elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'carbon')
+elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'helium') || strcmp(pln.radiationMode,'carbon')
     dij = matRad_calcParticleDose(ct,stf,pln,cst);
 end
 
@@ -189,13 +180,11 @@ ResultRBEUCM.Optimized.resultGUI = resultGUI;
 
 %% Recalculo de dosis para ConstRBE Y RBEMCN
 
-%[ResultRBEUCM.ConstRBEreCalc.dij,ResultRBEUCM.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultRBEUCM.Optimized.resultGUI, ct, stf, pln, cst, 'constRBE_RBExD');
-[~ ,ResultRBEUCM.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultRBEUCM.Optimized.resultGUI, ct, stf, pln, cst, 'constRBE_RBExD');
+[~ ,ResultRBEUCM.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultRBEUCM.Optimized.resultGUI, ct, stf, pln, cst, 'RBExD','constRBE');
 
-%[ResultRBEUCM.RBEMCNreCalc.dij,ResultRBEUCM.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(ResultRBEUCM.Optimized.resultGUI, ct, stf, pln, cst, 'MCN_RBExD');
-[~ ,ResultRBEUCM.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(ResultRBEUCM.Optimized.resultGUI, ct, stf, pln, cst, 'MCN_RBExD');
+[~ ,ResultRBEUCM.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(ResultRBEUCM.Optimized.resultGUI, ct, stf, pln, cst, 'effect', 'MCN');
 
-clear dij resultGUI 
+clear dij resultGUI quantityOpt modelName
 
 
 %% Graficas de perfil de dosis
@@ -310,7 +299,7 @@ clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRB
 
 if strcmp(phantomtype, 'Prostate') >0
     Regions{1,1} = 'Rectum';
-    Regions{2,1} = 'PTV 68';
+    Regions{2,1} = 'PTV_68';
     
 elseif strcmp(phantomtype, 'Head and Neck') >0
     Regions = [];
@@ -327,7 +316,6 @@ midRBE(3).OptModel = 'RBEUCM';
 for i = 1:size(Regions,1)
     for j = 1: size (Dose,1)
         for k = 1:size(cst,1)
-            
             if strcmp (Regions{i,1},cst{k,2}) > 0
                 indices     = cst{k,4}{1};
                 % midRBE point by point
@@ -349,6 +337,8 @@ for i = 1:size(Regions,1)
                     midRBE(j).(strcat('PTV',Regions{i,1}(5:6),'_pbp')) = sum(RBE_pbp) / numel(indices);
                     midRBE(j).(strcat('PTV',Regions{i,1}(5:6),'_sum')) = RBE_sum;
                     midRBE(j).(strcat('PTV',Regions{i,1}(5:6),'_thr')) = sum(RBE_thr) / numel(indices);
+                    
+
                 else
                     midRBE(j).(strcat(Regions{i,1},'_pbp')) = sum(RBE_pbp) / numel(indices);
                     midRBE(j).(strcat(Regions{i,1},'_sum')) = RBE_sum;
@@ -387,6 +377,7 @@ Dose{3,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
 Dose{4,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
 Dose{5,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
 Dose{6,1}= ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
+
 image_All = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
 %saveas(image_All, 'DVHComp_All.png'); close;
 clear OptModel Dose
