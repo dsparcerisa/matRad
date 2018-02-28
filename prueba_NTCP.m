@@ -1,4 +1,25 @@
-%% Hacer carga del phantom
+%% Estructuracion del programa
+
+% 1 - Carga del phantom/paciente
+% 2 - Carga de parametros alpha y beta
+% 3 - Definicion de restricciones "distintas"
+% 4 - Introduccion de los datos basicos
+% 5 - Calculo y optimizacion para dosis fisica
+% 6 - Calculo y optimizacion de dosis considerando el RBE = 1.1
+% 7 - Calculo y optimizacion de dosis para el modelo McNamara
+% 8 - Calculo y optimizacion de dosis para el modelo de planificacion UCM
+% 9 - Graficas de perfil de dosis
+% 10 - Graficas de perfil de dosis vs RBE
+% 11 - Graficas de dosis 2D
+% 12 - Representacion de DVH para todas las VOI
+% 13 - Calculo de RBE medio para RBEMCN con las diversas optimizaciones
+% 14 - Comparacion de DVH para VOIs especificas
+% 15 - Calculo de las estadisticas generales de dosis
+% 16 - Calculo de NTCP
+% 17 - "Resumen" de valores de NTCP
+% 18 - Resultados de dij y resultGUI para ver en la GUI
+
+%% 1 - Carga del phantom/paciente
 
 close all
 % clear
@@ -12,11 +33,31 @@ load PROSTATE.mat; phantomtype = 'Prostate';
 
 %phantomtype = 'Prostate';
 
-%% Carga de parametros alpha y beta
+%% 2 - Carga de parametros alpha y beta
 
 cst = prueba_abLoader (cst, phantomtype);
 
-%% Definir restricciones "distintas"
+%% 3 - Definicion de restricciones "distintas"
+
+%       .type                   || NaN parameters
+
+% 'square underdosing'          ||.EUD - .volume
+% 'square overdosing'           ||.EUD - .volume
+% 'square deviation'            ||.EUD - .volume
+% 'mean'                        ||.dose - .EUD - .volume
+% 'EUD'                         ||.dose - .volume
+% 'min dose constraint'         ||.penalty - .EUD - .volume
+% 'max dose constraint'         ||.penalty - .EUD - .volume
+% 'min mean dose constraint'    ||.EUD - .volume
+% 'max mean dose constraint'    ||.EUD - .volume
+% 'min EUD constraint'          ||.penalty - .dose - .volume
+% 'max EUD constraint'          ||.penalty - .dose - .volume
+% 'min DVH constraint'          ||.penalty - .EUD 
+% 'max DVH constraint'          ||.penalty - .EUD
+% 'min DVH objective'           ||.EUD
+% 'max DVH objective'           ||.EUD
+
+
 % EUD para el Rectum
 cst{1,6}.type = 'EUD';
 cst{1,6}.dose = NaN;
@@ -25,7 +66,42 @@ cst{1,6}.penalty = 50;
 cst{1,6}.volume = 50;
 cst{1,6}.robustness = 'none';
 
-%% Introduccion de los datos 
+% PTV_68
+cst{6,6}.type = 'square deviation';
+cst{6,6}.dose = 68;
+cst{6,6}.penalty = 1000;
+cst{6,6}.EUD = NaN;
+cst{6,6}.volume = NaN;
+cst{6,6}.robustness = 'none';
+
+% PTV_56
+cst{7,6}.type = 'square deviation';
+cst{7,6}.dose = 56;
+cst{7,6}.penalty = 1000;
+cst{7,6}.EUD = NaN;
+cst{7,6}.volume = NaN;
+cst{7,6}.robustness = 'none';
+
+% Bladder
+cst{8,6}.type = 'square overdosing';
+cst{8,6}.dose = 50;
+cst{8,6}.penalty = 300;
+cst{8,6}.EUD = NaN;
+cst{8,6}.volume = NaN;
+cst{8,6}.robustness = 'none';
+
+
+% Body 
+cst{9,6}.type = 'square overdosing';
+cst{9,6}.dose = 30;
+cst{9,6}.penalty = 100;
+cst{9,6}.EUD = NaN;
+cst{9,6}.volume = NaN;
+cst{9,6}.robustness = 'none';
+
+
+
+%% 4 - Introduccion de los datos basicos
 
 pln.bixelWidth      = 5; % [mm] / also corresponds to lateral spot spacing for particles
 pln.gantryAngles    = [0]; % [??]
@@ -45,8 +121,7 @@ pln.robOpt          = false;
 %pln.calcLET = true;
 
 
-%% Calculo y optimizacion para dosis fisica
-
+%% 5 - Calculo y optimizacion para dosis fisica
 
 quantityOpt         = 'physicalDose';     % options: physicalDose, constRBE, effect, RBExD
 modelName           = 'none';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
@@ -85,7 +160,7 @@ ResultPhysical.Optimized.resultGUI = resultGUI;
 clear dij resultGUI quantityOpt modelName
 
 
-%% Calculo y optimizacion de dosis considerando el RBE = 1.1
+%% 6 - Calculo y optimizacion de dosis considerando el RBE = 1.1
 
 quantityOpt         = 'RBExD';     % options: physicalDose, constRBE, effect, RBExD
 modelName           = 'constRBE';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
@@ -121,9 +196,8 @@ ResultConstRBE.Optimized.resultGUI = resultGUI;
 clear dij resultGUI quantityOpt modelName
 
 
-%% Cambio a modelo McNamara, calculo de dosis y optimizacion de este
+%% 7 - Calculo y optimizacion de dosis para el modelo McNamara
 
-%quantityOpt         = 'effect';     % options: physicalDose, constRBE, effect, RBExD
 quantityOpt         = 'RBExD';      % options: physicalDose, constRBE, effect, RBExD
 modelName           = 'MCN';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
                                          % WED: Wedenberg-variable RBE model for protons
@@ -159,9 +233,7 @@ ResultRBEMCN.Optimized.resultGUI = resultGUI;
 clear dij resultGUI quantityOpt modelName
 
 
-%% Cambio a modelo UCM, calculo de dosis y optimizacion de este
-
-%quantityOpt         = 'effect';     % options: physicalDose, constRBE, effect, RBExD
+%% 8 - Calculo y optimizacion de dosis para el modelo de planificacion UCM
 quantityOpt         = 'RBExD';
 modelName           = 'UCM';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
                                           % WED: Wedenberg-variable RBE model for protons   
@@ -198,7 +270,7 @@ ResultRBEUCM.Optimized.resultGUI = resultGUI;
 clear dij resultGUI quantityOpt modelName
 
 
-%% Graficas de perfil de dosis
+%% 9 - Graficas de perfil de dosis
 
 % ProfileType = longitudinal // lateral
 % DisplayOption = physicalDose // RBExD // physical_vs_RBExD
@@ -220,7 +292,7 @@ title('RBEUCM optimized')
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical
 
 
-%% Graficas de perfil de dosis vs RBE
+%% 10 - Graficas de perfil de dosis vs RBE
 % ProfileType = longitudinal // lateral
 % DisplayOption = RBE // physicalDose // RBExD // physical_vs_RBExD
 % Para hacer comparaciones entre modelos DisplayOption == RBExD // physical_vs_RBExD
@@ -237,7 +309,7 @@ if strcmp(version('-release'),'2014b') == 0
     title('RBE vs RBExD (RBEUCM optimized)')
     
 end
-%% Graficas 2D de dosis
+%% 11 - Graficas de dosis 2D 
 % prueba_DoseIntens (ct, pln, Dose, IsoDose_Levels, z_cut, TypeDose, Model)
 
 IsoDose_Levels = [10 20 30 40 50 60 68]; %(Gy)
@@ -265,7 +337,7 @@ prueba_DoseIntens (ct, pln, ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD, IsoDose_L
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical
 
 
-%% Representacion DVH todas las VOI
+%% 12 - Representacion de DVH para todas las VOI
 
 %Comparacion para RBE constante optimizado
 OptModel = cell(3,2);
@@ -307,8 +379,7 @@ clear OptModel
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical
 
 
-%% Calculo de RBE medio para RBEMCN y representaciones de perfil del RBE y de RBExD en VOIs especificas
-
+%% 13 - Calculo de RBE medio para RBEMCN con las diversas optimizaciones
 if strcmp(phantomtype, 'Prostate') >0
     Regions{1,1} = 'Rectum';
     Regions{2,1} = 'PTV_68';
@@ -365,7 +436,7 @@ end
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE
 
 
-%% Comparacion DVH para VOIs especificas
+%% 14 - Comparacion de DVH para VOIs especificas
 
 % Todos los modelos juntos
 if strcmp(phantomtype, 'Prostate') >0
@@ -427,7 +498,7 @@ image_RBEMCN = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE midRBE ResultPhysical
 
 
-%% Calculo de las estadisticas de dosis
+%% 15 - Calculo de las estadisticas generales de dosis
 
 %prueba_DVHstatsComp (pln, cst, Dose, refVol, refGy, Models, Name, FigRem)
 
@@ -463,7 +534,7 @@ clear Dose Models
 clearvars -except ct cst phantomtype pln ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics
 
 
-%% Calculo de NTCP
+%% 16 - Calculo de NTCP
 
 % Calculos NTCP para ConstRBEOpt
 NTCP.ConstRBEOpt.Optimized = prueba_NTCPcalc(pln, cst, phantomtype, ResultConstRBE.Optimized.resultGUI.RBExD);
@@ -477,7 +548,8 @@ NTCP.RBEMCNOpt.Optimized = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEMCN.O
 NTCP.RBEUCMOpt.ConstRBEreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD);
 NTCP.RBEUCMOpt.RBEMCNreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD);
 
-%% Mostrar como le gusta al pesao de Dani
+
+%% 17 - "Resumen" de valores de NTCP
 NTCP_bio_const = nan(7,1);
 NTCP_bio_MCN = nan(7,1);
 NTCP_bio_UCM = nan(7,1);
@@ -510,3 +582,32 @@ NTCP_bio_UCM(7) = NTCP.RBEUCMOpt.RBEMCNreCalc.Schaake.NTCP(2).NTCP;
 mascara = [2 4 5 6 7];
 [NTCP_bio_const(mascara), NTCP_bio_MCN(mascara), NTCP_bio_UCM(mascara)]
 [mean(NTCP_bio_const(mascara)), mean(NTCP_bio_MCN(mascara)), mean(NTCP_bio_UCM(mascara))]
+
+
+%% 18 - Resultados de dij y resultGUI para ver en la GUI
+
+% NOTA IMPORTANTE: Solo se puede cargar uno cada vez
+
+% Resultados para dosis física optimizada
+    % dij = ResultPhysical.Optimized.dij
+    % resultGUI = ResultPhysical.Optimized.resultGUI
+    % resultGUI = ResultPhysical.ConstRBEreCalc.resultGUI
+    % resultGUI = ResultPhysical.RBEMCNreCalc.resultGUI;
+
+% Resultados para RBExD para el modelo ConstRBE optimizado
+    % dij = ResultConstRBE.Optimized.dij;
+    % resultGUI = ResultConstRBE.Optimized.resultGUI;
+    % resultGUI = ResultConstRBE.RBEMCNreCalc.resultGUI;
+
+
+% Resultados para RBExD para el modelo RBEMCN optimizado
+    % dij = ResultRBEMCN.Optimized.dij;
+    % resultGUI = ResultRBEMCN.ConstRBEreCalc.resultGUI;
+    % resultGUI = ResultRBEMCN.Optimized.resultGUI;
+
+% Resultados para RBExD para el modelo RBEUCM optimizado
+    % dij = ResultRBEUCM.Optimized.dij;
+    % resultGUI = ResultRBEUCM.ConstRBEreCalc.resultGUI;
+    % resultGUI = ResultRBEUCM.RBEMCNreCalc.resultGUI;
+
+

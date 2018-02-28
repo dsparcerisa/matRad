@@ -137,7 +137,7 @@ classdef matRad_bioModel
                                 if sum(strcmp(this.model, {'constRBE', 'none'})) == 1
                                     this.RBE            = this.constRBE_photons;
                                     boolCHECK           = true;
-                                    this.bioOpt         = false; % ??
+                                    this.bioOpt         = false; 
                                     this.quantityVis    = 'RBExD';
                                 else
                                     matRad_dispToConsole(['matRad: Invalid biological model: ' this.model  '; using constant RBE instead. \n'],[],'warning');
@@ -182,7 +182,7 @@ classdef matRad_bioModel
                                     this.quantityVis    = 'RBExD';
                                     if sum(strcmp( this.model, {'constRBE'})) == 1
                                         this.RBE  = this.constRBE_protons;
-                                        this.bioOpt = false; % 28 feb                                        
+                                        this.bioOpt = false;                                         
                                     end  
                                 else
                                     matRad_dispToConsole(['matRad: Invalid biological model: ' this.model  '; using constant RBE instead. \n'],[],'warning');

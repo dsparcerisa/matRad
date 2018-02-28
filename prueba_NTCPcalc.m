@@ -1,4 +1,4 @@
-%% Funci???n para los c???lculos de los da???os NTCP
+%% Funcion para el calculo de los valores de NTCP
 
 % Modelos implementados
 % 1- Fukahori (2016)
