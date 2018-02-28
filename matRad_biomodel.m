@@ -19,7 +19,7 @@ classdef matRad_bioModel
     %                       LEM_effect: effect-based optimization;                                 LEM_RBExD: optimization of RBE-weighted dose
     %
     % output
-    %   bioParam:           matRad's bioParam structure containing information
+    %   bioParam:fU           matRad's bioParam structure containing information
     %                       about the choosen biological model
     %
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,7 +137,7 @@ classdef matRad_bioModel
                                 if sum(strcmp(this.model, {'constRBE', 'none'})) == 1
                                     this.RBE            = this.constRBE_photons;
                                     boolCHECK           = true;
-                                    this.bioOpt         = false;
+                                    this.bioOpt         = false; % ??
                                     this.quantityVis    = 'RBExD';
                                 else
                                     matRad_dispToConsole(['matRad: Invalid biological model: ' this.model  '; using constant RBE instead. \n'],[],'warning');
@@ -174,12 +174,15 @@ classdef matRad_bioModel
                                 end
                                 
                             case {'RBExD'}
-                                if sum(strcmp( this.model, {'constRBE','MCN','WED'})) == 1
+                                if sum(strcmp( this.model, {'constRBE','MCN','WED','UCM'})) == 1
                                     boolCHECK           = true;
-                                    this.bioOpt         = false;
+                                    % this.bioOpt         = false; % PRUEBA 28 febrero: false tus muertos
+                                    this.bioOpt         = true;
+                                    
                                     this.quantityVis    = 'RBExD';
                                     if sum(strcmp( this.model, {'constRBE'})) == 1
                                         this.RBE  = this.constRBE_protons;
+                                        this.bioOpt = false; % 28 feb                                        
                                     end  
                                 else
                                     matRad_dispToConsole(['matRad: Invalid biological model: ' this.model  '; using constant RBE instead. \n'],[],'warning');
@@ -399,6 +402,7 @@ classdef matRad_bioModel
                     
                 case {'protons_UCM'}
                     
+                    % The McNamara way
                     bixelLET = matRad_interp1(depths,baseDataEntry.LET,vRadDepths);
                     bixelLET(isnan(bixelLET)) = 0;
                     
@@ -408,11 +412,19 @@ classdef matRad_bioModel
                     bixelAlpha = RBEmax    .* vAlpha_x;
                     bixelBeta  = RBEmin.^2 .* vBeta_x;
                     
+%                     % The Wedenberg way
+%                     bixelLET = matRad_interp1(depths,baseDataEntry.LET,vRadDepths);
+%                     bixelLET(isnan(bixelLET)) = 0;
+%                     
+%                     RBEmax     = this.p0_WED + ((this.p1_WED * bixelLET )./ vABratio);
+%                     RBEmin     = this.p2_WED;
+%                     bixelAlpha = RBEmax    .* vAlpha_x;
+%                     bixelBeta  = RBEmin.^2 .* vBeta_x;                    
+                    
+                    % Fix for inside target
                     bixelAlpha (mTissueClass > 0) = this.constRBE_protons .* vAlpha_x(mTissueClass > 0);
                     bixelBeta (mTissueClass > 0) = this.constRBE_protons .* vBeta_x(mTissueClass > 0);
-                    
-                    
-                    
+                                        
                 case {'protons_WED'}
                     
                     bixelLET = matRad_interp1(depths,baseDataEntry.LET,vRadDepths);

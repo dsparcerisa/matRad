@@ -1,4 +1,4 @@
-%% Funci�n para los c�lculos de los da�os NTCP
+%% Funci???n para los c???lculos de los da???os NTCP
 
 % Modelos implementados
 % 1- Fukahori (2016)
@@ -10,7 +10,6 @@
 % 7 - Shaacke (2016)
 
 function [NTCP] = prueba_NTCPcalc (pln, cst, phantomtype, Dose)
-
 
 % Modelo LKB
 LKM = @(x)(exp (-0.5.*x.^2))*(1/sqrt(2*pi));
