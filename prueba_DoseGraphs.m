@@ -1,11 +1,16 @@
-function prueba_DoseGraphs (ct, pln, cst, NumBeam, ProfileType, DisplayOption, Result, Model1, Result2, Model2)
+function prueba_DoseGraphs (ct, pln, cst, NumBeam, ProfileType, DisplayOption, Result, Model1, Result2, Model2, offSet)
+
+
+if nargin<11
+    offSet = 0
+end
 
 figure
 
 handles.selectedBeam = NumBeam;
 handles.ProfileType = ProfileType;
 handles.popupDisplayOption = DisplayOption; 
-handles.profileOffset = 0;
+handles.profileOffset = offSet;
 
 fileName = [pln.radiationMode '_' pln.machine];
 try

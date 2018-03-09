@@ -277,17 +277,20 @@ clear dij resultGUI quantityOpt modelName
 % Para hacer comparaciones entre modelos DisplayOption == RBExD // physical_vs_RBExD
 % prueba_DoseGraphs (ct, pln, cst, NumBeam, ProfileType, DisplayOption, Result, Model1, Result2, Model2)
 
-prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultPhysical.ConstRBEreCalc.resultGUI, 'ConstRBE',ResultPhysical.RBEMCNreCalc.resultGUI,'RBEMCN')
-title('Physical dose optimized')
+%prueba_DoseGraphs (ct, pln, cst, 1, 'longitudinal', 'physical_vs_RBExD', ResultPhysical.ConstRBEreCalc.resultGUI, 'ConstRBE',ResultPhysical.RBEMCNreCalc.resultGUI,'RBEMCN')
+%title('Physical dose optimized')
 
-prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultConstRBE.Optimized.resultGUI, 'ConstRBE', ResultConstRBE.RBEMCNreCalc.resultGUI, 'RBEMCN')
+prueba_DoseGraphs (ct, pln, cst, 1, 'longitudinal', 'physical_vs_RBExD', ResultConstRBE.RBEMCNreCalc.resultGUI, 'RBEMCN', ResultConstRBE.Optimized.resultGUI, 'ConstRBE')
 title('ConstRBE optimized')
+axis([0 250 0 90])
 
-prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultRBEMCN.Optimized.resultGUI, 'RBEMCN',ResultRBEMCN.ConstRBEreCalc.resultGUI,'ConstRBE')
+prueba_DoseGraphs (ct, pln, cst, 1, 'longitudinal', 'physical_vs_RBExD', ResultRBEMCN.Optimized.resultGUI, 'RBEMCN',ResultRBEMCN.ConstRBEreCalc.resultGUI,'ConstRBE')
 title('RBEMCN optimized')
+axis([0 250 0 90])
 
-prueba_DoseGraphs (ct, pln, cst,1, 'longitudinal', 'physical_vs_RBExD', ResultRBEUCM.RBEMCNreCalc.resultGUI, 'RBEMCN',ResultRBEUCM.ConstRBEreCalc.resultGUI,'ConstRBE')
+prueba_DoseGraphs (ct, pln, cst, 1, 'longitudinal', 'physical_vs_RBExD', ResultRBEUCM.RBEMCNreCalc.resultGUI, 'RBEMCN',ResultRBEUCM.ConstRBEreCalc.resultGUI,'ConstRBE', i)
 title('RBEUCM optimized')
+axis([0 250 0 90])
 
 clearvars -except ct phantomtype cst pln ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical
 
