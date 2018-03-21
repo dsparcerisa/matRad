@@ -21,8 +21,11 @@ set(gca,'YDir','Reverse'); %Y axis inversion
 matRad_plotCtSlice(axesHandle,ct.cube,1,3,z_cut);
 
 Total_dose = pln.numOfFractions .* Dose;
-cmin = min(Total_dose(:));
-cmax = max(Total_dose(:));
+%cmin = min(Total_dose(:));
+%cmax = max(Total_dose(:));
+% Definimos los limites para color escalonado en todos las figuras
+cmin = 0;
+cmax = 100;
 colormap(axesHandle, jet(64));
 caxis([cmin cmax]);
 matRad_plotDoseSlice(axesHandle,Total_dose,3,z_cut,0.01,0.8,jet(64), [cmin cmax+0.05]);
@@ -36,7 +39,8 @@ end
 IsoDose_Contours = matRad_computeIsoDoseContours(Total_dose ,IsoDose_Levels);
 
 matRad_plotIsoDoseLines(axesHandle,Total_dose,IsoDose_Contours,IsoDose_Levels,...
-   0,3,z_cut,jet(64),[cmin cmax+0.05],'LineWidth',1.5);
+  0,3,z_cut,jet(64),[cmin cmax+0.05],'LineWidth',1.5);
+
 
 cd ..
 

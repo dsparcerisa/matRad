@@ -177,7 +177,7 @@ if strcmp (phantomtype, 'Prostate')>0
     numOfVois = size(cst,1);
     for j = 1:numOfVois
         if strcmpi('Rectum',cst{j,2}) > 0
-            n = 0.08;
+            n = 0.08; 
             m = 0.14;
             TD_50 = 78;
             indices     = cst{j,4}{1};
@@ -259,6 +259,7 @@ if strcmp (phantomtype, 'Prostate')>0
          NTCP.Schaake.NTCP(delta).AnticUse = delta-1;
          NTCP.Schaake.NTCP(delta).NTCP = 1/(1+exp(-S));      
      end
+elseif strcmp (phantomtype, 'Head and Neck')>0
     
 end
 
