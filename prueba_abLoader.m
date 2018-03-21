@@ -26,22 +26,23 @@ else
         'SmallBowel', [0.0845 0.0141], 'Emami (1985)', 'Small intestine';
         'duodenum', [0.0845 0.0141], 'Emami (1985)', 'Small intestine';
         'Rectum', [0.0484 0.0124], 'Emami(1985)+Fowler (2001)', 'Rectum';
-        'PAROTID LT', [0.0628 0.0209], 'Emami(1985)', 'Parotid';
+        'PAROTID_LT', [0.0628 0.0209], 'Emami(1985)', 'Parotid';
         'LARYNX', [0.0875 0.0208], 'Emami (1985)', 'Larynx';
         'Lt femoral head', [0.03 0.01], 'Sfjro (2010)', 'Bone';
         'Rt femoral head', [0.03 0.01], 'Sfjro (2010)', 'Bone';
-        'SPINAL CORD', [0.0445 0.0136], 'Emami (1985) + Dische (1999)(VdK-2009)', 'Spinal Cord';
+        'SPINAL_CORD', [0.0445 0.0136], 'Emami (1985) + Dische (1999)(VdK-2009)', 'Spinal Cord';
+        'SPINL_CRD_PRV', [0.0445 0.0136], 'Emami (1985) + Dische (1999)(VdK-2009)', 'Spinal Cord';
         'Lymph Nodes', [0.035 0.01], 'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
         'Penile bulb', [0.035 0.01], 'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
         'Celiac', [0.035 0.01], 'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
         'SMASMV', [0.035 0.01], 'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
-        'BRAIN STEM', [0.0491 0.0234], 'Emami (1985)', 'Brain stem';
+        'BRAIN_STEM', [0.0491 0.0234], 'Emami (1985)', 'Brain stem';
         'CEREBELLUM', [0.0499 0.0238], 'Emami (1985)', 'Brain';
-        'TEMP LOBE LT', [0.0499 0.0238], 'Emami (1985)', 'Brain';
-        'TM JOINT LT', [0.0761 0.0217], 'Emami (1985)', 'Temporomandibular & mandible';
+        'TEMP_LOBE_LT', [0.0499 0.0238], 'Emami (1985)', 'Brain';
+        'TM_JOINT_LT', [0.0761 0.0217], 'Emami (1985)', 'Temporomandibular & mandible';
         'CHIASMA', [0.0586 0.0195], 'Emami(1985) +Jiang (1994) (VdK-2009)', 'Optic Chiasma (Eye)';
-        'LENS LT', [0.0686 0.0572], 'Emami (1985)+D�rr (2009)', 'Eye lens';
-        'OPTIC NRV LT', [0.0586 0.0195], 'Emami(1985)', 'Optic nerve'};
+        'LENS_LT', [0.0686 0.0572], 'Emami (1985)+D�rr (2009)', 'Eye lens';
+        'OPTIC_NRV_LT', [0.0586 0.0195], 'Emami(1985)', 'Optic nerve'};
     
     % Datos de tumores
     if strcmp (phantomtype, 'Prostate')

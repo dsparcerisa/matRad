@@ -26,8 +26,8 @@ close all
 if ~ismac
     opengl software
 end
-load PROSTATE.mat; phantomtype = 'Prostate';
-%load HEAD_AND_NECK.mat; phantomtype = 'Head and Neck';
+%load PROSTATE.mat; phantomtype = 'Prostate';
+load HEAD_AND_NECK.mat; phantomtype = 'Head and Neck';
 %load TG119.mat; phantomtype = 'TG119';
 
 %phantomtype = 'Prostate';
@@ -56,55 +56,57 @@ cst = prueba_abLoader (cst, phantomtype);
 % 'min DVH objective'           ||.EUD
 % 'max DVH objective'           ||.EUD
 
+if strcmp (phantomtype, 'Prostate') > 0
+    
+    % EUD para el Rectum
+    cst{1,6}.type = 'EUD';
+    cst{1,6}.dose = NaN;
+    cst{1,6}.EUD = 85; % Con 70 se vuelve to loco
+    cst{1,6}.penalty = 50;
+    cst{1,6}.volume = 50;
+    cst{1,6}.robustness = 'none';
+    
+    % PTV_68
+    cst{6,6}.type = 'square deviation';
+    cst{6,6}.dose = 68;
+    cst{6,6}.penalty = 1000;
+    cst{6,6}.EUD = NaN;
+    cst{6,6}.volume = NaN;
+    cst{6,6}.robustness = 'none';
+    % prueba 9 de marzo
+    cst{6,6}.type = 'min DVH objective';
+    cst{6,6}.dose = 64;
+    cst{6,6}.penalty = 1000;
+    cst{6,6}.EUD = 0.95;
+    cst{6,6}.volume = NaN;
+    cst{6,6}.robustness = 'none';
+    
+    % PTV_56
+    cst{7,6}.type = 'square deviation';
+    cst{7,6}.dose = 56;
+    cst{7,6}.penalty = 1000;
+    cst{7,6}.EUD = NaN;
+    cst{7,6}.volume = NaN;
+    cst{7,6}.robustness = 'none';
+    
+    % Bladder
+    cst{8,6}.type = 'square overdosing';
+    cst{8,6}.dose = 50;
+    cst{8,6}.penalty = 300;
+    cst{8,6}.EUD = NaN;
+    cst{8,6}.volume = NaN;
+    cst{8,6}.robustness = 'none';
+    
+    
+    % Body
+    cst{9,6}.type = 'square overdosing';
+    cst{9,6}.dose = 30;
+    cst{9,6}.penalty = 100;
+    cst{9,6}.EUD = NaN;
+    cst{9,6}.volume = NaN;
+    cst{9,6}.robustness = 'none';
 
-% EUD para el Rectum
-cst{1,6}.type = 'EUD';
-cst{1,6}.dose = NaN;
-cst{1,6}.EUD = 85; % Con 70 se vuelve to loco
-cst{1,6}.penalty = 50;
-cst{1,6}.volume = 50;
-cst{1,6}.robustness = 'none';
-
-% PTV_68
-cst{6,6}.type = 'square deviation';
-cst{6,6}.dose = 68;
-cst{6,6}.penalty = 1000;
-cst{6,6}.EUD = NaN;
-cst{6,6}.volume = NaN;
-cst{6,6}.robustness = 'none';
-% prueba 9 de marzo
-cst{6,6}.type = 'min DVH objective';
-cst{6,6}.dose = 64;
-cst{6,6}.penalty = 1000;
-cst{6,6}.EUD = 0.95;
-cst{6,6}.volume = NaN;
-cst{6,6}.robustness = 'none';
-
-% PTV_56
-cst{7,6}.type = 'square deviation';
-cst{7,6}.dose = 56;
-cst{7,6}.penalty = 1000;
-cst{7,6}.EUD = NaN;
-cst{7,6}.volume = NaN;
-cst{7,6}.robustness = 'none';
-
-% Bladder
-cst{8,6}.type = 'square overdosing';
-cst{8,6}.dose = 50;
-cst{8,6}.penalty = 300;
-cst{8,6}.EUD = NaN;
-cst{8,6}.volume = NaN;
-cst{8,6}.robustness = 'none';
-
-
-% Body 
-cst{9,6}.type = 'square overdosing';
-cst{9,6}.dose = 30;
-cst{9,6}.penalty = 100;
-cst{9,6}.EUD = NaN;
-cst{9,6}.volume = NaN;
-cst{9,6}.robustness = 'none';
-
+end
 
 
 %% 4 - Introduccion de los datos basicos
@@ -578,57 +580,59 @@ clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultCon
 
 
 %% 17 - "Resumen" de valores de NTCP
-NTCP_bio_phys = nan(9,1);
-NTCP_bio_const = nan(9,1);
-NTCP_bio_MCN = nan(9,1);
-NTCP_bio_UCM = nan(9,1);
 
-NTCP_bio_phys(1) = NTCP.PhysicalOpt.RBEMCNreCalc.Fukahori.NTCP(2).NTCP;
-NTCP_bio_phys(2) = NTCP.PhysicalOpt.RBEMCNreCalc.Burman.Rectum.NTCP;
-NTCP_bio_phys(3) = NTCP.PhysicalOpt.RBEMCNreCalc.Cheung.Rectum.NTCP(2).NTCP;
-NTCP_bio_phys(4) = NTCP.PhysicalOpt.RBEMCNreCalc.Liu.NTCP;
-NTCP_bio_phys(5) = NTCP.PhysicalOpt.RBEMCNreCalc.Tucker.NTCP;
-NTCP_bio_phys(6) = NTCP.PhysicalOpt.RBEMCNreCalc.Peeters.Bleeding.NTCP;
-NTCP_bio_phys(7) = NTCP.PhysicalOpt.RBEMCNreCalc.Peeters.Dep_Freq_Incr.NTCP;
-NTCP_bio_phys(8) = NTCP.PhysicalOpt.RBEMCNreCalc.Peeters.Fecal_Inc.NTCP;
-NTCP_bio_phys(9) = NTCP.PhysicalOpt.RBEMCNreCalc.Schaake.NTCP(2).NTCP;
-
-NTCP_bio_const(1) = NTCP.ConstRBEOpt.RBEMCNreCalc.Fukahori.NTCP(2).NTCP;
-NTCP_bio_const(2) = NTCP.ConstRBEOpt.RBEMCNreCalc.Burman.Rectum.NTCP;
-NTCP_bio_const(3) = NTCP.ConstRBEOpt.RBEMCNreCalc.Cheung.Rectum.NTCP(2).NTCP;
-NTCP_bio_const(4) = NTCP.ConstRBEOpt.RBEMCNreCalc.Liu.NTCP;
-NTCP_bio_const(5) = NTCP.ConstRBEOpt.RBEMCNreCalc.Tucker.NTCP;
-NTCP_bio_const(6) = NTCP.ConstRBEOpt.RBEMCNreCalc.Peeters.Bleeding.NTCP;
-NTCP_bio_const(7) = NTCP.ConstRBEOpt.RBEMCNreCalc.Peeters.Dep_Freq_Incr.NTCP;
-NTCP_bio_const(8) = NTCP.ConstRBEOpt.RBEMCNreCalc.Peeters.Fecal_Inc.NTCP;
-NTCP_bio_const(9) = NTCP.ConstRBEOpt.RBEMCNreCalc.Schaake.NTCP(2).NTCP;
-
-NTCP_bio_MCN(1) = NTCP.RBEMCNOpt.Optimized.Fukahori.NTCP(2).NTCP;
-NTCP_bio_MCN(2) = NTCP.RBEMCNOpt.Optimized.Burman.Rectum.NTCP;
-NTCP_bio_MCN(3) = NTCP.RBEMCNOpt.Optimized.Cheung.Rectum.NTCP(2).NTCP;
-NTCP_bio_MCN(4) = NTCP.RBEMCNOpt.Optimized.Liu.NTCP;
-NTCP_bio_MCN(5) = NTCP.RBEMCNOpt.Optimized.Tucker.NTCP;
-NTCP_bio_MCN(6) = NTCP.RBEMCNOpt.Optimized.Peeters.Bleeding.NTCP;
-NTCP_bio_MCN(7) = NTCP.RBEMCNOpt.Optimized.Peeters.Dep_Freq_Incr.NTCP;
-NTCP_bio_MCN(8) = NTCP.RBEMCNOpt.Optimized.Peeters.Fecal_Inc.NTCP;
-NTCP_bio_MCN(9) = NTCP.RBEMCNOpt.Optimized.Schaake.NTCP(2).NTCP;
-
-NTCP_bio_UCM(1) = NTCP.RBEUCMOpt.RBEMCNreCalc.Fukahori.NTCP(2).NTCP;
-NTCP_bio_UCM(2) = NTCP.RBEUCMOpt.RBEMCNreCalc.Burman.Rectum.NTCP;
-NTCP_bio_UCM(3) = NTCP.RBEUCMOpt.RBEMCNreCalc.Cheung.Rectum.NTCP(2).NTCP;
-NTCP_bio_UCM(4) = NTCP.RBEUCMOpt.RBEMCNreCalc.Liu.NTCP;
-NTCP_bio_UCM(5) = NTCP.RBEUCMOpt.RBEMCNreCalc.Tucker.NTCP;
-NTCP_bio_UCM(6) = NTCP.RBEUCMOpt.RBEMCNreCalc.Peeters.Bleeding.NTCP;
-NTCP_bio_UCM(7) = NTCP.RBEUCMOpt.RBEMCNreCalc.Peeters.Dep_Freq_Incr.NTCP;
-NTCP_bio_UCM(8) = NTCP.RBEUCMOpt.RBEMCNreCalc.Peeters.Fecal_Inc.NTCP;
-NTCP_bio_UCM(9) = NTCP.RBEUCMOpt.RBEMCNreCalc.Schaake.NTCP(2).NTCP;
-
-% Mostrar valores quitando Cheung y Fukahori
-mascara = [4 5 6 7 8 9];
-
-NTCPMCNall = [ NTCP_bio_phys(mascara), NTCP_bio_const(mascara), NTCP_bio_MCN(mascara), NTCP_bio_UCM(mascara)]
-meanNTCP = [mean(NTCP_bio_phys(mascara)),mean(NTCP_bio_const(mascara)), mean(NTCP_bio_MCN(mascara)), mean(NTCP_bio_UCM(mascara))]
-
+if strcmp (phantomtype, 'Prostate') > 0
+    NTCP_bio_phys = nan(9,1);
+    NTCP_bio_const = nan(9,1);
+    NTCP_bio_MCN = nan(9,1);
+    NTCP_bio_UCM = nan(9,1);
+    
+    NTCP_bio_phys(1) = NTCP.PhysicalOpt.RBEMCNreCalc.Fukahori.NTCP(2).NTCP;
+    NTCP_bio_phys(2) = NTCP.PhysicalOpt.RBEMCNreCalc.Burman.Rectum.NTCP;
+    NTCP_bio_phys(3) = NTCP.PhysicalOpt.RBEMCNreCalc.Cheung.Rectum.NTCP(2).NTCP;
+    NTCP_bio_phys(4) = NTCP.PhysicalOpt.RBEMCNreCalc.Liu.NTCP;
+    NTCP_bio_phys(5) = NTCP.PhysicalOpt.RBEMCNreCalc.Tucker.NTCP;
+    NTCP_bio_phys(6) = NTCP.PhysicalOpt.RBEMCNreCalc.Peeters.Bleeding.NTCP;
+    NTCP_bio_phys(7) = NTCP.PhysicalOpt.RBEMCNreCalc.Peeters.Dep_Freq_Incr.NTCP;
+    NTCP_bio_phys(8) = NTCP.PhysicalOpt.RBEMCNreCalc.Peeters.Fecal_Inc.NTCP;
+    NTCP_bio_phys(9) = NTCP.PhysicalOpt.RBEMCNreCalc.Schaake.NTCP(2).NTCP;
+    
+    NTCP_bio_const(1) = NTCP.ConstRBEOpt.RBEMCNreCalc.Fukahori.NTCP(2).NTCP;
+    NTCP_bio_const(2) = NTCP.ConstRBEOpt.RBEMCNreCalc.Burman.Rectum.NTCP;
+    NTCP_bio_const(3) = NTCP.ConstRBEOpt.RBEMCNreCalc.Cheung.Rectum.NTCP(2).NTCP;
+    NTCP_bio_const(4) = NTCP.ConstRBEOpt.RBEMCNreCalc.Liu.NTCP;
+    NTCP_bio_const(5) = NTCP.ConstRBEOpt.RBEMCNreCalc.Tucker.NTCP;
+    NTCP_bio_const(6) = NTCP.ConstRBEOpt.RBEMCNreCalc.Peeters.Bleeding.NTCP;
+    NTCP_bio_const(7) = NTCP.ConstRBEOpt.RBEMCNreCalc.Peeters.Dep_Freq_Incr.NTCP;
+    NTCP_bio_const(8) = NTCP.ConstRBEOpt.RBEMCNreCalc.Peeters.Fecal_Inc.NTCP;
+    NTCP_bio_const(9) = NTCP.ConstRBEOpt.RBEMCNreCalc.Schaake.NTCP(2).NTCP;
+    
+    NTCP_bio_MCN(1) = NTCP.RBEMCNOpt.Optimized.Fukahori.NTCP(2).NTCP;
+    NTCP_bio_MCN(2) = NTCP.RBEMCNOpt.Optimized.Burman.Rectum.NTCP;
+    NTCP_bio_MCN(3) = NTCP.RBEMCNOpt.Optimized.Cheung.Rectum.NTCP(2).NTCP;
+    NTCP_bio_MCN(4) = NTCP.RBEMCNOpt.Optimized.Liu.NTCP;
+    NTCP_bio_MCN(5) = NTCP.RBEMCNOpt.Optimized.Tucker.NTCP;
+    NTCP_bio_MCN(6) = NTCP.RBEMCNOpt.Optimized.Peeters.Bleeding.NTCP;
+    NTCP_bio_MCN(7) = NTCP.RBEMCNOpt.Optimized.Peeters.Dep_Freq_Incr.NTCP;
+    NTCP_bio_MCN(8) = NTCP.RBEMCNOpt.Optimized.Peeters.Fecal_Inc.NTCP;
+    NTCP_bio_MCN(9) = NTCP.RBEMCNOpt.Optimized.Schaake.NTCP(2).NTCP;
+    
+    NTCP_bio_UCM(1) = NTCP.RBEUCMOpt.RBEMCNreCalc.Fukahori.NTCP(2).NTCP;
+    NTCP_bio_UCM(2) = NTCP.RBEUCMOpt.RBEMCNreCalc.Burman.Rectum.NTCP;
+    NTCP_bio_UCM(3) = NTCP.RBEUCMOpt.RBEMCNreCalc.Cheung.Rectum.NTCP(2).NTCP;
+    NTCP_bio_UCM(4) = NTCP.RBEUCMOpt.RBEMCNreCalc.Liu.NTCP;
+    NTCP_bio_UCM(5) = NTCP.RBEUCMOpt.RBEMCNreCalc.Tucker.NTCP;
+    NTCP_bio_UCM(6) = NTCP.RBEUCMOpt.RBEMCNreCalc.Peeters.Bleeding.NTCP;
+    NTCP_bio_UCM(7) = NTCP.RBEUCMOpt.RBEMCNreCalc.Peeters.Dep_Freq_Incr.NTCP;
+    NTCP_bio_UCM(8) = NTCP.RBEUCMOpt.RBEMCNreCalc.Peeters.Fecal_Inc.NTCP;
+    NTCP_bio_UCM(9) = NTCP.RBEUCMOpt.RBEMCNreCalc.Schaake.NTCP(2).NTCP;
+    
+    % Mostrar valores quitando Cheung y Fukahori
+    mascara = [4 5 6 7 8 9];
+    
+    NTCPMCNall = [ NTCP_bio_phys(mascara), NTCP_bio_const(mascara), NTCP_bio_MCN(mascara), NTCP_bio_UCM(mascara)]
+    meanNTCP = [mean(NTCP_bio_phys(mascara)),mean(NTCP_bio_const(mascara)), mean(NTCP_bio_MCN(mascara)), mean(NTCP_bio_UCM(mascara))]
+end
 
 %% 18 - Resultados de dij y resultGUI para ver en la GUI
 

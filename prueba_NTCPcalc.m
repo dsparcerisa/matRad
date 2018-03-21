@@ -268,6 +268,8 @@ if strcmp (phantomtype, 'Prostate')>0
          NTCP.Schaake.NTCP(delta).AnticUse = delta-1;
          NTCP.Schaake.NTCP(delta).NTCP = 1/(1+exp(-S));      
      end
+     
+     
 elseif strcmp (phantomtype, 'Head and Neck')>0
     
     % Semenenko (2008) -> NTCP xerostomia
@@ -275,20 +277,23 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
     NTCP.Semenenko.Model = 'Semenenko''s Model';
     NTCP.Semenenko.Risk = 'Xerostomia';
     NCTP.Semenenko.VOI = 'Parotid gland';
+    numOfVois = size(cst,1);
+    
     n = 1;
     m = 0.53;
     TD_50 = 31.4;
-    for j = 1:numOfVois
+    
+     for j = 1:numOfVois
         if strcmpi('Parotid_LT',cst{j,2}) > 0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Semenenko.Left.NTCP = integral(LKM, -inf, t);
+            NTCP.Semenenko.NTCP_Left = integral(LKM, -inf, t);
         elseif strcmpi('Parotid_RT',cst{j,2}) > 0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Semenenko.Right.NTCP = integral(LKM, -inf, t);
+            NTCP.Semenenko.NTCP_Right = integral(LKM, -inf, t);
         end
         
     end
@@ -298,20 +303,23 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
     NTCP.Burman.Model = 'Burman''s Model';
     NTCP.Burman.Risk = 'Xerostomia';
     NTCP.Burman.VOI = 'Parotid gland';
+    numOfVois = size(cst,1);
+    
     n = 0.7;
     m = 0.18;
     TD_50 = 46;
+    
     for j = 1:numOfVois
         if strcmpi('Parotid_LT',cst{j,2}) > 0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Burman.Left.NTCP = integral(LKM, -inf, t);
+            NTCP.Burman.NTCP_Left = integral(LKM, -inf, t);
         elseif strcmpi('Parotid_RT',cst{j,2}) > 0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Burman.Right.NTCP = integral(LKM, -inf, t);
+            NTCP.Burman.NTCP_Right = integral(LKM, -inf, t);
         end
     end
     
@@ -320,26 +328,30 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
     NTCP.Eisbruch.Model = 'Eisbruch''s Model';
     NTCP.Eisbruch.Risk = 'RTOG grade 4 (fibrosis)';
     NTCP.Eisbruch.VOI = 'Parotid gland';
+    numOfVois = size(cst,1);
+    
     n = 1;
     m = 0.18;
     TD_50 = 28.4;
+    
     for j = 1:numOfVois
         if strcmpi('Parotid_LT',cst{j,2}) > 0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Eisbruch.Left.NTCP = integral(LKM, -inf, t);
+            NTCP.Eisbruch.NTCP_Left = integral(LKM, -inf, t);
         elseif strcmpi('Parotid_RT',cst{j,2}) > 0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Eisbruch.Right.NTCP = integral(LKM, -inf, t);
+            NTCP.Eisbruch.NTCP_Right = integral(LKM, -inf, t);
         end
     end
 
     % Luxton (2008) -> Multiple NTCP
     
     NTCP.Eisbruch.Model = 'Luxton''s Model';
+    numOfVois = size(cst,1);
     
     for j = 1:numOfVois
         if strcmpi('Parotid_LT',cst{j,2}) > 0
@@ -351,7 +363,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Luxton.Parotid.Left.NTCP = integral(LKM, -inf, t);
+            NTCP.Luxton.Parotid.NTCP_Left = integral(LKM, -inf, t);
         elseif strcmpi('Parotid_RT',cst{j,2}) > 0
             NTCP.Luxton.Parotid.Risk = 'Xerostomia';
             NTCP.Luxton.Parotid.VOI = 'Parotid gland';
@@ -361,7 +373,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Luxton.Parotid.Right.NTCP = integral(LKM, -inf, t);
+            NTCP.Luxton.Parotid.NTCP_Right = integral(LKM, -inf, t);
             
         elseif strcmpi('Brain_stem',cst{j,2}) > 0
             NTCP.Luxton.Brain_Stem.Risk = 'Necrosis/Infraction';
@@ -414,7 +426,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Luxton.OcularLens.Left.NTCP = integral(LKM, -inf, t);
+            NTCP.Luxton.OcularLens.NTCP_Left = integral(LKM, -inf, t);
         elseif strcmpi('Lens_RT',cst{j,2}) > 0
             NTCP.Luxton.Parotid.Risk = 'Cataract Requiring Intervention';
             NTCP.Luxton.Parotid.VOI = 'Ocular Lens';
@@ -424,7 +436,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Luxton.OcularLens.Right.NTCP = integral(LKM, -inf, t);
+            NTCP.Luxton.OcularLens.NTCP_Right = integral(LKM, -inf, t);
             
         elseif strcmpi('Optic_NRV_LT',cst{j,2}) > 0
             NTCP.Luxton.OpticNerve.Risk = 'Blindness';
@@ -435,7 +447,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Luxton.OpticNerve.Left.NTCP = integral(LKM, -inf, t);
+            NTCP.Luxton.OpticNerve.NTCP_Left = integral(LKM, -inf, t);
         elseif strcmpi('Optic_NRV_RT',cst{j,2}) > 0
             NTCP.Luxton.OpticNerve.Risk = 'Blindness';
             NTCP.Luxton.OpticNerve.VOI = 'Optic Nerve';
@@ -445,7 +457,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Luxton.OpticNerve.Right.NTCP = integral(LKM, -inf, t);
+            NTCP.Luxton.OpticNerve.NTCP_Right = integral(LKM, -inf, t);
             
         elseif strcmpi('Chiasma',cst{j,2}) > 0
             NTCP.Luxton.Chiasma.Risk = 'Blindness';
@@ -489,7 +501,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Luxton.Tm_Joint.Left.NTCP = integral(LKM, -inf, t);
+            NTCP.Luxton.Tm_Joint.NTCP_Left = integral(LKM, -inf, t);
         elseif strcmpi('TM_JOINT_RT',cst{j,2}) > 0
             NTCP.Luxton.Tm_Joint.Risk = 'Marked Limit. Joint Funct. ';
             NTCP.Luxton.Tm_Joint.VOI = 'Temporomandibular Joint';
@@ -499,15 +511,17 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Luxton.Tm_Joint.Right.NTCP = integral(LKM, -inf, t);   
+            NTCP.Luxton.Tm_Joint.NTCP_Right = integral(LKM, -inf, t);
             
         end
     end
-
+    
     % Gay (2007) -> Multiple NTCP
     
-        NTCP.Gay.Model = 'Gay''s Model';
-        
+    NTCP.Gay.Model = 'Gay''s Model';
+    numOfVois = size(cst,1);
+    
+    for j = 1:numOfVois
         if strcmpi('Brain_stem',cst{j,2}) > 0
             NTCP.Gay.Brain_Stem.Risk = 'Necrosis';
             NTCP.Gay.Brain_Stem.VOI = 'Brain Stem';
@@ -546,7 +560,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
             TD_50 = 65;
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^a)/numel(indices))^(1/a) *(pln.numOfFractions);
-            NTCP.Gay.OpticNerve.Left.NTCP = 1/(1 + (TD_50/EUD)^(4 * gamma_50));
+            NTCP.Gay.OpticNerve.NTCP_Left = 1/(1 + (TD_50/EUD)^(4 * gamma_50));
         elseif strcmpi('Optic_NRV_RT',cst{j,2}) > 0
             NTCP.Gay.OpticNerve.Risk = 'Blindness';
             NTCP.Gay.OpticNerve.VOI = 'Optic Nerve';
@@ -555,7 +569,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
             TD_50 = 65;
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^a)/numel(indices))^(1/a) *(pln.numOfFractions);
-            NTCP.Gay.OpticNerve.Right.NTCP = 1/(1 + (TD_50/EUD)^(4 * gamma_50));
+            NTCP.Gay.OpticNerve.NTCP_Right = 1/(1 + (TD_50/EUD)^(4 * gamma_50));
             
         elseif strcmpi('Lens_LT',cst{j,2}) > 0
             NTCP.Gay.OcularLens.Risk = 'Cataract Requiring Intervention';
@@ -565,7 +579,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
             TD_50 = 18;
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^a)/numel(indices))^(1/a) *(pln.numOfFractions);
-            NTCP.Gay.OcularLens.Left.NTCP = 1/(1 + (TD_50/EUD)^(4 * gamma_50));
+            NTCP.Gay.OcularLens.NTCP_Left = 1/(1 + (TD_50/EUD)^(4 * gamma_50));
         elseif strcmpi('Lens_RT',cst{j,2}) > 0
             NTCP.Gay.OcularLens.Risk = 'Cataract Requiring Intervention';
             NTCP.Gay.OcularLens.VOI = 'Ocular Lens';
@@ -574,9 +588,10 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
             TD_50 = 18;
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^a)/numel(indices))^(1/a) *(pln.numOfFractions);
-            NTCP.Gay.OcularLens.Right.NTCP = 1/(1 + (TD_50/EUD)^(4 * gamma_50));
-               
-        end 
+            NTCP.Gay.OcularLens.NTCP_Right = 1/(1 + (TD_50/EUD)^(4 * gamma_50));
+            
+        end
+    end
     
         % Roesink (2004) -> Salivary Excretion
     
@@ -584,7 +599,8 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
         NTCP.Roesink.Risk = 'Xerostomia';
         NCTP.Roesink.VOI = 'Parotid gland';
         NTCP.Roesink.Note = 'SEFX = Salivary Excretion Factor < X';
-
+        numOfVois = size(cst,1);
+        
         for j = 1:numOfVois
             if strcmpi('Parotid_LT',cst{j,2}) > 0
                 n = 1;
@@ -594,7 +610,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
                 EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
                 t =  (EUD - TD_50)/(m * TD_50);
                 NTCP.Roesink.Left.NTCP_SEF25 = integral(LKM, -inf, t);   
-            elseif strcmpi('Parotid_LT',cst{j,2}) > 0
+                clear n m TD_50 indices EUD t
                 n = 1;
                 m = 0.43;
                 TD_50 = 47;
@@ -602,7 +618,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
                 EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
                 t =  (EUD - TD_50)/(m * TD_50);
                 NTCP.Roesink.Left.NTCP_SEF35 = integral(LKM, -inf, t);
-            elseif strcmpi('Parotid_LT',cst{j,2}) > 0
+                clear n m TD_50 indices EUD t
                 n = 1;
                 m = 0.53;
                 TD_50 = 29;
@@ -610,7 +626,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
                 EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
                 t =  (EUD - TD_50)/(m * TD_50);
                 NTCP.Roesink.Left.NTCP_SEF45 = integral(LKM, -inf, t);
-            elseif strcmpi('Parotid_LT',cst{j,2}) > 0
+                clear n m TD_50 indices EUD t
                 n = 1;
                 m = 0.59;
                 TD_50 = 25;
@@ -618,6 +634,8 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
                 EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
                 t =  (EUD - TD_50)/(m * TD_50);
                 NTCP.Roesink.Left.NTCP_SEF55 = integral(LKM, -inf, t);
+                clear n m TD_50 indices EUD t
+                
                 
             elseif strcmpi('Parotid_RT',cst{j,2}) > 0
                 n = 1;
@@ -627,7 +645,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
                 EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
                 t =  (EUD - TD_50)/(m * TD_50);
                 NTCP.Roesink.Right.NTCP_SEF25 = integral(LKM, -inf, t);   
-            elseif strcmpi('Parotid_RT',cst{j,2}) > 0
+                clear n m TD_50 indices EUD t
                 n = 1;
                 m = 0.43;
                 TD_50 = 47;
@@ -635,7 +653,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
                 EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
                 t =  (EUD - TD_50)/(m * TD_50);
                 NTCP.Roesink.Right.NTCP_SEF35 = integral(LKM, -inf, t);
-            elseif strcmpi('Parotid_RT',cst{j,2}) > 0
+                clear n m TD_50 indices EUD t
                 n = 1;
                 m = 0.53;
                 TD_50 = 29;
@@ -643,7 +661,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
                 EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
                 t =  (EUD - TD_50)/(m * TD_50);
                 NTCP.Roesink.Right.NTCP_SEF45 = integral(LKM, -inf, t);
-            elseif strcmpi('Parotid_RT',cst{j,2}) > 0
+                clear n m TD_50 indices EUD t
                 n = 1;
                 m = 0.59;
                 TD_50 = 25;
@@ -651,7 +669,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
                 EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
                 t =  (EUD - TD_50)/(m * TD_50);
                 NTCP.Roesink.Right.NTCP_SEF55 = integral(LKM, -inf, t);
-
+                clear n m TD_50 indices EUD t
             end
 
         end
