@@ -350,7 +350,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
 
     % Luxton (2008) -> Multiple NTCP
     
-    NTCP.Eisbruch.Model = 'Luxton''s Model';
+    NTCP.Luxton.Model = 'Luxton''s Model';
     numOfVois = size(cst,1);
     
     for j = 1:numOfVois

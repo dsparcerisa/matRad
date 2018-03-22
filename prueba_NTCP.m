@@ -632,6 +632,80 @@ if strcmp (phantomtype, 'Prostate') > 0
     
     NTCPMCNall = [ NTCP_bio_phys(mascara), NTCP_bio_const(mascara), NTCP_bio_MCN(mascara), NTCP_bio_UCM(mascara)]
     meanNTCP = [mean(NTCP_bio_phys(mascara)),mean(NTCP_bio_const(mascara)), mean(NTCP_bio_MCN(mascara)), mean(NTCP_bio_UCM(mascara))]
+    
+elseif strcmpi(phantomtype, 'Head and Neck') > 0
+    
+    NTCP_bio_phys = nan(14,1);
+    NTCP_bio_const = nan(14,1);
+    NTCP_bio_MCN = nan(14,1);
+    NTCP_bio_UCM = nan(14,1);
+    
+    NTCP_bio_phys(1) = NTCP.PhysicalOpt.RBEMCNreCalc.Semenenko.NTCP_Left;
+    NTCP_bio_phys(2) = NTCP.PhysicalOpt.RBEMCNreCalc.Burman.NTCP_Left;
+    NTCP_bio_phys(3) = NTCP.PhysicalOpt.RBEMCNreCalc.Eisbruch.NTCP_Left;
+    NTCP_bio_phys(4) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Larynx.Necro.NTCP;
+    NTCP_bio_phys(5) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Larynx.Edema.NTCP;
+    NTCP_bio_phys(6) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.OcularLens.NTCP_Left;
+    NTCP_bio_phys(7) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Parotid.NTCP_Left;
+    NTCP_bio_phys(8) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Skin.NTCP;
+    NTCP_bio_phys(9) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Spinal_Cord.NTCP;
+    NTCP_bio_phys(10) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Tm_Joint.NTCP_Left;
+    NTCP_bio_phys(11) = NTCP.PhysicalOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF25;
+    NTCP_bio_phys(12) = NTCP.PhysicalOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF35;
+    NTCP_bio_phys(13) = NTCP.PhysicalOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF45;
+    NTCP_bio_phys(14) = NTCP.PhysicalOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF55;
+    
+    NTCP_bio_const(1) = NTCP.ConstRBEOpt.RBEMCNreCalc.Semenenko.NTCP_Left;
+    NTCP_bio_const(2) = NTCP.ConstRBEOpt.RBEMCNreCalc.Burman.NTCP_Left;
+    NTCP_bio_const(3) = NTCP.ConstRBEOpt.RBEMCNreCalc.Eisbruch.NTCP_Left;
+    NTCP_bio_const(4) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Larynx.Necro.NTCP;
+    NTCP_bio_const(5) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Larynx.Edema.NTCP;
+    NTCP_bio_const(6) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.OcularLens.NTCP_Left;
+    NTCP_bio_const(7) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Parotid.NTCP_Left;
+    NTCP_bio_const(8) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Skin.NTCP;
+    NTCP_bio_const(9) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Spinal_Cord.NTCP;
+    NTCP_bio_const(10) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Tm_Joint.NTCP_Left;
+    NTCP_bio_const(11) = NTCP.ConstRBEOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF25;
+    NTCP_bio_const(12) = NTCP.ConstRBEOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF35;
+    NTCP_bio_const(13) = NTCP.ConstRBEOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF45;
+    NTCP_bio_const(14) = NTCP.ConstRBEOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF55;
+    
+    NTCP_bio_MCN(1) = NTCP.RBEMCNOpt.Optimized.Semenenko.NTCP_Left;
+    NTCP_bio_MCN(2) = NTCP.RBEMCNOpt.Optimized.Burman.NTCP_Left;
+    NTCP_bio_MCN(3) = NTCP.RBEMCNOpt.Optimized.Eisbruch.NTCP_Left;
+    NTCP_bio_MCN(4) = NTCP.RBEMCNOpt.Optimized.Luxton.Larynx.Necro.NTCP;
+    NTCP_bio_MCN(5) = NTCP.RBEMCNOpt.Optimized.Luxton.Larynx.Edema.NTCP;
+    NTCP_bio_MCN(6) = NTCP.RBEMCNOpt.Optimized.Luxton.OcularLens.NTCP_Left;
+    NTCP_bio_MCN(7) = NTCP.RBEMCNOpt.Optimized.Luxton.Parotid.NTCP_Left;
+    NTCP_bio_MCN(8) = NTCP.RBEMCNOpt.Optimized.Luxton.Skin.NTCP;
+    NTCP_bio_MCN(9) = NTCP.RBEMCNOpt.Optimized.Luxton.Spinal_Cord.NTCP;
+    NTCP_bio_MCN(10) = NTCP.RBEMCNOpt.Optimized.Luxton.Tm_Joint.NTCP_Left;
+    NTCP_bio_MCN(11) = NTCP.RBEMCNOpt.Optimized.Roesink.Left.NTCP_SEF25;
+    NTCP_bio_MCN(12) = NTCP.RBEMCNOpt.Optimized.Roesink.Left.NTCP_SEF35;
+    NTCP_bio_MCN(13) = NTCP.RBEMCNOpt.Optimized.Roesink.Left.NTCP_SEF45;
+    NTCP_bio_MCN(14) = NTCP.RBEMCNOpt.Optimized.Roesink.Left.NTCP_SEF55;
+    
+    
+    NTCP_bio_UCM(1) = NTCP.RBEUCMOpt.RBEMCNreCalc.Semenenko.NTCP_Left;
+    NTCP_bio_UCM(2) = NTCP.RBEUCMOpt.RBEMCNreCalc.Burman.NTCP_Left;
+    NTCP_bio_UCM(3) = NTCP.RBEUCMOpt.RBEMCNreCalc.Eisbruch.NTCP_Left;
+    NTCP_bio_UCM(4) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Larynx.Necro.NTCP;
+    NTCP_bio_UCM(5) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Larynx.Edema.NTCP;
+    NTCP_bio_UCM(6) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.OcularLens.NTCP_Left;
+    NTCP_bio_UCM(7) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Parotid.NTCP_Left;
+    NTCP_bio_UCM(8) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Skin.NTCP;
+    NTCP_bio_UCM(9) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Spinal_Cord.NTCP;
+    NTCP_bio_UCM(10) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Tm_Joint.NTCP_Left;
+    NTCP_bio_UCM(11) = NTCP.RBEUCMOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF25;
+    NTCP_bio_UCM(12) = NTCP.RBEUCMOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF35;
+    NTCP_bio_UCM(13) = NTCP.RBEUCMOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF45;
+    NTCP_bio_UCM(14) = NTCP.RBEUCMOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF55;
+    
+    
+    mascara = [1 2 3 4 5 6 7 8 9 10 11 12 13 14];
+    
+    NTCPMCNall = [ NTCP_bio_phys(mascara), NTCP_bio_const(mascara), NTCP_bio_MCN(mascara), NTCP_bio_UCM(mascara)]
+    meanNTCP = [mean(NTCP_bio_phys(mascara)),mean(NTCP_bio_const(mascara)), mean(NTCP_bio_MCN(mascara)), mean(NTCP_bio_UCM(mascara))]
 end
 
 %% 18 - Resultados de dij y resultGUI para ver en la GUI
