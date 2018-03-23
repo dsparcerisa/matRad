@@ -105,7 +105,76 @@ if strcmp (phantomtype, 'Prostate') > 0
     cst{9,6}.EUD = NaN;
     cst{9,6}.volume = NaN;
     cst{9,6}.robustness = 'none';
+    
+elseif strcmp (phantomtype, 'TG119') > 0
+    
+    % Core
+    cst{1,6}.type = 'square overdosing';
+    cst{1,6}.dose = 25;
+    cst{1,6}.EUD = 300;
+    cst{1,6}.penalty = NaN;
+    cst{1,6}.volume = NaN;
+    cst{1,6}.robustness = 'none';
+    
+    % Target
+    cst{2,6}.type = 'square deviation';
+    cst{2,6}.dose = 50;
+    cst{2,6}.EUD = 1000;
+    cst{2,6}.penalty = NaN;
+    cst{2,6}.volume = NaN;
+    cst{2,6}.robustness = 'none';
+    
+    % Body
+    cst{3,6}.type = 'square overdosing';
+    cst{3,6}.dose = 30;
+    cst{3,6}.EUD = 100;
+    cst{3,6}.penalty = NaN;
+    cst{3,6}.volume = NaN;
+    cst{3,6}.robustness = 'none';
 
+elseif    strcmp (phantomtype, 'Head and Neck') > 0
+    
+    % Parotid_LT
+    cst{13,6}.type = 'square overdosing';
+    cst{13,6}.dose = 25;
+    cst{13,6}.EUD = 100;
+    cst{13,6}.penalty = NaN;
+    cst{13,6}.volume = NaN;
+    cst{13,6}.robustness = 'none';
+    
+    % Parotid_RT
+    cst{14,6}.type = 'square overdosing';
+    cst{14,6}.dose = 25;
+    cst{14,6}.EUD = 100;
+    cst{14,6}.penalty = NaN;
+    cst{14,6}.volume = NaN;
+    cst{14,6}.robustness = 'none';
+    
+    % PTV63
+    cst{15,6}.type = 'square deviation';
+    cst{15,6}.dose = 63;
+    cst{15,6}.EUD = 1000;
+    cst{15,6}.penalty = NaN;
+    cst{15,6}.volume = NaN;
+    cst{15,6}.robustness = 'none';
+    
+    % PTV70
+    cst{16,6}.type = 'square deviation';
+    cst{16,6}.dose = 63;
+    cst{16,6}.EUD = 1000;
+    cst{16,6}.penalty = NaN;
+    cst{16,6}.volume = NaN;
+    cst{16,6}.robustness = 'none';
+    
+    % SKIN
+    cst{17,6}.type = 'square overdosing';
+    cst{17,6}.dose = 30;
+    cst{17,6}.EUD = 800;
+    cst{17,6}.penalty = NaN;
+    cst{17,6}.volume = NaN;
+    cst{17,6}.robustness = 'none';
+    
+    
 end
 
 
