@@ -166,8 +166,10 @@ elseif pln.bioParam.bioOpt
            % ensure a underestimated biological effective dose 
            TolEstBio        = 1.2;
            % calculate maximal RBE in target
-           maxCurrRBE = max(-cst{ixTarget,5}.alphaX + sqrt(cst{ixTarget,5}.alphaX^2 + ...
-                        4*cst{ixTarget,5}.betaX.*CurrEffectTarget)./(2*cst{ixTarget,5}.betaX*(dij.physicalDose{1}(V,:)*wOnes)));
+           maxCurrRBE = max((-cst{ixTarget,5}.alphaX + sqrt(cst{ixTarget,5}.alphaX^2 + ...
+                        4*cst{ixTarget,5}.betaX.*CurrEffectTarget))./(2*cst{ixTarget,5}.betaX*(dij.physicalDose{1}(V,:)*wOnes)));
+                    
+                    
            wInit    =  ((doseTarget)/(TolEstBio*maxCurrRBE*max(dij.physicalDose{1}(V,:)*wOnes)))* wOnes;
     end
     
