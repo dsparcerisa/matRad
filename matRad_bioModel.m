@@ -390,10 +390,14 @@ classdef matRad_bioModel
                     % TODO: assign normal tissue an RBE of 1.1
                     
                 case {'protons_MCN'}
-                    
-                    
+                                        
                     bixelLET = matRad_interp1(depths,baseDataEntry.LET,vRadDepths);
                     bixelLET(isnan(bixelLET)) = 0;
+                    % FIX 3 abril (TEMPORAL!)
+                    bixelLET(isinf(bixelLET)) = max(bixelLET(~isinf(bixelLET)));
+                    vAlpha_x(vAlpha_x==0) = mean(vAlpha_x);
+                    vBeta_x(vBeta_x==0) = mean(vBeta_x);
+                    vABratio(vABratio==0 | isinf(vABratio)) = mean(vAlpha_x) / mean(vBeta_x);
                     
                     RBEmax     = this.p0_MCN + ((this.p1_MCN * bixelLET )./ vABratio);
                     RBEmin     = this.p2_MCN + (this.p3_MCN  * sqrt(vABratio) .* bixelLET);
