@@ -279,7 +279,7 @@ clear dij resultGUI quantityOpt modelName
 
 
 %% 9 - Graficas de perfil de dosis
-hkhk % para que de error aqui y poder parar.
+ % para que de error aqui y poder parar.
 
 % ProfileType = longitudinal // lateral
 % DisplayOption = physicalDose // RBExD // physical_vs_RBExD

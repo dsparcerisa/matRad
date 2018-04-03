@@ -85,6 +85,7 @@ if strcmp(handles.popupDisplayOption, 'RBE')
         mRBExD2 = Result2.(['RBExD' Suffix]);
         PlotHandles{2,1} = plot(vX,pln.numOfFractions .* mRBExD2(ix),'color',cColor{1,7},'LineWidth',3); hold on;
         PlotHandles{2,2} = strcat( Model2,' RBExD');
+                
     end
     
 elseif strcmp(handles.popupDisplayOption, 'physicalDose')
@@ -123,6 +124,9 @@ elseif  strcmp(handles.popupDisplayOption, 'physical_vs_RBExD')
     end
 end
 
+
+
+% Legend
 Lines1  = PlotHandles(~cellfun(@isempty,PlotHandles(:,1)),1);
 Lines2  = PlotHandles(~cellfun(@isempty,PlotHandles(:,2)),1);
 Labels = PlotHandles(~cellfun(@isempty,PlotHandles(:,1)),2);
@@ -130,6 +134,7 @@ Labels = PlotHandles(~cellfun(@isempty,PlotHandles(:,1)),2);
 legend([Lines1{:} Lines2{:}],Labels{:}, 'Location', 'northwest');
 
 xlabel('radiological depth [mm]','FontSize',8);
+xlim([0,180])
 grid on, grid minor
 
 hold off
