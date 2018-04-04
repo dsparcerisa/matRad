@@ -181,8 +181,8 @@ end
 %% 4 - Introduccion de los datos basicos
 
 pln.bixelWidth      = 5; % [mm] / also corresponds to lateral spot spacing for particles
-pln.gantryAngles    = [0]; % [??]
-pln.couchAngles     = [0]; % [??]
+pln.gantryAngles    = [45 315]; % [??]
+pln.couchAngles     = [0 0]; % [??]
 pln.numOfBeams      = numel(pln.gantryAngles);
 pln.numOfVoxels     = prod(ct.cubeDim);
 pln.isoCenter       = ones(pln.numOfBeams,1) * matRad_getIsoCenter(cst,ct,0);
@@ -198,43 +198,43 @@ pln.robOpt          = false;
 %pln.calcLET = true;
 
 
-%% 5 - Calculo y optimizacion para dosis fisica
-
-quantityOpt         = 'physicalDose';     % options: physicalDose, constRBE, effect, RBExD
-modelName           = 'none';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
-                                          % WED: Wedenberg-variable RBE model for protons 
-
-% retrieve model parameters
-pln.bioParam = matRad_bioModel(pln.radiationMode,quantityOpt, modelName);
-% retrieve scenarios for dose calculation and optimziation
-pln.multScen = matRad_multScen(ct,pln.scenGenType); 
-% generate steering file
-stf = matRad_generateStf(ct,cst,pln);
-
-% dose calculation
-if strcmp(pln.radiationMode,'photons')
-    dij = matRad_calcPhotonDose(ct,stf,pln,cst);
-elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'helium') || strcmp(pln.radiationMode,'carbon')
-    dij = matRad_calcParticleDose(ct,stf,pln,cst);
-end
-
-resultGUI = matRad_fluenceOptimization(dij,cst,pln);
-
-pause(1.5);
-close all
-clc
-
-ResultPhysical.Optimized.dij = dij;
-ResultPhysical.Optimized.resultGUI = resultGUI;
-
-
-%% Recalculo de dosis para ConstRBE Y RBEMCN
-
-[~ ,ResultPhysical.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultPhysical.Optimized.resultGUI, ct, stf, pln, cst, 'RBExD','constRBE');
-
-[~ ,ResultPhysical.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(ResultPhysical.Optimized.resultGUI, ct, stf, pln, cst, 'effect', 'MCN' );
-
-clear dij resultGUI quantityOpt modelName
+% %% 5 - Calculo y optimizacion para dosis fisica
+% 
+% quantityOpt         = 'physicalDose';     % options: physicalDose, constRBE, effect, RBExD
+% modelName           = 'none';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
+%                                           % WED: Wedenberg-variable RBE model for protons 
+% 
+% % retrieve model parameters
+% pln.bioParam = matRad_bioModel(pln.radiationMode,quantityOpt, modelName);
+% % retrieve scenarios for dose calculation and optimziation
+% pln.multScen = matRad_multScen(ct,pln.scenGenType); 
+% % generate steering file
+% stf = matRad_generateStf(ct,cst,pln);
+% 
+% % dose calculation
+% if strcmp(pln.radiationMode,'photons')
+%     dij = matRad_calcPhotonDose(ct,stf,pln,cst);
+% elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'helium') || strcmp(pln.radiationMode,'carbon')
+%     dij = matRad_calcParticleDose(ct,stf,pln,cst);
+% end
+% 
+% resultGUI = matRad_fluenceOptimization(dij,cst,pln);
+% 
+% pause(1.5);
+% close all
+% clc
+% 
+% ResultPhysical.Optimized.dij = dij;
+% ResultPhysical.Optimized.resultGUI = resultGUI;
+% 
+% 
+% %% Recalculo de dosis para ConstRBE Y RBEMCN
+% 
+% [~ ,ResultPhysical.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultPhysical.Optimized.resultGUI, ct, stf, pln, cst, 'RBExD','constRBE');
+% 
+% [~ ,ResultPhysical.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(ResultPhysical.Optimized.resultGUI, ct, stf, pln, cst, 'effect', 'MCN' );
+% 
+% clear dij resultGUI quantityOpt modelName
 
 
 %% 6 - Calculo y optimizacion de dosis considerando el RBE = 1.1
@@ -628,10 +628,10 @@ clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultCon
 
 %% 16 - Calculo de NTCP
 
-% Calculos de NTCP para PhysicalDose
-NTCP.PhysicalOpt.Optimized = prueba_NTCPcalc(pln, cst, phantomtype, ResultPhysical.Optimized.resultGUI.physicalDose);
-NTCP.PhysicalOpt.ConstRBEreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultPhysical.ConstRBEreCalc.resultGUI.RBExD);
-NTCP.PhysicalOpt.RBEMCNreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultPhysical.RBEMCNreCalc.resultGUI.RBExD);
+% % Calculos de NTCP para PhysicalDose
+% NTCP.PhysicalOpt.Optimized = prueba_NTCPcalc(pln, cst, phantomtype, ResultPhysical.Optimized.resultGUI.physicalDose);
+% NTCP.PhysicalOpt.ConstRBEreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultPhysical.ConstRBEreCalc.resultGUI.RBExD);
+% NTCP.PhysicalOpt.RBEMCNreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultPhysical.RBEMCNreCalc.resultGUI.RBExD);
 
 % Calculos NTCP para ConstRBEOpt
 NTCP.ConstRBEOpt.Optimized = prueba_NTCPcalc(pln, cst, phantomtype, ResultConstRBE.Optimized.resultGUI.RBExD);

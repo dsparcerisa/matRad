@@ -410,6 +410,12 @@ classdef matRad_bioModel
                     bixelLET = matRad_interp1(depths,baseDataEntry.LET,vRadDepths);
                     bixelLET(isnan(bixelLET)) = 0;
                     
+                    % FIX 4 abril (TEMPORAL!)
+                    bixelLET(isinf(bixelLET)) = max(bixelLET(~isinf(bixelLET)));
+                    vAlpha_x(vAlpha_x==0) = mean(vAlpha_x);
+                    vBeta_x(vBeta_x==0) = mean(vBeta_x);
+                    vABratio(vABratio==0 | isinf(vABratio)) = mean(vAlpha_x) / mean(vBeta_x);
+                    
                     RBEmax     = this.p0_MCN + ((this.p1_MCN * bixelLET )./ vABratio);
                     RBEmin     = this.p2_MCN + (this.p3_MCN  * sqrt(vABratio) .* bixelLET);
                     
@@ -429,6 +435,10 @@ classdef matRad_bioModel
                     bixelAlpha (mTissueClass > 0) = this.constRBE_protons .* vAlpha_x(mTissueClass > 0);
                     bixelBeta (mTissueClass > 0) = this.constRBE_protons .^2 .* vBeta_x(mTissueClass > 0);
                                         
+                    
+                    
+                    
+                    
                 case {'protons_WED'}
                     
                     bixelLET = matRad_interp1(depths,baseDataEntry.LET,vRadDepths);
