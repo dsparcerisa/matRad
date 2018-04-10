@@ -19,7 +19,7 @@ classdef matRad_bioModel
     %                       LEM_effect: effect-based optimization;                                 LEM_RBExD: optimization of RBE-weighted dose
     %
     % output
-    %   bioParam:fU           matRad's bioParam structure containing information
+    %   bioParam:           matRad's bioParam structure containing information
     %                       about the choosen biological model
     %
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,7 +59,7 @@ classdef matRad_bioModel
     
     % constant public properties which are visible outside of this class
     properties(Constant = true)
-        AvailableModels                 = {'none','constRBE','MCN','WED','LEM', 'UCM'};   % cell array determines available models - if cell is deleted then the corersponding model can not be generated
+        AvailableModels                 = {'none','constRBE','MCN','WED','LEM'};   % cell array determines available models - if cell is deleted then the corersponding model can not be generated
         AvailableradiationModealities   = {'photons','protons','helium','carbon'};
         AvailableQuantitiesForOpt       = {'physicalDose','effect','RBExD'};
         
@@ -119,44 +119,50 @@ classdef matRad_bioModel
             while ~boolCHECK
                 
                 switch this.radiationMode
+                    
                     case {'photons'}
                         
+                        setDefaultValues = false;
                         switch this.quantityOpt
                             
                             case {'physicalDose'}
-                                if strcmp( this.model, 'none')
-                                    boolCHECK           = true;
-                                    this.bioOpt         = false;
-                                    this.quantityVis    = 'physicalDose';
+                                if strcmp(this.model,'none')
+                                    boolCHECK        = true;
+                                    this.bioOpt      = false;
+                                    this.quantityVis = 'physicalDose';
                                 else
-                                    matRad_dispToConsole(['matRad: Invalid biological model: ' this.model  '; using "none" instead. \n'],[],'warning');
-                                    this.model  = 'none';
+                                    setDefaultValues = true;
                                 end
                                 
                             case {'RBExD'}
-                                if sum(strcmp(this.model, {'constRBE', 'none'})) == 1
-                                    this.RBE            = this.constRBE_photons;
-                                    boolCHECK           = true;
-                                    this.bioOpt         = false; 
-                                    this.quantityVis    = 'RBExD';
+                                if sum(strcmp(this.model,{'constRBE', 'none'})) == 1
+                                    this.RBE         = this.constRBE_photons;
+                                    boolCHECK        = true;
+                                    this.bioOpt      = false;
+                                    this.quantityVis = 'RBExD';
                                 else
-                                    matRad_dispToConsole(['matRad: Invalid biological model: ' this.model  '; using constant RBE instead. \n'],[],'warning');
-                                    this.model = 'constRBE';
+                                    setDefaultValues = true;
                                 end
                                 
                             case {'effect'}
-                                if strcmp( this.model, 'none')
-                                    boolCHECK           = true;
-                                    this.bioOpt         = true;
-                                    this.quantityVis    = 'RBExD';
+                                if strcmp( this.model,'none')
+                                    boolCHECK        = true;
+                                    this.bioOpt      = true;
+                                    this.quantityVis = 'RBExD';
                                 else
-                                    matRad_dispToConsole(['matRad: Invalid biological model: ' this.model  '; using "none" instead. \n'],[],'warning');
-                                    this.model  = 'none';
+                                    setDefaultValues = true;   
                                 end
                                 
                             otherwise
                                 matRad_dispToConsole(['matRad: Invalid biological optimization quantity: ' this.quantityOpt  '; using physical dose instead. \n'],[],'warning');
                                 this.quantityOpt = 'physicalDose';
+                        end
+                        
+                        if setDefaultValues
+                            matRad_dispToConsole(['matRad: Invalid biological model: ' this.model  '; using "none" instead. \n'],[],'warning');
+                            this.model       = 'none';
+                            this.quantityVis = 'physicalDose';
+                            this.quantityOpt = 'physicalDose';
                         end
                         
                     case {'protons'}
@@ -174,15 +180,13 @@ classdef matRad_bioModel
                                 end
                                 
                             case {'RBExD'}
-                                if sum(strcmp( this.model, {'constRBE','MCN','WED','UCM'})) == 1
+                                if sum(strcmp( this.model, {'constRBE','MCN','WED'})) == 1
                                     boolCHECK           = true;
-                                    % this.bioOpt         = false; % PRUEBA 28 febrero: false tus muertos
                                     this.bioOpt         = true;
-                                    
                                     this.quantityVis    = 'RBExD';
                                     if sum(strcmp( this.model, {'constRBE'})) == 1
                                         this.RBE  = this.constRBE_protons;
-                                        this.bioOpt = false;                                         
+                                        this.bioOpt     = false;
                                     end  
                                 else
                                     matRad_dispToConsole(['matRad: Invalid biological model: ' this.model  '; using constant RBE instead. \n'],[],'warning');
@@ -190,7 +194,7 @@ classdef matRad_bioModel
                                 end
                                 
                             case {'effect'}
-                                if sum(strcmp( this.model, {'MCN','WED', 'UCM'})) == 1
+                                if sum(strcmp( this.model, {'MCN','WED'})) == 1
                                     boolCHECK           = true;
                                     this.bioOpt         = true;
                                     this.quantityVis    = 'RBExD';
@@ -390,54 +394,15 @@ classdef matRad_bioModel
                     % TODO: assign normal tissue an RBE of 1.1
                     
                 case {'protons_MCN'}
-                                        
+                    
+                    
                     bixelLET = matRad_interp1(depths,baseDataEntry.LET,vRadDepths);
                     bixelLET(isnan(bixelLET)) = 0;
-                    % FIX 3 abril (TEMPORAL!)
-                    bixelLET(isinf(bixelLET)) = max(bixelLET(~isinf(bixelLET)));
-                    vAlpha_x(vAlpha_x==0) = mean(vAlpha_x);
-                    vBeta_x(vBeta_x==0) = mean(vBeta_x);
-                    vABratio(vABratio==0 | isinf(vABratio)) = mean(vAlpha_x) / mean(vBeta_x);
                     
                     RBEmax     = this.p0_MCN + ((this.p1_MCN * bixelLET )./ vABratio);
                     RBEmin     = this.p2_MCN + (this.p3_MCN  * sqrt(vABratio) .* bixelLET);
                     bixelAlpha = RBEmax    .* vAlpha_x;
                     bixelBeta  = RBEmin.^2 .* vBeta_x;
-                    
-                case {'protons_UCM'}
-                    
-                    % The McNamara way
-                    bixelLET = matRad_interp1(depths,baseDataEntry.LET,vRadDepths);
-                    bixelLET(isnan(bixelLET)) = 0;
-                    
-                    % FIX 4 abril (TEMPORAL!)
-                    bixelLET(isinf(bixelLET)) = max(bixelLET(~isinf(bixelLET)));
-                    vAlpha_x(vAlpha_x==0) = mean(vAlpha_x);
-                    vBeta_x(vBeta_x==0) = mean(vBeta_x);
-                    vABratio(vABratio==0 | isinf(vABratio)) = mean(vAlpha_x) / mean(vBeta_x);
-                    
-                    RBEmax     = this.p0_MCN + ((this.p1_MCN * bixelLET )./ vABratio);
-                    RBEmin     = this.p2_MCN + (this.p3_MCN  * sqrt(vABratio) .* bixelLET);
-                    
-                    bixelAlpha = RBEmax    .* vAlpha_x;
-                    bixelBeta  = RBEmin.^2 .* vBeta_x;
-                    
-%                     % The Wedenberg way
-%                     bixelLET = matRad_interp1(depths,baseDataEntry.LET,vRadDepths);
-%                     bixelLET(isnan(bixelLET)) = 0;
-%                     
-%                     RBEmax     = this.p0_WED + ((this.p1_WED * bixelLET )./ vABratio);
-%                     RBEmin     = this.p2_WED;
-%                     bixelAlpha = RBEmax    .* vAlpha_x;
-%                     bixelBeta  = RBEmin.^2 .* vBeta_x;                    
-                    
-                    % Fix for inside target
-                    bixelAlpha (mTissueClass > 0) = this.constRBE_protons .* vAlpha_x(mTissueClass > 0);
-                    bixelBeta (mTissueClass > 0) = this.constRBE_protons .^2 .* vBeta_x(mTissueClass > 0);
-                                        
-                    
-                    
-                    
                     
                 case {'protons_WED'}
                     
@@ -478,4 +443,3 @@ classdef matRad_bioModel
     
     
 end % end class definition
-

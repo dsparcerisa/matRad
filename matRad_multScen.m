@@ -150,8 +150,8 @@ classdef matRad_multScen
         scenCombType_impScen              = 'individual';                  % individual:  no combination of range and setup scenarios,
         includeNomScen_impScen            = false;                         % exclude nominal scenario
         
-        % 'rndScen'    create worst case scenarios
-        numOfShiftScen_rndScen            = [20 20 20];                    % number of shifts in x y and z direction
+        % 'rndScen'   default parameters for random sampling
+        numOfShiftScen_rndScen            = [25 25 25];                    % number of shifts in x y and z direction
         shiftSize_rndScen                 = [3 3 3];                       % given in [mm]
         shiftGenType_rndScen              = 'sampled';                     % sample shifts from normal distribution
         shiftCombType_rndScen             = 'combined';                    % individual:  no combination of shift scenarios;
@@ -347,11 +347,11 @@ classdef matRad_multScen
                     this.absRangeShift = [nomScen linspace(-this.maxAbsRangeShift, this.maxAbsRangeShift, this.numOfRangeShiftScen)];
                 case 'sampled'
                     % relRange
-                    std = this.maxRelRangeShift; meanP = 0;
+                    std = this.rangeRelSD; meanP = 0;
                     rng('shuffle');
                     this.relRangeShift = [nomScen std .* randn(1, this.numOfRangeShiftScen) + meanP];
                     % absRange
-                    std = this.maxAbsRangeShift; meanP = 0;
+                    std = this.rangeAbsSD; meanP = 0;
                     rng('shuffle');
                     this.absRangeShift = [nomScen std .* randn(1, this.numOfRangeShiftScen) + meanP];
                 otherwise
