@@ -219,7 +219,7 @@ if pln.bioParam.bioOpt
        for i = 1:size(cst,1)
            % find indices of structures related to V
            [~, row] = ismember(vertcat(cst{i,4}{:}),V,'rows');
-           % creaci�n de la m�scara de objetivos           
+           % creacion de la mascara de objetivos           
            if strcmp (cst{i,3}, 'TARGET')
                vTissueIndex (row) = 1;
            end         

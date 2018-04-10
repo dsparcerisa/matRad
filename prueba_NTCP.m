@@ -180,21 +180,20 @@ end
 
 %% 4 - Introduccion de los datos basicos
 
-pln.bixelWidth      = 5; % [mm] / also corresponds to lateral spot spacing for particles
-pln.gantryAngles    = [45 315]; % [??]
-pln.couchAngles     = [0 0]; % [??]
-pln.numOfBeams      = numel(pln.gantryAngles);
-pln.numOfVoxels     = prod(ct.cubeDim);
-pln.isoCenter       = ones(pln.numOfBeams,1) * matRad_getIsoCenter(cst,ct,0);
-pln.voxelDimensions = ct.cubeDim;
-pln.radiationMode   = 'protons';             % either photons / protons / helium / carbon
-pln.scenGenType     = 'nomScen';             % scenario creation type'nomScen'  'wcScen' 'impScen' 'rndScen'
+% meta information for treatment plan 
+pln.numOfFractions = 30;
+pln.radiationMode = 'protons';           % either photons / protons / helium / carbon
+pln.machine = 'Generic';
 
-pln.numOfFractions  = 30;
-pln.runSequencing   = false; % 1/true: run sequencing, 0/false: don't / will be ignored for particles and also triggered by runDAO below
-pln.runDAO          = false; % 1/true: run DAO, 0/false: don't / will be ignored for particles
-pln.machine         = 'Generic';
-pln.robOpt          = false;
+% beam geometry settings
+pln.propStf.bixelWidth     = 5; % [mm] / also corresponds to lateral spot spacing for particles
+pln.propStf.gantryAngles   = [0]; % [?];
+pln.propStf.couchAngles    = [0]; % [?];
+pln.propStf.numOfBeams     = numel(pln.propStf.gantryAngles);
+pln.propStf.isoCenter      = ones(pln.propStf.numOfBeams,1) * matRad_getIsoCenter(cst,ct,0);
+% optimization settings
+pln.propOpt.runDAO         = false;   % 1/true: run DAO, 0/false: don't / will be ignored for particles
+pln.propOpt.runSequencing  = false;   % 1/true: run sequencing, 0/false: don't / will be ignored for particles and also triggered by runDAO below
 %pln.calcLET = true;
 
 
@@ -204,10 +203,12 @@ pln.robOpt          = false;
 % modelName           = 'none';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
 %                                           % WED: Wedenberg-variable RBE model for protons 
 % 
+% scenGenType = 'nomScen';            % scenario creation type 'nomScen' 'wcScen' 'impScen' 'rndScen'
+%
 % % retrieve model parameters
 % pln.bioParam = matRad_bioModel(pln.radiationMode,quantityOpt, modelName);
 % % retrieve scenarios for dose calculation and optimziation
-% pln.multScen = matRad_multScen(ct,pln.scenGenType); 
+% pln.multScen = matRad_multScen(ct,scenGenType); 
 % % generate steering file
 % stf = matRad_generateStf(ct,cst,pln);
 % 
@@ -241,11 +242,15 @@ pln.robOpt          = false;
 
 quantityOpt         = 'RBExD';     % options: physicalDose, constRBE, effect, RBExD
 modelName           = 'constRBE';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
-                                          % WED: Wedenberg-variable RBE model for protons 
+                                             % WED: Wedenberg-variable RBE model for protons 
+
+
+scenGenType = 'nomScen';            % scenario creation type 'nomScen' 'wcScen' 'impScen' 'rndScen'
+
 % retrieve model parameters
 pln.bioParam = matRad_bioModel(pln.radiationMode, quantityOpt, modelName);
 % retrieve scenarios for dose calculation and optimziation
-pln.multScen = matRad_multScen(ct,pln.scenGenType); 
+pln.multScen = matRad_multScen(ct,scenGenType); 
 % generate steering file
 stf = matRad_generateStf(ct,cst,pln);
 
@@ -278,13 +283,15 @@ clear dij resultGUI quantityOpt modelName
 quantityOpt         = 'RBExD';      % options: physicalDose, constRBE, effect, RBExD
 modelName           = 'MCN';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
                                          % WED: Wedenberg-variable RBE model for protons
-                                                
+
+scenGenType = 'nomScen';            % scenario creation type 'nomScen' 'wcScen' 'impScen' 'rndScen'                                         
+                                         
 % retrieve model parameters
 pln.bioParam = matRad_bioModel(pln.radiationMode,quantityOpt, modelName);
 pln.bioOpt = 1;
 
 % retrieve scenarios for dose calculation and optimziation
-pln.multScen = matRad_multScen(ct,pln.scenGenType); 
+pln.multScen = matRad_multScen(ct,scenGenType); 
 
 stf = matRad_generateStf(ct,cst,pln);
 
@@ -314,12 +321,14 @@ clear dij resultGUI quantityOpt modelName
 quantityOpt         = 'RBExD';
 modelName           = 'UCM';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
                                           % WED: Wedenberg-variable RBE model for protons   
-                                             
+                                                                                  
+scenGenType = 'nomScen';            % scenario creation type 'nomScen' 'wcScen' 'impScen' 'rndScen' 
+
 % retrieve model parameters
 pln.bioParam = matRad_bioModel(pln.radiationMode,quantityOpt, modelName);
 
 % retrieve scenarios for dose calculation and optimziation
-pln.multScen = matRad_multScen(ct,pln.scenGenType); 
+pln.multScen = matRad_multScen(ct,scenGenType); 
 
 stf = matRad_generateStf(ct,cst,pln);
 
