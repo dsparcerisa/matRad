@@ -8,12 +8,12 @@ evalin('base','exist(''pln'',''var'')') && ...
     evalin('base','exist(''cst'',''var'')') && ...
     evalin('base','exist(''resultGUI'',''var'')');
 
-% get all data from workspace
-pln       = evalin('base','pln');
-stf       = evalin('base','stf');
-ct        = evalin('base','ct');
-cst       = evalin('base','cst');
-resultGUI = evalin('base','resultGUI');
+% % get all data from workspace
+% pln       = evalin('base','pln');
+% stf       = evalin('base','stf');
+% ct        = evalin('base','ct');
+% cst       = evalin('base','cst');
+% resultGUI = evalin('base','resultGUI');
 
 scenGenType = 'nomScen';            % scenario creation type 'nomScen' 'wcScen' 'impScen' 'rndScen'
 % retrieve model parameters
