@@ -562,9 +562,11 @@ Dose{4,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
 Dose{5,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
 Dose{6,1}= ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
 
-image_All = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
-%saveas(image_All, 'DVHComp_All.png'); close;
-clear OptModel Dose
+if ~isempty(Regions)
+    image_All = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
+    %saveas(image_All, 'DVHComp_All.png'); close;
+    clear OptModel Dose
+end
 
 % % Solo ConstRBE
 % OptModel = cell(6,2);
@@ -665,15 +667,15 @@ if strcmp (phantomtype, 'Prostate') > 0
     NTCP_bio_MCN = nan(9,1);
     NTCP_bio_UCM = nan(9,1);
     
-    NTCP_bio_phys(1) = NTCP.PhysicalOpt.RBEMCNreCalc.Fukahori.NTCP(2).NTCP;
-    NTCP_bio_phys(2) = NTCP.PhysicalOpt.RBEMCNreCalc.Burman.Rectum.NTCP;
-    NTCP_bio_phys(3) = NTCP.PhysicalOpt.RBEMCNreCalc.Cheung.Rectum.NTCP(2).NTCP;
-    NTCP_bio_phys(4) = NTCP.PhysicalOpt.RBEMCNreCalc.Liu.NTCP;
-    NTCP_bio_phys(5) = NTCP.PhysicalOpt.RBEMCNreCalc.Tucker.NTCP;
-    NTCP_bio_phys(6) = NTCP.PhysicalOpt.RBEMCNreCalc.Peeters.Bleeding.NTCP;
-    NTCP_bio_phys(7) = NTCP.PhysicalOpt.RBEMCNreCalc.Peeters.Dep_Freq_Incr.NTCP;
-    NTCP_bio_phys(8) = NTCP.PhysicalOpt.RBEMCNreCalc.Peeters.Fecal_Inc.NTCP;
-    NTCP_bio_phys(9) = NTCP.PhysicalOpt.RBEMCNreCalc.Schaake.NTCP(2).NTCP;
+%     NTCP_bio_phys(1) = NTCP.PhysicalOpt.RBEMCNreCalc.Fukahori.NTCP(2).NTCP;
+%     NTCP_bio_phys(2) = NTCP.PhysicalOpt.RBEMCNreCalc.Burman.Rectum.NTCP;
+%     NTCP_bio_phys(3) = NTCP.PhysicalOpt.RBEMCNreCalc.Cheung.Rectum.NTCP(2).NTCP;
+%     NTCP_bio_phys(4) = NTCP.PhysicalOpt.RBEMCNreCalc.Liu.NTCP;
+%     NTCP_bio_phys(5) = NTCP.PhysicalOpt.RBEMCNreCalc.Tucker.NTCP;
+%     NTCP_bio_phys(6) = NTCP.PhysicalOpt.RBEMCNreCalc.Peeters.Bleeding.NTCP;
+%     NTCP_bio_phys(7) = NTCP.PhysicalOpt.RBEMCNreCalc.Peeters.Dep_Freq_Incr.NTCP;
+%     NTCP_bio_phys(8) = NTCP.PhysicalOpt.RBEMCNreCalc.Peeters.Fecal_Inc.NTCP;
+%     NTCP_bio_phys(9) = NTCP.PhysicalOpt.RBEMCNreCalc.Schaake.NTCP(2).NTCP;
     
     NTCP_bio_const(1) = NTCP.ConstRBEOpt.RBEMCNreCalc.Fukahori.NTCP(2).NTCP;
     NTCP_bio_const(2) = NTCP.ConstRBEOpt.RBEMCNreCalc.Burman.Rectum.NTCP;
@@ -718,20 +720,20 @@ elseif strcmpi(phantomtype, 'Head and Neck') > 0
     NTCP_bio_MCN = nan(14,1);
     NTCP_bio_UCM = nan(14,1);
     
-    NTCP_bio_phys(1) = NTCP.PhysicalOpt.RBEMCNreCalc.Semenenko.NTCP_Left;
-    NTCP_bio_phys(2) = NTCP.PhysicalOpt.RBEMCNreCalc.Burman.NTCP_Left;
-    NTCP_bio_phys(3) = NTCP.PhysicalOpt.RBEMCNreCalc.Eisbruch.NTCP_Left;
-    NTCP_bio_phys(4) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Larynx.Necro.NTCP;
-    NTCP_bio_phys(5) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Larynx.Edema.NTCP;
-    NTCP_bio_phys(6) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.OcularLens.NTCP_Left;
-    NTCP_bio_phys(7) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Parotid.NTCP_Left;
-    NTCP_bio_phys(8) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Skin.NTCP;
-    NTCP_bio_phys(9) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Spinal_Cord.NTCP;
-    NTCP_bio_phys(10) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Tm_Joint.NTCP_Left;
-    NTCP_bio_phys(11) = NTCP.PhysicalOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF25;
-    NTCP_bio_phys(12) = NTCP.PhysicalOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF35;
-    NTCP_bio_phys(13) = NTCP.PhysicalOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF45;
-    NTCP_bio_phys(14) = NTCP.PhysicalOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF55;
+%     NTCP_bio_phys(1) = NTCP.PhysicalOpt.RBEMCNreCalc.Semenenko.NTCP_Left;
+%     NTCP_bio_phys(2) = NTCP.PhysicalOpt.RBEMCNreCalc.Burman.NTCP_Left;
+%     NTCP_bio_phys(3) = NTCP.PhysicalOpt.RBEMCNreCalc.Eisbruch.NTCP_Left;
+%     NTCP_bio_phys(4) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Larynx.Necro.NTCP;
+%     NTCP_bio_phys(5) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Larynx.Edema.NTCP;
+%     NTCP_bio_phys(6) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.OcularLens.NTCP_Left;
+%     NTCP_bio_phys(7) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Parotid.NTCP_Left;
+%     NTCP_bio_phys(8) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Skin.NTCP;
+%     NTCP_bio_phys(9) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Spinal_Cord.NTCP;
+%     NTCP_bio_phys(10) = NTCP.PhysicalOpt.RBEMCNreCalc.Luxton.Tm_Joint.NTCP_Left;
+%     NTCP_bio_phys(11) = NTCP.PhysicalOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF25;
+%     NTCP_bio_phys(12) = NTCP.PhysicalOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF35;
+%     NTCP_bio_phys(13) = NTCP.PhysicalOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF45;
+%     NTCP_bio_phys(14) = NTCP.PhysicalOpt.RBEMCNreCalc.Roesink.Left.NTCP_SEF55;
     
     NTCP_bio_const(1) = NTCP.ConstRBEOpt.RBEMCNreCalc.Semenenko.NTCP_Left;
     NTCP_bio_const(2) = NTCP.ConstRBEOpt.RBEMCNreCalc.Burman.NTCP_Left;

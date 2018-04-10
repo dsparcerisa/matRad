@@ -27,7 +27,7 @@ cColor ={'black','green','magenta','cyan','yellow','red','blue'};
 
 % Rotate the system into the beam.
 % passive rotation & row vector multiplication & inverted rotation requires triple matrix transpose
-rotMat_system_T = transpose(matRad_getRotationMatrix(pln.gantryAngles(handles.selectedBeam),pln.couchAngles(handles.selectedBeam)));
+rotMat_system_T = transpose(matRad_getRotationMatrix(pln.propStf.gantryAngles(handles.selectedBeam),pln.propStf.couchAngles(handles.selectedBeam)));
 
 if strcmp(handles.ProfileType,'longitudinal')
     sourcePointBEV = [handles.profileOffset -SAD   0];
@@ -41,7 +41,7 @@ rotSourcePointBEV = sourcePointBEV * rotMat_system_T;
 rotTargetPointBEV = targetPointBEV * rotMat_system_T;
 
 % perform raytracing on the central axis of the selected beam
-[~,l,rho,~,ix] = matRad_siddonRayTracer(pln.isoCenter(handles.selectedBeam,:),ct.resolution,rotSourcePointBEV,rotTargetPointBEV,{ct.cube{1}});
+[~,l,rho,~,ix] = matRad_siddonRayTracer(pln.propStf.isoCenter(handles.selectedBeam,:),ct.resolution,rotSourcePointBEV,rotTargetPointBEV,{ct.cube{1}});
 d = [0 l .* rho{1}];
 % Calculate accumulated d sum.
 vX = cumsum(d(1:end-1));
