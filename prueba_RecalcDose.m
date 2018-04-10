@@ -15,10 +15,11 @@ ct        = evalin('base','ct');
 cst       = evalin('base','cst');
 resultGUI = evalin('base','resultGUI');
 
+scenGenType = 'nomScen';            % scenario creation type 'nomScen' 'wcScen' 'impScen' 'rndScen'
 % retrieve model parameters
 pln.bioParam = matRad_bioModel(pln.radiationMode, quantityOpt, modelName);
 % retrieve scenarios for dose calculation and optimziation
-pln.multScen = matRad_multScen(ct,pln.scenGenType);
+pln.multScen = matRad_multScen(ct,scenGenType);
 
 SelectedCube = 'RBExD';
 Suffix = strsplit(SelectedCube,'_');
@@ -35,8 +36,8 @@ end
 
 % change isocenter if that was changed and do _not_ recreate steering
 % information
-for i = 1:numel(pln.gantryAngles)
-    stf(i).isoCenter = pln.isoCenter(i,:);
+for i = 1:numel(pln.propStf.gantryAngles)
+    stf(i).isoCenter = pln.propStf.isoCenter(i,:);
 end
 
 % recalculate influence matrix
