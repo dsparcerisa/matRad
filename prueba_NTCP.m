@@ -17,7 +17,7 @@
 
 
 function  [ResultPhysical, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
-    prueba_NTCP(cst, pln, ct, phantomtype, GraphSel, DoseRecalc, DoseResults)
+    prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults)
 
 if ~isempty(DoseResults)
     ResultConstRBE = DoseResults{1,1};
@@ -70,51 +70,64 @@ ResultPhysical = 'Not evaluated';
 
 %% 2 - Calculo y optimizacion de dosis considerando el RBE = 1.1
 
-if DoseRecalc(1) > 0
-    clear ResultConstRBE
+if DoseRecalc{1,1}{1,1} > 0
     
-    quantityOpt         = 'RBExD';     % options: physicalDose, constRBE, effect, RBExD
-    modelName           = 'constRBE';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
-    % WED: Wedenberg-variable RBE model for protons
-    
-    
-    scenGenType = 'nomScen';            % scenario creation type 'nomScen' 'wcScen' 'impScen' 'rndScen'
-    
-    % retrieve model parameters
-    pln.bioParam = matRad_bioModel(pln.radiationMode, quantityOpt, modelName);
-    % retrieve scenarios for dose calculation and optimziation
-    pln.multScen = matRad_multScen(ct,scenGenType);
-    % generate steering file
-    stf = matRad_generateStf(ct,cst,pln);
-    
-    % dose calculation
-    if strcmp(pln.radiationMode,'photons')
-        dij = matRad_calcPhotonDose(ct,stf,pln,cst);
-    elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'helium') || strcmp(pln.radiationMode,'carbon')
-        dij = matRad_calcParticleDose(ct,stf,pln,cst);
+        quantityOpt         = 'RBExD';     % options: physicalDose, constRBE, effect, RBExD
+        modelName           = 'constRBE';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
+        % WED: Wedenberg-variable RBE model for protons
+        
+        
+        scenGenType = 'nomScen';            % scenario creation type 'nomScen' 'wcScen' 'impScen' 'rndScen'
+        
+        % retrieve model parameters
+        pln.bioParam = matRad_bioModel(pln.radiationMode, quantityOpt, modelName);
+        % retrieve scenarios for dose calculation and optimziation
+        pln.multScen = matRad_multScen(ct,scenGenType);
+        % generate steering file
+        stf = matRad_generateStf(ct,cst,pln);
+        
+    if DoseRecalc{1,1}{1,2} == 0
+        clear ResultConstRBE
+                
+        % dose calculation
+        if strcmp(pln.radiationMode,'photons')
+            dij = matRad_calcPhotonDose(ct,stf,pln,cst);
+        elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'helium') || strcmp(pln.radiationMode,'carbon')
+            dij = matRad_calcParticleDose(ct,stf,pln,cst);
+        end
+        
+        resultGUI = matRad_fluenceOptimization(dij,cst,pln);
+        
+        pause(1.5);
+        close all
+        clc
+        
+        ResultConstRBE.Optimized.dij = dij;
+        ResultConstRBE.Optimized.resultGUI = resultGUI;
+        
+        % Recalculo de dosis para RBEMCN 
+        
+        [~ ,ResultConstRBE.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(resultGUI, ct, stf, pln, cst, 'effect', 'MCN');
+        clear dij resultGUI quantityOpt modelName
+        
+    else
+        dij = ResultConstRBE.Optimized.dij;
+        resultGUI = matRad_fluenceOptimization(dij,cst,pln);
+        
+        pause(1.5);
+        close all
+        clc
+        
+        ResultConstRBE.Optimized.dij = dij;
+        ResultConstRBE.Optimized.resultGUI = resultGUI;
+        clear dij resultGUI quantityOpt modelName
     end
-    
-    resultGUI = matRad_fluenceOptimization(dij,cst,pln);
-    
-    pause(1.5);
-    close all
-    clc
-    
-    ResultConstRBE.Optimized.dij = dij;
-    ResultConstRBE.Optimized.resultGUI = resultGUI;
-    
-    % Recalculo de dosis para RBEMCN
-    
-    [~ ,ResultConstRBE.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(resultGUI, ct, stf, pln, cst, 'effect', 'MCN');
-    clear dij resultGUI quantityOpt modelName
-    
 end
 
 %% 3 - Calculo y optimizacion de dosis para el modelo McNamara
 
-if DoseRecalc(2) > 0
-    clear ResultRBEMCN
-    
+if DoseRecalc{2,1}{1,1} > 0
+        
     quantityOpt         = 'RBExD';      % options: physicalDose, constRBE, effect, RBExD
     modelName           = 'MCN';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
     % WED: Wedenberg-variable RBE model for protons
@@ -130,6 +143,10 @@ if DoseRecalc(2) > 0
     
     stf = matRad_generateStf(ct,cst,pln);
     
+    if DoseRecalc{2,1}{1,2} == 0
+    clear ResultRBEMCN
+
+    % dose calculation
     if strcmp(pln.radiationMode,'photons')
         dij = matRad_calcPhotonDose(ct,stf,pln,cst);
     elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'helium') || strcmp(pln.radiationMode,'carbon')
@@ -149,13 +166,24 @@ if DoseRecalc(2) > 0
     [~ ,ResultRBEMCN.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultRBEMCN.Optimized.resultGUI, ct, stf, pln, cst,'RBExD','constRBE');
     clear dij resultGUI quantityOpt modelName
     
+    else
+        dij = ResultRBEMCN.Optimized.dij;
+        resultGUI = matRad_fluenceOptimization(dij,cst,pln);
+        
+        pause(1.5);
+        close all
+        clc
+        
+        ResultConstRBE.Optimized.dij = dij;
+        ResultConstRBE.Optimized.resultGUI = resultGUI;
+        clear dij resultGUI quantityOpt modelName
+    end
 end
 
 %% 4 - Calculo y optimizacion de dosis para el modelo de planificacion UCM
 
-if DoseRecalc(3) > 0
-    clear ResultRBEUCM
-    
+if DoseRecalc{3,1}{1,1} > 0
+        
     quantityOpt         = 'RBExD';
     modelName           = 'UCM';             % none: for photons, protons, carbon                                    MCN: McNamara-variable RBE model for protons
     % WED: Wedenberg-variable RBE model for protons
@@ -170,6 +198,10 @@ if DoseRecalc(3) > 0
     
     stf = matRad_generateStf(ct,cst,pln);
     
+    if DoseRecalc{3,1}{1,2} == 0
+    clear ResultRBEUCM
+
+    % dose calculation
     if strcmp(pln.radiationMode,'photons')
         dij = matRad_calcPhotonDose(ct,stf,pln,cst);
     elseif strcmp(pln.radiationMode,'protons') || strcmp(pln.radiationMode,'helium') || strcmp(pln.radiationMode,'carbon')
@@ -189,6 +221,19 @@ if DoseRecalc(3) > 0
     [~ ,ResultRBEUCM.ConstRBEreCalc.resultGUI] = prueba_RecalcDose(ResultRBEUCM.Optimized.resultGUI, ct, stf, pln, cst, 'RBExD','constRBE');
     [~ ,ResultRBEUCM.RBEMCNreCalc.resultGUI] = prueba_RecalcDose(ResultRBEUCM.Optimized.resultGUI, ct, stf, pln, cst, 'effect', 'MCN');
     clear dij resultGUI quantityOpt modelName
+    
+    else
+        dij = ResultConstRBE.Optimized.dij;
+        resultGUI = matRad_fluenceOptimization(dij,cst,pln);
+        
+        pause(1.5);
+        close all
+        clc
+        
+        ResultConstRBE.Optimized.dij = dij;
+        ResultConstRBE.Optimized.resultGUI = resultGUI;
+        clear dij resultGUI quantityOpt modelName
+    end
 
 end
 
@@ -286,7 +331,7 @@ end
 
 %% 8 - Representacion de DVH para todas las VOI
 
-if GraphSel(4) > 0
+if GraphSel(4) == 1
     %Comparacion para RBE constante optimizado
     OptModel = cell(3,2);
     OptModel(1,1) = {'ConstRBE Optimized'};
@@ -329,6 +374,7 @@ end
 
 %% 9 - Calculo de RBE medio para RBEMCN con las diversas optimizaciones
 
+% clear midRBE
 % if strcmp(phantomtype, 'Prostate') >0
 %     Regions{1,1} = 'Rectum';
 %     Regions{2,1} = 'PTV_68';
@@ -388,7 +434,7 @@ end
 
 %% 10 - Comparacion de DVH para VOIs especificas
 
-if GraphSel(4) > 0
+if GraphSel(4) == 2
     % Todos los modelos juntos
     if strcmp(phantomtype, 'Prostate') >0
         Regions{1,1} = 'Rectum';
@@ -458,6 +504,8 @@ end
 if GraphSel(5) > 0
     %prueba_DVHstatsComp (pln, cst, Dose, refVol, refGy, Models, Name, FigRem)
     
+    clear DoseStatistics
+    
     % Estadisticas de dosis para el caso de ConstRBE optimizado
     Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
     Dose{2,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
@@ -496,6 +544,8 @@ end
 if strcmpi(phantomtype, 'TG119') > 0
     NTCP = 'No models';
 else
+    clear NTCP
+    
     % % Calculos de NTCP para PhysicalDose
     % NTCP.PhysicalOpt.Optimized = prueba_NTCPcalc(pln, cst, phantomtype, ResultPhysical.Optimized.resultGUI.physicalDose);
     % NTCP.PhysicalOpt.ConstRBEreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultPhysical.ConstRBEreCalc.resultGUI.RBExD);
@@ -519,6 +569,8 @@ end
 
 
 %% 13 - "Resumen" de valores de NTCP
+
+clear meanNTCP
 
 if strcmp (phantomtype, 'Prostate') > 0
     NTCP_bio_phys = nan(9,1);

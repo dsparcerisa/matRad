@@ -113,19 +113,23 @@ pln.propOpt.runSequencing  = false;   % 1/true: run sequencing, 0/false: don't /
 % Seleccion de graficas y estadisticas que mostrar (0 = Desactivado // 1 = Activado)
 perfGraphs = 0;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
-DGraphs = 0;          % Graficas de dosis 2D
-DVHGraphs = 1;        % Representacion de DVH
+DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
+DVHGraphs = 0;        % Representacion de DVH (1 = Generales // 2 = Especificas)
 DVHStats = 1;         % Calculo de las estadisticas generales de dosis
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
 
-% Seleccion de modelos de dosis a calcular (0 = Desactivado // 1 = Activado)
+% Seleccion de modelos de dosis a calcular 
+% Dosis{i,j}     j = 1 -> Activación del calculo (0 = Desactivado // 1 = Activado)
+%                j = 2 -> Recalculo de dij y reoptimizacion (0 = Todo // 1 = Solo reoptimizar)
 
-ConstRBE = 0;
-RBEMCN = 0;
-RBEUCM = 0;
+ConstRBE{1,1} = 0;  ConstRBE{1,2} = 0;
+RBEMCN{1,1} = 0;    RBEMCN{1,2} = 0;
+RBEUCM{1,1} = 0;    RBEUCM{1,2} = 0;
 
-DoseRecalc = [ConstRBE RBEMCN RBEUCM];
+DoseRecalc{1,1} = ConstRBE;
+DoseRecalc{2,1} = RBEMCN;
+DoseRecalc{3,1} = RBEUCM;
 
 % Calculos
 if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exist('ResultRBEUCM', 'var') > 0
@@ -136,14 +140,20 @@ if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exis
     DoseResults{1,3} = ResultRBEUCM;
     
     [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
-        prueba_NTCP(cst, pln, ct, phantomtype, GraphSel, DoseRecalc, DoseResults);
+        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults);
 else
     % Si no se ha calculado ninguna vez los resultados, ignora DoseRecalc y calcula todas las matrices de dosis automaticamente
     clear DoseResults
-    DoseRecalc = [1 1 1];
+    ConstRBE{1,1} = 1;  ConstRBE{1,2} = 1;
+    RBEMCN{1,1} = 1;    RBEMCN{1,2} = 1;
+    RBEUCM{1,1} = 1;    RBEUCM{1,2} = 1;
+    
+    DoseRecalc{1,1} = ConstRBE;
+    DoseRecalc{2,1} = RBEMCN;
+    DoseRecalc{3,1} = RBEUCM;
     DoseResults = [];
     [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
-        prueba_NTCP(cst, pln, ct, phantomtype, GraphSel, DoseRecalc, DoseResults);
+        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults);
 end
     
     clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP
