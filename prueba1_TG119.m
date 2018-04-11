@@ -76,8 +76,8 @@ pln.machine = 'Generic';
 
 % beam geometry settings
 pln.propStf.bixelWidth     = 5; % [mm] / also corresponds to lateral spot spacing for particles
-pln.propStf.gantryAngles   = [0]; % [?];
-pln.propStf.couchAngles    = [0]; % [?];
+pln.propStf.gantryAngles   = [45 315]; % [?];
+pln.propStf.couchAngles    = [0 0]; % [?];
 pln.propStf.numOfBeams     = numel(pln.propStf.gantryAngles);
 pln.propStf.isoCenter      = ones(pln.propStf.numOfBeams,1) * matRad_getIsoCenter(cst,ct,0);
 % optimization settings
@@ -92,7 +92,7 @@ perfGraphs = 0;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
 DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
 DVHGraphs = 0;        % Representacion de DVH (1 = Generales // 2 = Especificas)
-DVHStats = 1;         % Calculo de las estadisticas generales de dosis
+DVHStats = 0;         % Calculo de las estadisticas generales de dosis
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
 
@@ -108,6 +108,7 @@ DoseRecalc{1,1} = ConstRBE;
 DoseRecalc{2,1} = RBEMCN;
 DoseRecalc{3,1} = RBEUCM;
 
+
 % Calculos
 if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exist('ResultRBEUCM', 'var') > 0
     % Si ya se ha realizado un calculo de todas las matrices de dosis y solo se quiere reevaluar alguna de ellas
@@ -121,9 +122,10 @@ if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exis
 else
     % Si no se ha calculado ninguna vez los resultados, ignora DoseRecalc y calcula todas las matrices de dosis automaticamente
     clear DoseResults
-    ConstRBE{1,1} = 1;  ConstRBE{1,2} = 1;
-    RBEMCN{1,1} = 1;    RBEMCN{1,2} = 1;
-    RBEUCM{1,1} = 1;    RBEUCM{1,2} = 1;
+    DoseStatistics = 'Not evaluated';
+    ConstRBE{1,1} = 1;  ConstRBE{1,2} = 0;
+    RBEMCN{1,1} = 1;    RBEMCN{1,2} = 0;
+    RBEUCM{1,1} = 1;    RBEUCM{1,2} = 0;
     
     DoseRecalc{1,1} = ConstRBE;
     DoseRecalc{2,1} = RBEMCN;

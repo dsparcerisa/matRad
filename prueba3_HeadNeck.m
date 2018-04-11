@@ -137,9 +137,10 @@ if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exis
 else
     % Si no se ha calculado ninguna vez los resultados, ignora DoseRecalc y calcula todas las matrices de dosis automaticamente
     clear DoseResults
-    ConstRBE{1,1} = 1;  ConstRBE{1,2} = 1;
-    RBEMCN{1,1} = 1;    RBEMCN{1,2} = 1;
-    RBEUCM{1,1} = 1;    RBEUCM{1,2} = 1;
+    DoseStatistics = 'Not evaluated';
+    ConstRBE{1,1} = 1;  ConstRBE{1,2} = 0;
+    RBEMCN{1,1} = 1;    RBEMCN{1,2} = 0;
+    RBEUCM{1,1} = 1;    RBEUCM{1,2} = 0;
     
     DoseRecalc{1,1} = ConstRBE;
     DoseRecalc{2,1} = RBEMCN;
