@@ -4,7 +4,7 @@
 % 2 - Carga de parametros alpha y beta
 % 3 - Definicion de restricciones "distintas"
 % 4 - Introduccion de los datos basicos
-% 5 - Cálculos
+% 5 - Calculos
 
 %% 1 - Carga del phantom/paciente
 
@@ -83,6 +83,42 @@ pln.propOpt.runDAO         = false;   % 1/true: run DAO, 0/false: don't / will b
 pln.propOpt.runSequencing  = false;   % 1/true: run sequencing, 0/false: don't / will be ignored for particles and also triggered by runDAO below
 %pln.calcLET = true;
 
-%% 5 - Cálculos
+%% 5 - Calculos
 
-[~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP] = prueba_NTCP(cst, pln, ct, phantomtype);
+% Seleccion de graficas y estadisticas que mostrar (0 = Desactivado // 1 = Activado)
+perfGraphs = 0;       % Graficas de perfil de dosis
+perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
+DGraphs = 0;          % Graficas de dosis 2D
+DVHGraphs = 1;        % Representacion de DVH
+DVHStats = 1;         % Calculo de las estadisticas generales de dosis
+
+GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
+
+% Seleccion de modelos de dosis a calcular (0 = Desactivado // 1 = Activado)
+
+ConstRBE = 0;
+RBEMCN = 0;
+RBEUCM = 0;
+
+DoseRecalc = [ConstRBE RBEMCN RBEUCM];
+
+% Calculos
+if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exist('ResultRBEUCM', 'var') > 0
+    % Si ya se ha realizado un calculo de todas las matrices de dosis y solo se quiere reevaluar alguna de ellas
+    clear DoseResults
+    DoseResults{1,1} = ResultConstRBE;
+    DoseResults{1,2} = ResultRBEMCN;
+    DoseResults{1,3} = ResultRBEUCM;
+    
+    [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
+        prueba_NTCP(cst, pln, ct, phantomtype, GraphSel, DoseRecalc, DoseResults);
+else
+    % Si no se ha calculado ninguna vez los resultados, ignora DoseRecalc y calcula todas las matrices de dosis automaticamente
+    clear DoseResults
+    DoseRecalc = [1 1 1];
+    DoseResults = [];
+    [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
+        prueba_NTCP(cst, pln, ct, phantomtype, GraphSel, DoseRecalc, DoseResults);
+end
+    
+    clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP

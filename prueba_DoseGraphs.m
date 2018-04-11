@@ -2,7 +2,7 @@ function prueba_DoseGraphs (ct, pln, cst, NumBeam, ProfileType, DisplayOption, R
 
 
 if nargin<11
-    offSet = 0
+    offSet = 0;
 end
 
 figure
