@@ -13,7 +13,6 @@
 % 11 - Calculo de las estadisticas generales de dosis
 % 12 - Calculo de NTCP
 % 13 - "Resumen" de valores de NTCP
-% 14 - (Deshabilitado) Resultados de dij y resultGUI para ver en la GUI
 
 
 function  [ResultPhysical, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
@@ -701,32 +700,6 @@ elseif strcmpi(phantomtype, 'Head and Neck') > 0
     elseif strcmpi(phantomtype, 'TG119') > 0
          meanNTCP = 'No models';  
 end
-
-%% 14 - Resultados de dij y resultGUI para ver en la GUI
-
-% NOTA IMPORTANTE: Solo se puede cargar uno cada vez
-
-% Resultados para dosis física optimizada
-% dij = ResultPhysical.Optimized.dij;
-% resultGUI = ResultPhysical.Optimized.resultGUI;
-% resultGUI = ResultPhysical.ConstRBEreCalc.resultGUI;
-% resultGUI = ResultPhysical.RBEMCNreCalc.resultGUI;
-
-% Resultados para RBExD para el modelo ConstRBE optimizado
-% dij = ResultConstRBE.Optimized.dij;
-% resultGUI = ResultConstRBE.Optimized.resultGUI;
-% resultGUI = ResultConstRBE.RBEMCNreCalc.resultGUI;
-
-
-% Resultados para RBExD para el modelo RBEMCN optimizado
-% dij = ResultRBEMCN.Optimized.dij;
-% resultGUI = ResultRBEMCN.ConstRBEreCalc.resultGUI;
-% resultGUI = ResultRBEMCN.Optimized.resultGUI;
-
-% Resultados para RBExD para el modelo RBEUCM optimizado
-% dij = ResultRBEUCM.Optimized.dij;
-% resultGUI = ResultRBEUCM.ConstRBEreCalc.resultGUI;
-% resultGUI = ResultRBEUCM.RBEMCNreCalc.resultGUI;
 
 
 end

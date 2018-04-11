@@ -5,6 +5,8 @@
 % 3 - Definicion de restricciones "distintas"
 % 4 - Introduccion de los datos basicos
 % 5 - Calculos
+% 6 - Exportacion de resultados a la GUI
+% 7 - Apertura de la GUI
 
 %% 1 - Carga del phantom/paciente
 
@@ -157,3 +159,39 @@ else
 end
     
     clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP
+
+    
+%% 6 - Exportacion de resultados a la GUI
+
+% NOTA IMPORTANTE: Solo se puede cargar uno cada vez
+% NOTA 2: Segun el resultado que se quiera exportar hay que modificar el parametro modelname 
+
+clear dij resultGUI quantityOpt modelName stf
+
+quantityOpt         = 'RBExD';
+modelName           = 'constRBE';       % 'constRBE', 'MCN', 'UCM'
+scenGenType = 'nomScen';
+pln.bioParam = matRad_bioModel(pln.radiationMode, quantityOpt, modelName);
+pln.multScen = matRad_multScen(ct,scenGenType);
+stf = matRad_generateStf(ct,cst,pln);
+
+% Resultados para RBExD para el modelo ConstRBE optimizado
+dij = ResultConstRBE.Optimized.dij;
+resultGUI = ResultConstRBE.Optimized.resultGUI;
+% resultGUI = ResultConstRBE.RBEMCNreCalc.resultGUI;
+
+
+% Resultados para RBExD para el modelo RBEMCN optimizado
+% dij = ResultRBEMCN.Optimized.dij;
+% resultGUI = ResultRBEMCN.ConstRBEreCalc.resultGUI;
+% resultGUI = ResultRBEMCN.Optimized.resultGUI;
+
+
+% Resultados para RBExD para el modelo RBEUCM optimizado
+% dij = ResultRBEUCM.Optimized.dij;
+% resultGUI = ResultRBEUCM.ConstRBEreCalc.resultGUI;
+% resultGUI = ResultRBEUCM.RBEMCNreCalc.resultGUI;
+
+%% 7 - Apertura de la GUI
+
+matRadGUI 
