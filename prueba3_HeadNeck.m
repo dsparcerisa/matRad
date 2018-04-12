@@ -112,6 +112,14 @@ DVHStats = 1;         % Calculo de las estadisticas generales de dosis
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
 
+
+% Seleccion de estadisticas V_X y D_X
+refVol = []; % Valores D_X
+refGy = []; % Valores V_X
+
+StatsRef{1,1} = refVol;
+StatsRef{2,1} = refGy;
+
 % Seleccion de modelos de dosis a calcular 
 % Dosis{i,j}     j = 1 -> Activación del calculo (0 = Desactivado // 1 = Activado)
 %                j = 2 -> Recalculo de dij y reoptimizacion (0 = Todo // 1 = Solo reoptimizar)
@@ -124,6 +132,7 @@ DoseRecalc{1,1} = ConstRBE;
 DoseRecalc{2,1} = RBEMCN;
 DoseRecalc{3,1} = RBEUCM;
 
+
 % Calculos
 if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exist('ResultRBEUCM', 'var') > 0
     % Si ya se ha realizado un calculo de todas las matrices de dosis y solo se quiere reevaluar alguna de ellas
@@ -133,7 +142,7 @@ if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exis
     DoseResults{1,3} = ResultRBEUCM;
     
     [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
-        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults);
+        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef);
 else
     % Si no se ha calculado ninguna vez los resultados, ignora DoseRecalc y calcula todas las matrices de dosis automaticamente
     clear DoseResults
@@ -147,7 +156,7 @@ else
     DoseRecalc{3,1} = RBEUCM;
     DoseResults = [];
     [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
-        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults);
+        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef);
 end
     
     clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP

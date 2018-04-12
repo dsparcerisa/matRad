@@ -16,7 +16,7 @@
 
 
 function  [ResultPhysical, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
-    prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults)
+    prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef)
 
 if ~isempty(DoseResults)
     ResultConstRBE = DoseResults{1,1};
@@ -271,7 +271,7 @@ if GraphSel(1) > 0
     % print(fig, 'prueba', '-dpng')
     %
     %
-    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical GraphSel DoseRecalc
+    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical GraphSel DoseRecalc StatsRef
 end
 
 
@@ -325,7 +325,7 @@ if GraphSel(3) > 0
     prueba_DoseIntens (ct, pln, ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD, IsoDose_Levels, corte, 'RBExD', 'ConstRBE');
     prueba_DoseIntens (ct, pln, ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD, IsoDose_Levels, corte, 'RBExD', 'RBEMCN');
     
-    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical GraphSel DoseRecalc
+    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical GraphSel DoseRecalc StatsRef
 end
 
 %% 8 - Representacion de DVH para todas las VOI
@@ -368,8 +368,8 @@ if GraphSel(4) == 1
     clear OptModel
     
     
-    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical GraphSel DoseRecalc
-end
+    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical GraphSel DoseRecalc StatsRef
+end 
 
 %% 9 - Calculo de RBE medio para RBEMCN con las diversas optimizaciones
 
@@ -427,7 +427,7 @@ end
 %     end
 % end
 % 
-% clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM
+% clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE midRBE ResultPhysical GraphSel DoseRecalc StatsRef
 % ResultConstRBE ResultPhysical midRBE GraphSel DoseRecalc
 
 
@@ -494,13 +494,22 @@ if GraphSel(4) == 2
     %
     % %saveas(image_RBEMCN, 'DVHComp_RBEMCN.png')
     
-    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE midRBE ResultPhysical GraphSel DoseRecalc
+    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE midRBE ResultPhysical GraphSel DoseRecalc StatsRef
 end
 
 
 %% 11 - Calculo de las estadisticas generales de dosis
 
 if GraphSel(5) > 0
+    
+    if isempty(StatsRef)
+        refVol = [];
+        refGy = [];
+    else
+        refVol = StatsRef{1,1};
+        refGy = StatsRef{2,1};
+    end
+    
     %prueba_DVHstatsComp (pln, cst, Dose, refVol, refGy, Models, Name, FigRem)
     
     clear DoseStatistics
@@ -511,7 +520,7 @@ if GraphSel(5) > 0
     Models{1,1} = 'ConstRBE'; Models{1,2} = 'Optimized';
     Models{2,1} = 'RBEMCN';Models{2,2} = 'RBEMCNreCalc';
     
-    DoseStatistics.ConstRBEOpt = prueba_DVHstatsComp(pln, cst, Dose,[],[64.6 66.84], Models, 'ConstRBEOpt',0);
+    DoseStatistics.ConstRBEOpt = prueba_DVHstatsComp(pln, cst, Dose,refVol,refGy, Models, 'ConstRBEOpt',0);
     clear Dose Models
     
     % Estadisticas de dosis para el modelo de McNamara optimizado
@@ -520,7 +529,7 @@ if GraphSel(5) > 0
     Models{1,1} = 'ConstRBE'; Models{1,2} = 'ConstRBEreCalc';
     Models{2,1} = 'RBEMCN';Models{2,2} = 'Optimized';
     
-    DoseStatistics.RBEMCNOpt = prueba_DVHstatsComp(pln, cst, Dose,[],[64.6 66.84], Models, 'RBEMCNOpt',0);
+    DoseStatistics.RBEMCNOpt = prueba_DVHstatsComp(pln, cst, Dose,refVol,refGy, Models, 'RBEMCNOpt',0);
     clear Dose Models
     
     % Estadisticas de dosis para el modelo UCM optimizado
@@ -531,10 +540,10 @@ if GraphSel(5) > 0
     Models{2,1} = 'RBEMCN';Models{2,2} = 'RBEMCNreCalc';
     %Models{3,1} = 'RBEUCM';Models{3,2} = 'Optimized';
     
-    DoseStatistics.RBEUCMOpt = prueba_DVHstatsComp(pln, cst, Dose,[],[64.6 66.84], Models, 'RBEUCMOpt',0);
+    DoseStatistics.RBEUCMOpt = prueba_DVHstatsComp(pln, cst, Dose,refVol,refGy, Models, 'RBEUCMOpt',0);
     clear Dose Models
     
-    clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics GraphSel DoseRecalc
+    clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics GraphSel DoseRecalc StatsRef
 end
 
 
@@ -562,7 +571,7 @@ else
     NTCP.RBEUCMOpt.ConstRBEreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD);
     NTCP.RBEUCMOpt.RBEMCNreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD);
     
-    clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP GraphSel DoseRecalc
+    clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP GraphSel DoseRecalc StatsRef
     
 end
 

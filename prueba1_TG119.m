@@ -92,9 +92,17 @@ perfGraphs = 0;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
 DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
 DVHGraphs = 0;        % Representacion de DVH (1 = Generales // 2 = Especificas)
-DVHStats = 0;         % Calculo de las estadisticas generales de dosis
+DVHStats = 1;         % Calculo de las estadisticas generales de dosis
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
+
+
+% Seleccion de estadisticas V_X y D_X
+refVol = []; % Valores D_X
+refGy = []; % Valores V_X
+
+StatsRef{1,1} = refVol;
+StatsRef{2,1} = refGy;
 
 % Seleccion de modelos de dosis a calcular 
 % Dosis{i,j}     j = 1 -> Activación del calculo (0 = Desactivado // 1 = Activado)
@@ -118,7 +126,7 @@ if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exis
     DoseResults{1,3} = ResultRBEUCM;
     
     [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
-        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults);
+        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef);
 else
     % Si no se ha calculado ninguna vez los resultados, ignora DoseRecalc y calcula todas las matrices de dosis automaticamente
     clear DoseResults
@@ -132,7 +140,7 @@ else
     DoseRecalc{3,1} = RBEUCM;
     DoseResults = [];
     [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
-        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults);
+        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef);
 end
     
     clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP
@@ -146,22 +154,22 @@ end
 clear dij resultGUI quantityOpt modelName stf
 
 quantityOpt         = 'RBExD';
-modelName           = 'constRBE';       % 'constRBE', 'MCN', 'UCM'
+modelName           = 'MCN';       % 'constRBE', 'MCN', 'UCM'
 scenGenType = 'nomScen';
 pln.bioParam = matRad_bioModel(pln.radiationMode, quantityOpt, modelName);
 pln.multScen = matRad_multScen(ct,scenGenType);
 stf = matRad_generateStf(ct,cst,pln);
 
 % Resultados para RBExD para el modelo ConstRBE optimizado
-dij = ResultConstRBE.Optimized.dij;
-resultGUI = ResultConstRBE.Optimized.resultGUI;
+% dij = ResultConstRBE.Optimized.dij;
+% resultGUI = ResultConstRBE.Optimized.resultGUI;
 % resultGUI = ResultConstRBE.RBEMCNreCalc.resultGUI;
 
 
 % Resultados para RBExD para el modelo RBEMCN optimizado
-% dij = ResultRBEMCN.Optimized.dij;
-% resultGUI = ResultRBEMCN.ConstRBEreCalc.resultGUI;
-% resultGUI = ResultRBEMCN.Optimized.resultGUI;
+dij = ResultRBEMCN.Optimized.dij;
+%resultGUI = ResultRBEMCN.ConstRBEreCalc.resultGUI;
+resultGUI = ResultRBEMCN.Optimized.resultGUI;
 
 
 % Resultados para RBExD para el modelo RBEUCM optimizado
