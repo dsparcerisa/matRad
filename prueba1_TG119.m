@@ -23,48 +23,58 @@ cst = prueba_abLoader (cst, phantomtype);
 
 %% 3 - Definicion de restricciones "distintas"
 
-%       .type                   || NaN parameters
-
-% 'square underdosing'          ||.EUD - .volume
-% 'square overdosing'           ||.EUD - .volume
-% 'square deviation'            ||.EUD - .volume
-% 'mean'                        ||.dose - .EUD - .volume
-% 'EUD'                         ||.dose - .volume
-% 'min dose constraint'         ||.penalty - .EUD - .volume
-% 'max dose constraint'         ||.penalty - .EUD - .volume
-% 'min mean dose constraint'    ||.EUD - .volume
-% 'max mean dose constraint'    ||.EUD - .volume
-% 'min EUD constraint'          ||.penalty - .dose - .volume
-% 'max EUD constraint'          ||.penalty - .dose - .volume
-% 'min DVH constraint'          ||.penalty - .EUD 
-% 'max DVH constraint'          ||.penalty - .EUD
-% 'min DVH objective'           ||.EUD
-% 'max DVH objective'           ||.EUD
+%       .type                   || NaN parameters               ||OAR or Target         ||Total or dose/frac 
+ 
+% 'square underdosing'          ||.EUD - .volume                ||OAR/Target            ||Total
+% 'square overdosing'           ||.EUD - .volume                ||OAR/Target            ||Total                
+% 'square deviation'            ||.EUD - .volume                ||Target                ||Total
+% 'mean'                        ||.dose - .EUD - .volume        ||OAR                   ||Indiferente
+% 'EUD'                         ||.dose - .volume               ||OAR/Target            ||Indiferente          
+% 'min dose constraint'         ||.penalty - .EUD - .volume     ||Target                ||
+% 'max dose constraint'         ||.penalty - .EUD - .volume     ||OAR/Target            ||
+% 'min mean dose constraint'    ||.EUD - .volume                ||Target                ||
+% 'max mean dose constraint'    ||.EUD - .volume                ||OAR/Target            ||
+% 'min EUD constraint'          ||.penalty - .dose - .volume    ||OAR/Target            ||Indiferente
+% 'max EUD constraint'          ||.penalty - .dose - .volume    ||OAR/Target            ||Indiferente
+% 'min DVH constraint'          ||.penalty - .EUD               ||Target                ||
+% 'max DVH constraint'          ||.penalty - .EUD               ||OAR/Target            ||
+% 'min DVH objective'           ||.EUD                          ||Target                ||dose/frac
+% 'max DVH objective'           ||.EUD                          ||OAR/Target            ||dose/frac
 
 
 % Core
-cst{1,6}.type = 'square overdosing';
-cst{1,6}.dose = 25;
-cst{1,6}.EUD = NaN;
-cst{1,6}.penalty = 300;
-cst{1,6}.volume = NaN;
-cst{1,6}.robustness = 'none';
+% cst{1,6}.type = 'square overdosing';
+% cst{1,6}.dose = 25;
+% cst{1,6}.EUD = NaN;
+% cst{1,6}.penalty = 300;
+% cst{1,6}.volume = NaN;
+% cst{1,6}.robustness = 'none';
 
-% Target
-cst{2,6}.type = 'square deviation';
-cst{2,6}.dose = 50;
+
+% OuterTarget
+% cst{2,6}.type = 'square deviation';
+% cst{2,6}.dose = 50;
+% cst{2,6}.EUD = NaN;
+% cst{2,6}.penalty = 1000;
+% cst{2,6}.volume = NaN;
+% cst{2,6}.robustness = 'none';
+
+% Prueba 12 Abril 
+cst{2,6}.type = 'max dose constraint';
+cst{2,6}.dose = 2;
 cst{2,6}.EUD = NaN;
-cst{2,6}.penalty = 1000;
+cst{2,6}.penalty = NaN;
 cst{2,6}.volume = NaN;
 cst{2,6}.robustness = 'none';
 
+
 % Body
-cst{3,6}.type = 'square overdosing';
-cst{3,6}.dose = 30;
-cst{3,6}.EUD = NaN;
-cst{3,6}.penalty = 100;
-cst{3,6}.volume = NaN;
-cst{3,6}.robustness = 'none';
+% cst{3,6}.type = 'square overdosing';
+% cst{3,6}.dose = 30;
+% cst{3,6}.EUD = NaN;
+% cst{3,6}.penalty = 100;
+% cst{3,6}.volume = NaN;
+% cst{3,6}.robustness = 'none';
 
     
 %% 4 - Introduccion de los datos basicos
@@ -76,8 +86,8 @@ pln.machine = 'Generic';
 
 % beam geometry settings
 pln.propStf.bixelWidth     = 5; % [mm] / also corresponds to lateral spot spacing for particles
-pln.propStf.gantryAngles   = [45 315]; % [?];
-pln.propStf.couchAngles    = [0 0]; % [?];
+pln.propStf.gantryAngles   = [0]; % [?];
+pln.propStf.couchAngles    = [0]; % [?];
 pln.propStf.numOfBeams     = numel(pln.propStf.gantryAngles);
 pln.propStf.isoCenter      = ones(pln.propStf.numOfBeams,1) * matRad_getIsoCenter(cst,ct,0);
 % optimization settings
@@ -92,7 +102,7 @@ perfGraphs = 0;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
 DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
 DVHGraphs = 0;        % Representacion de DVH (1 = Generales // 2 = Especificas)
-DVHStats = 1;         % Calculo de las estadisticas generales de dosis
+DVHStats = 0;         % Calculo de las estadisticas generales de dosis
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
 

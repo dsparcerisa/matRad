@@ -24,23 +24,24 @@ cst = prueba_abLoader (cst, phantomtype);
 
 %% 3 - Definicion de restricciones 
 
-%       .type                   || NaN parameters
+%       .type                   || NaN parameters               ||OAR or Target         ||Total or dose/frac 
+ 
+% 'square underdosing'          ||.EUD - .volume                ||OAR/Target            ||Total
+% 'square overdosing'           ||.EUD - .volume                ||OAR/Target            ||Total                
+% 'square deviation'            ||.EUD - .volume                ||Target                ||Total
+% 'mean'                        ||.dose - .EUD - .volume        ||OAR                   ||Indiferente
+% 'EUD'                         ||.dose - .volume               ||OAR/Target            ||Indiferente          
+% 'min dose constraint'         ||.penalty - .EUD - .volume     ||Target                ||
+% 'max dose constraint'         ||.penalty - .EUD - .volume     ||OAR/Target            ||
+% 'min mean dose constraint'    ||.EUD - .volume                ||Target                ||
+% 'max mean dose constraint'    ||.EUD - .volume                ||OAR/Target            ||
+% 'min EUD constraint'          ||.penalty - .dose - .volume    ||OAR/Target            ||Indiferente
+% 'max EUD constraint'          ||.penalty - .dose - .volume    ||OAR/Target            ||Indiferente
+% 'min DVH constraint'          ||.penalty - .EUD               ||Target                ||
+% 'max DVH constraint'          ||.penalty - .EUD               ||OAR/Target            ||
+% 'min DVH objective'           ||.EUD                          ||Target                ||dose/frac
+% 'max DVH objective'           ||.EUD                          ||OAR/Target            ||dose/frac
 
-% 'square underdosing'          ||.EUD - .volume
-% 'square overdosing'           ||.EUD - .volume
-% 'square deviation'            ||.EUD - .volume
-% 'mean'                        ||.dose - .EUD - .volume
-% 'EUD'                         ||.dose - .volume
-% 'min dose constraint'         ||.penalty - .EUD - .volume
-% 'max dose constraint'         ||.penalty - .EUD - .volume
-% 'min mean dose constraint'    ||.EUD - .volume
-% 'max mean dose constraint'    ||.EUD - .volume
-% 'min EUD constraint'          ||.penalty - .dose - .volume
-% 'max EUD constraint'          ||.penalty - .dose - .volume
-% 'min DVH constraint'          ||.penalty - .EUD 
-% 'max DVH constraint'          ||.penalty - .EUD
-% 'min DVH objective'           ||.EUD
-% 'max DVH objective'           ||.EUD
     
 % Parotid_LT
 cst{13,6}.type = 'square overdosing';
