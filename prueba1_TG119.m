@@ -28,53 +28,83 @@ cst = prueba_abLoader (cst, phantomtype);
 % 'square underdosing'          ||.EUD - .volume                ||OAR/Target            ||Total
 % 'square overdosing'           ||.EUD - .volume                ||OAR/Target            ||Total                
 % 'square deviation'            ||.EUD - .volume                ||Target                ||Total
-% 'mean'                        ||.dose - .EUD - .volume        ||OAR                   ||Indiferente
-% 'EUD'                         ||.dose - .volume               ||OAR/Target            ||Indiferente          
+% 'mean'                        ||.dose - .EUD - .volume        ||OAR                   ||Total
+% 'EUD'                         ||.dose - .volume               ||OAR/Target            ||Total        
 % 'min dose constraint'         ||.penalty - .EUD - .volume     ||Target                ||
 % 'max dose constraint'         ||.penalty - .EUD - .volume     ||OAR/Target            ||
 % 'min mean dose constraint'    ||.EUD - .volume                ||Target                ||
 % 'max mean dose constraint'    ||.EUD - .volume                ||OAR/Target            ||
-% 'min EUD constraint'          ||.penalty - .dose - .volume    ||OAR/Target            ||Indiferente
-% 'max EUD constraint'          ||.penalty - .dose - .volume    ||OAR/Target            ||Indiferente
+% 'min EUD constraint'          ||.penalty - .dose - .volume    ||OAR/Target            ||Total
+% 'max EUD constraint'          ||.penalty - .dose - .volume    ||OAR/Target            ||Total
 % 'min DVH constraint'          ||.penalty - .EUD               ||Target                ||
 % 'max DVH constraint'          ||.penalty - .EUD               ||OAR/Target            ||
-% 'min DVH objective'           ||.EUD                          ||Target                ||dose/frac
-% 'max DVH objective'           ||.EUD                          ||OAR/Target            ||dose/frac
+% 'min DVH objective'           ||.EUD                          ||Target                ||Total
+% 'max DVH objective'           ||.EUD                          ||OAR/Target            ||Total
+
+% VOLUMEN EN TANTO POR CIENTO SIEMPRE!
 
 % DEFAULT VALUES -------------------------
 % Core
-cst{1,6}.type = 'square overdosing';
-cst{1,6}.dose = 10; %25;
+% Standard
+%cst{1,6}.type = 'square overdosing';
+%cst{1,6}.dose = 10; %25;
+%cst{1,6}.volume = NaN;
+% New version
+cst{1,5}.Priority = 2;
+cst{1,6}.type = 'max DVH objective';
+cst{1,6}.dose = 15; %25;
+cst{1,6}.volume = 5;
 cst{1,6}.EUD = NaN;
-cst{1,6}.penalty = 300;
-cst{1,6}.volume = NaN;
+cst{1,6}.penalty = 3000;
 cst{1,6}.robustness = 'none';
 
 % OuterTarget
-cst{2,6}.type = 'square deviation';
-cst{2,6}.dose = 50;
-cst{2,6}.EUD = NaN;
-cst{2,6}.penalty = 1000;
-cst{2,6}.volume = NaN;
-cst{2,6}.robustness = 'none';
+% Old version
+%cst{2,6}.type = 'square deviation';
+%cst{2,6}.dose = 50;
+%cst{2,6}.volume = NaN;
+%cst{2,6}.EUD = NaN;
+%cst{2,6}.penalty = 1000;
+%cst{2,6}.volume = NaN;
+%cst{2,6}.robustness = 'none';
+
+% New version
+cst{2,5}.Priority = 1;
+
+% Independientemente de los objetivos de DVH, siempre conviene poner un
+% squeare deviation en el target
+cst{2,6}(1).type = 'square deviation';
+cst{2,6}(1).dose = 50;
+cst{2,6}(1).volume = NaN;
+cst{2,6}(1).EUD = NaN;
+cst{2,6}(1).penalty = 1000;
+cst{2,6}(1).robustness = 'none';
+
+cst{2,6}(2).type = 'min DVH objective';
+cst{2,6}(2).dose = 50;
+cst{2,6}(2).volume = 99;
+cst{2,6}(2).EUD = NaN;
+cst{2,6}(2).penalty = 1000;
+cst{2,6}(2).robustness = 'none';
+
+cst{2,6}(3).type = 'max DVH objective';
+cst{2,6}(3).dose = 55;
+cst{2,6}(3).volume = 10;
+cst{2,6}(3).EUD = NaN;
+cst{2,6}(3).penalty = 500;
+cst{2,6}(3).robustness = 'none';
 
 % Body
+% Este es necesario para conformar
+cst{3,5}.Priority = 3;
 cst{3,6}.type = 'square overdosing';
 cst{3,6}.dose = 30;
 cst{3,6}.EUD = NaN;
 cst{3,6}.penalty = 100;
 cst{3,6}.volume = NaN;
 cst{3,6}.robustness = 'none';
+
 % ----------------------------------------
-
-% % Prueba 12 Abril 
-% cst{2,6}.type = 'max dose constraint';
-% cst{2,6}.dose = 2;
-% cst{2,6}.EUD = NaN;
-% cst{2,6}.penalty = NaN;
-% cst{2,6}.volume = NaN;
-% cst{2,6}.robustness = 'none';
-
     
 %% 4 - Introduccion de los datos basicos
 
@@ -188,4 +218,4 @@ resultGUI = ResultRBEMCN.Optimized.resultGUI;
 
 %% 7 - Apertura de la GUI
 
-matRadGUI
+% matRadGUI
