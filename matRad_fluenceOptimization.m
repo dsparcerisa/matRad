@@ -92,7 +92,7 @@ cst  = matRad_setOverlapPriorities(cst);
 
 % adjust objectives and constraints internally for fractionation 
 for i = 1:size(cst,1)
-    for j = 1:size(cst{i,6},1)
+    for j = 1:size(cst{i,6},2)
        cst{i,6}(j).dose = cst{i,6}(j).dose/pln.numOfFractions;
     end
 end
