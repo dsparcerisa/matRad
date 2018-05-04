@@ -767,9 +767,10 @@ try
     currPln = evalin('base','pln');
     % if we run 3d conf opt -> hijack runDao to trigger computation of
     % connected bixels
-    if strcmp(pln.radiationMode,'photons') && get(handles.radiobutton3Dconf,'Value')
-       currpln.propOpt.runDAO = true; 
-    end
+    % FIX 4 may
+    %if strcmp(pln.radiationMode,'photons') && get(handles.radiobutton3Dconf,'Value')
+    %   currpln.propOpt.runDAO = true; 
+    %end
 
     stf = matRad_generateStf(evalin('base','ct'),...
                                      evalin('base','cst'),...
@@ -1501,7 +1502,9 @@ try
     ct  = evalin('base','ct');
  
     % optimize
-    if get(handles.radiobutton3Dconf,'Value') && strcmp(handles.Modalities{get(handles.popupRadMode,'Value')},'photons')
+    % FIX DSP 4 may
+    %if get(handles.radiobutton3Dconf,'Value') && strcmp(handles.Modalities{get(handles.popupRadMode,'Value')},'photons')
+    if false
         % conformal plan if photons and 3d conformal
         if ~matRad_checkForConnectedBixelRows(evalin('base','stf'))
             error('disconnetced dose influence data in BEV - run dose calculation again with consistent settings');

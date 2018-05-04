@@ -41,40 +41,39 @@ cst = prueba_abLoader (cst, phantomtype);
 % 'min DVH objective'           ||.EUD                          ||Target                ||dose/frac
 % 'max DVH objective'           ||.EUD                          ||OAR/Target            ||dose/frac
 
-
+% DEFAULT VALUES -------------------------
 % Core
-% cst{1,6}.type = 'square overdosing';
-% cst{1,6}.dose = 25;
-% cst{1,6}.EUD = NaN;
-% cst{1,6}.penalty = 300;
-% cst{1,6}.volume = NaN;
-% cst{1,6}.robustness = 'none';
-
+cst{1,6}.type = 'square overdosing';
+cst{1,6}.dose = 10; %25;
+cst{1,6}.EUD = NaN;
+cst{1,6}.penalty = 300;
+cst{1,6}.volume = NaN;
+cst{1,6}.robustness = 'none';
 
 % OuterTarget
-% cst{2,6}.type = 'square deviation';
-% cst{2,6}.dose = 50;
-% cst{2,6}.EUD = NaN;
-% cst{2,6}.penalty = 1000;
-% cst{2,6}.volume = NaN;
-% cst{2,6}.robustness = 'none';
-
-% Prueba 12 Abril 
-cst{2,6}.type = 'max dose constraint';
-cst{2,6}.dose = 2;
+cst{2,6}.type = 'square deviation';
+cst{2,6}.dose = 50;
 cst{2,6}.EUD = NaN;
-cst{2,6}.penalty = NaN;
+cst{2,6}.penalty = 1000;
 cst{2,6}.volume = NaN;
 cst{2,6}.robustness = 'none';
 
-
 % Body
-% cst{3,6}.type = 'square overdosing';
-% cst{3,6}.dose = 30;
-% cst{3,6}.EUD = NaN;
-% cst{3,6}.penalty = 100;
-% cst{3,6}.volume = NaN;
-% cst{3,6}.robustness = 'none';
+cst{3,6}.type = 'square overdosing';
+cst{3,6}.dose = 30;
+cst{3,6}.EUD = NaN;
+cst{3,6}.penalty = 100;
+cst{3,6}.volume = NaN;
+cst{3,6}.robustness = 'none';
+% ----------------------------------------
+
+% % Prueba 12 Abril 
+% cst{2,6}.type = 'max dose constraint';
+% cst{2,6}.dose = 2;
+% cst{2,6}.EUD = NaN;
+% cst{2,6}.penalty = NaN;
+% cst{2,6}.volume = NaN;
+% cst{2,6}.robustness = 'none';
 
     
 %% 4 - Introduccion de los datos basicos
@@ -98,11 +97,11 @@ pln.propOpt.runSequencing  = false;   % 1/true: run sequencing, 0/false: don't /
 %% 5 - Calculos
 
 % Seleccion de graficas y estadisticas que mostrar (0 = Desactivado // 1 = Activado)
-perfGraphs = 0;       % Graficas de perfil de dosis
-perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
-DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
-DVHGraphs = 0;        % Representacion de DVH (1 = Generales // 2 = Especificas)
-DVHStats = 0;         % Calculo de las estadisticas generales de dosis
+perfGraphs = 1;       % Graficas de perfil de dosis
+perfRBEGraphs = 1;    % Graficas de perfil de dosis vs RBE
+DGraphs = 1;          % Graficas de dosis 2D en z = z(dij max)
+DVHGraphs = 1;        % Representacion de DVH (1 = Generales // 2 = Especificas)
+DVHStats = 1;         % Calculo de las estadisticas generales de dosis
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
 
