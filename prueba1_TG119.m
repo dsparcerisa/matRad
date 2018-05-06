@@ -4,9 +4,10 @@
 % 2 - Carga de parametros alpha y beta
 % 3 - Definicion de restricciones "distintas"
 % 4 - Introduccion de los datos basicos
-% 5 - Calculos
-% 6 - Exportacion de resultados a la GUI
-% 7 - Apertura de la GUI
+% 5 - Seleccion de calculos
+% 6 - Calculos
+% 7 - Exportacion de resultados a la GUI
+% 8 - Apertura de la GUI
 
 %% 1 - Carga del phantom/paciente
 
@@ -124,14 +125,14 @@ pln.propOpt.runDAO         = false;   % 1/true: run DAO, 0/false: don't / will b
 pln.propOpt.runSequencing  = false;   % 1/true: run sequencing, 0/false: don't / will be ignored for particles and also triggered by runDAO below
 %pln.calcLET = true;
 
-%% 5 - Calculos
+%% 5 - Seleccion de calculos
 
 % Seleccion de graficas y estadisticas que mostrar (0 = Desactivado // 1 = Activado)
-perfGraphs = 1;       % Graficas de perfil de dosis
-perfRBEGraphs = 1;    % Graficas de perfil de dosis vs RBE
-DGraphs = 1;          % Graficas de dosis 2D en z = z(dij max)
-DVHGraphs = 1;        % Representacion de DVH (1 = Generales // 2 = Especificas)
-DVHStats = 1;         % Calculo de las estadisticas generales de dosis
+perfGraphs = 0;       % Graficas de perfil de dosis
+perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
+DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
+DVHGraphs = 2;        % Representacion de DVH (1 = Generales // 2 = Especificas)
+DVHStats = 0;         % Calculo de las estadisticas generales de dosis
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
 
@@ -144,7 +145,7 @@ StatsRef{1,1} = refVol;
 StatsRef{2,1} = refGy;
 
 % Seleccion de modelos de dosis a calcular 
-% Dosis{i,j}     j = 1 -> Activación del calculo (0 = Desactivado // 1 = Activado)
+% Dosis{i,j}     j = 1 -> Activacion del calculo (0 = Desactivado // 1 = Activado)
 %                j = 2 -> Recalculo de dij y reoptimizacion (0 = Todo // 1 = Solo reoptimizar)
 
 ConstRBE{1,1} = 0;  ConstRBE{1,2} = 0;
@@ -155,8 +156,38 @@ DoseRecalc{1,1} = ConstRBE;
 DoseRecalc{2,1} = RBEMCN;
 DoseRecalc{3,1} = RBEUCM;
 
+if DVHGraphs == 2 && exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exist('ResultRBEUCM', 'var') > 0
+    % Seleccion de regiones especificas para comparar DVH
+    % NumReg actua como contador de VOIs Target y OAR.
+    % Ej: Si tenemos DVHRegions{i,1} = 'OAR_i' --> NumReg{i,1} = i
+    % Ej: Si tenemos DVHRegions{1,1} = 'OAR' y DVHRegions{2,1} = 'Target' --> NumReg{[1,2],1} = 1
+    %       Es decir, el numero de OAR y Target se cuenta por separado (NumReg maximo = 3)
+    
+    DVHRegions{1,1} = 'Core';
+    NumReg{1,1} = 1; % Numero de Targets
+    DVHRegions{2,1} = 'OuterTarget';
+    NumReg{2,1} = 1; % Numero de OARs
+    % DVHRegions{3,1} = 'BODY';
+    % NumReg{3,1} = 2; % Numero de OARs
+    
+    
+    % Seleccion de modelos en comparacion de DVH
+    % Dose{i,1} = a.b.resultGUI.RBExD --> Seleccion de la matriz de dosis
+    %                               a = ResultConstRBE // ResultRBEMCN // ResultRBEUCM
+    %                               b = Optimized // ConstRBEreCalc // RBEMCNreCalc
+    
+    
+    Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
+    Dose{2,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
+    
+    % Variable a traves de la que entran todas las opciones al activar DVHGraphs = 2
+    CompDVH{1,1} = DVHRegions;
+    CompDVH{2,1} = NumReg;
+    CompDVH{3,1} = Dose;
 
-% Calculos
+end
+
+%% 6 - Calculos
 if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exist('ResultRBEUCM', 'var') > 0
     % Si ya se ha realizado un calculo de todas las matrices de dosis y solo se quiere reevaluar alguna de ellas
     clear DoseResults
@@ -165,7 +196,7 @@ if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exis
     DoseResults{1,3} = ResultRBEUCM;
     
     [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
-        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef);
+        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH);
 else
     % Si no se ha calculado ninguna vez los resultados, ignora DoseRecalc y calcula todas las matrices de dosis automaticamente
     clear DoseResults
@@ -179,13 +210,13 @@ else
     DoseRecalc{3,1} = RBEUCM;
     DoseResults = [];
     [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
-        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef);
+        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH);
 end
     
     clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP
 
     
-%% 6 - Exportacion de resultados a la GUI
+%% 7 - Exportacion de resultados a la GUI
 
 % NOTA IMPORTANTE: Solo se puede cargar uno cada vez
 % NOTA 2: Segun el resultado que se quiera exportar hay que modificar el parametro modelname 
@@ -216,6 +247,6 @@ resultGUI = ResultRBEMCN.Optimized.resultGUI;
 % resultGUI = ResultRBEUCM.ConstRBEreCalc.resultGUI;
 % resultGUI = ResultRBEUCM.RBEMCNreCalc.resultGUI;
 
-%% 7 - Apertura de la GUI
+%% 8 - Apertura de la GUI
 
 % matRadGUI
