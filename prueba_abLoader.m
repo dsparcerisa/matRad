@@ -47,7 +47,7 @@ else
     % Datos de tumores
     if strcmp (phantomtype, 'Prostate')
         TumorAlphaXBetaX = {'PTV', [0.026 0.024], 'Bentzen and Ritter (2005)+Chapman(2015)', 'Prostate cancer';
-            'prostate bed', [0.026 0.024], 'Bentzen and Ritter (2005)+Chapman(2015)', 'Prostate Cancer'};
+            'prostate_bed', [0.026 0.024], 'Bentzen and Ritter (2005)+Chapman(2015)', 'Prostate Cancer'};
         
     else strcmp (phantomtype, 'Head and Neck')
         TumorAlphaXBetaX = {'PTV', [0.4 0.21], 'Bj�rk-Eriksson (2000)', 'H&N carcinoma'};
