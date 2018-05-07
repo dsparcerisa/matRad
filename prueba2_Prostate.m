@@ -42,30 +42,25 @@ cst = prueba_abLoader (cst, phantomtype);
 % 'max DVH objective'           ||.EUD                          ||OAR/Target            ||dose/frac
 
 
-% EUD para el Rectum
-cst{1,6}.type = 'EUD';
-cst{1,6}.dose = NaN;
-cst{1,6}.EUD = 85; % Con 70 se vuelve to loco
-cst{1,6}.penalty = 50;
-cst{1,6}.volume = 50;
-cst{1,6}.robustness = 'none';
-
 % PTV_68
-cst{6,6}.type = 'square deviation';
-cst{6,6}.dose = 68;
-cst{6,6}.penalty = 1000;
-cst{6,6}.EUD = NaN;
-cst{6,6}.volume = NaN;
-cst{6,6}.robustness = 'none';
-% prueba 9 de marzo
-cst{6,6}.type = 'min DVH objective';
-cst{6,6}.dose = 64;
-cst{6,6}.penalty = 1000;
-cst{6,6}.EUD = 0.95;
-cst{6,6}.volume = NaN;
-cst{6,6}.robustness = 'none';
+cst{6,5}(1).Priority = 1;
+
+cst{6,6}(1).type = 'square deviation';
+cst{6,6}(1).dose = 78;
+cst{6,6}(1).penalty = 1000;
+cst{6,6}(1).EUD = NaN;
+cst{6,6}(1).volume = NaN;
+cst{6,6}(1).robustness = 'none';
+
+cst{6,6}(2).type = 'min DVH objective';
+cst{6,6}(2).dose = 78;
+cst{6,6}(2).penalty = 500;
+cst{6,6}(2).EUD = NaN;
+cst{6,6}(2).volume = 97;
+cst{6,6}(2).robustness = 'none';
 
 % PTV_56
+cst{7,5}.Priority = 2;
 cst{7,6}.type = 'square deviation';
 cst{7,6}.dose = 56;
 cst{7,6}.penalty = 1000;
