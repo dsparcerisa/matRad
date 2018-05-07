@@ -69,15 +69,59 @@ cst{7,6}.volume = NaN;
 cst{7,6}.robustness = 'none';
 
 % Bladder
-cst{8,6}.type = 'square overdosing';
-cst{8,6}.dose = 50;
-cst{8,6}.penalty = 300;
-cst{8,6}.EUD = NaN;
-cst{8,6}.volume = NaN;
-cst{8,6}.robustness = 'none';
+cst{8,5}.Priority = 3;
 
+cst{8,6}(1).type = 'max DVH objective';
+cst{8,6}(1).dose = 70;
+cst{8,6}(1).penalty = 300;
+cst{8,6}(1).EUD = NaN;
+cst{8,6}(1).volume = 35;
+cst{8,6}(1).robustness = 'none';
+
+cst{8,6}(2).type = 'max DVH objective';
+cst{8,6}(2).dose = 50;
+cst{8,6}(2).penalty = 300;
+cst{8,6}(2).EUD = NaN;
+cst{8,6}(2).volume = 60;
+cst{8,6}(2).robustness = 'none';
+
+% Rectum
+
+cst{1,5}.Priority = 3;
+
+cst{1,6}(1).type = 'max DVH objective';
+cst{1,6}(1).dose = 70;
+cst{1,6}(1).penalty = 700;
+cst{1,6}(1).EUD = NaN;
+cst{1,6}(1).volume = 30;
+cst{1,6}(1).robustness = 'none';
+
+cst{1,6}(2).type = 'max DVH objective';
+cst{1,6}(2).dose = 50;
+cst{1,6}(2).penalty = 700;
+cst{1,6}(2).EUD = NaN;
+cst{1,6}(2).volume = 50;
+cst{1,6}(2).robustness = 'none';
+
+% Femoral heads
+cst{4,5}.Priority = 3;
+cst{4,6}.type = 'max DVH objective';
+cst{4,6}.dose = 50;
+cst{4,6}.penalty = 300;
+cst{4,6}.EUD = NaN;
+cst{4,6}.volume = 5;
+cst{4,6}.robustness = 'none';
+
+cst{10,5}.Priority = 3;
+cst{10,6}.type = 'max DVH objective';
+cst{10,6}.dose = 50;
+cst{10,6}.penalty = 300;
+cst{10,6}.EUD = NaN;
+cst{10,6}.volume = 5;
+cst{10,6}.robustness = 'none';
 
 % Body
+cst{9,5}.Priority = 4;
 cst{9,6}.type = 'square overdosing';
 cst{9,6}.dose = 30;
 cst{9,6}.penalty = 100;
@@ -89,14 +133,14 @@ cst{9,6}.robustness = 'none';
 %% 4 - Introduccion de los datos basicos
 
 % meta information for treatment plan 
-pln.numOfFractions = 30;
+pln.numOfFractions = 39;
 pln.radiationMode = 'protons';           % either photons / protons / helium / carbon
 pln.machine = 'Generic';
 
 % beam geometry settings
 pln.propStf.bixelWidth     = 5; % [mm] / also corresponds to lateral spot spacing for particles
-pln.propStf.gantryAngles   = [0]; % [?];
-pln.propStf.couchAngles    = [0]; % [?];
+pln.propStf.gantryAngles   = [90 270]; % [?];
+pln.propStf.couchAngles    = [0 0]; % [?];
 pln.propStf.numOfBeams     = numel(pln.propStf.gantryAngles);
 pln.propStf.isoCenter      = ones(pln.propStf.numOfBeams,1) * matRad_getIsoCenter(cst,ct,0);
 % optimization settings
@@ -108,11 +152,11 @@ pln.propOpt.runSequencing  = false;   % 1/true: run sequencing, 0/false: don't /
 %% 5 - Calculos
 
 % Seleccion de graficas y estadisticas que mostrar (0 = Desactivado // 1 = Activado)
-perfGraphs = 0;       % Graficas de perfil de dosis
+perfGraphs = 1;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
 DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
-DVHGraphs = 0;        % Representacion de DVH (1 = Generales // 2 = Especificas)
-DVHStats = 1;         % Calculo de las estadisticas generales de dosis
+DVHGraphs = 1;        % Representacion de DVH (1 = Generales // 2 = Especificas)
+DVHStats = 0;         % Calculo de las estadisticas generales de dosis
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
 
@@ -198,5 +242,5 @@ resultGUI = ResultConstRBE.Optimized.resultGUI;
 % resultGUI = ResultRBEUCM.RBEMCNreCalc.resultGUI;
 
 %% 7 - Apertura de la GUI
-
+save('testProstate4may2018.mat')
 matRadGUI 
