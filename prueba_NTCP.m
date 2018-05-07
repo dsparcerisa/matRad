@@ -1,4 +1,4 @@
-%% Estructuracion del programa
+% Estructuracion del programa
 
 % 1 - (Deshabilitado) Calculo y optimizacion para dosis fisica
 % 2 - Calculo y optimizacion de dosis considerando el RBE = 1.1
@@ -16,7 +16,7 @@
 
 
 function  [ResultPhysical, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
-    prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef)
+    prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH)
 
 if ~isempty(DoseResults)
     ResultConstRBE = DoseResults{1,1};
@@ -433,69 +433,43 @@ end
 
 %% 10 - Comparacion de DVH para VOIs especificas
 
-if GraphSel(4) == 2
-    % Todos los modelos juntos
-    if strcmp(phantomtype, 'Prostate') >0
-        Regions{1,1} = 'Rectum';
-        Regions{2,1} = 'PTV_68';
-    elseif strcmp(phantomtype, 'Head and Neck') >0
-        Regions = [];
-    elseif strcmp(phantomtype, 'TG119') >0
-        Regions = [];
+if GraphSel(4) == 2 && ~isempty(CompDVH{1,1}) > 0
+    
+    Regions = CompDVH{1,1};
+    Dose = CompDVH{3,1};
+    OptModel = cell(size(Dose,1),2);
+    NumReg = CompDVH{2,1};
+    
+    for i = 1:size(Dose,1)
+        if Dose{i,1} == ResultConstRBE.Optimized.resultGUI.RBExD;
+            OptModel(i,1) = {' ConstRBEOpt '};
+            OptModel(i,2) = {' ConstRBE '};
+        elseif Dose{i,1} == ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
+            OptModel(i,1) = {' ConstRBEOpt '};
+            OptModel(i,2) = {' RBEMCN '};
+        elseif Dose{i,1} == ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
+            OptModel(i,1) = {' RBEMCNOpt '};
+            OptModel(i,2) = {' ConstRBE '};
+        elseif  Dose{i,1} == ResultRBEMCN.Optimized.resultGUI.RBExD;
+            OptModel(i,1) = {' RBEMCNOpt '};
+            OptModel(i,2) = {' RBEMCN '};
+        elseif Dose{i,1} == ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
+            OptModel(i,1) = {' RBEUCMOpt '};
+            OptModel(i,2) = {' ConstRBE '};
+        elseif Dose{i,1} == ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
+            OptModel(i,1) = {' RBEUCMOpt '};
+            OptModel(i,2) = {' RBEMCN '};
+        end
     end
     
-    OptModel = cell(6,2);
-    OptModel([1,2],1) = {' ConstRBEOpt '};
-    OptModel([3,4],1) = {' RBEMCNOpt '};
-    OptModel([5,6],1) = {' RBEUCMOpt '};
-    OptModel([1,3,5],2) = {' ConstRBE '};
-    OptModel([2,4,6],2) = {' RBEMCN '};
-    
-    Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
-    Dose{2,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
-    Dose{3,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
-    Dose{4,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
-    Dose{5,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
-    Dose{6,1}= ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
-    
-    if ~isempty(Regions)
-        image_All = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
-        %saveas(image_All, 'DVHComp_All.png'); close;
-        clear OptModel Dose
-    end
-    
-    % % Solo ConstRBE
-    % OptModel = cell(6,2);
-    % OptModel(1,1) = {' ConstRBEOpt '};
-    % OptModel(2,1) = {' RBEMCNOpt '};
-    % OptModel(3,1) = {' RBEUCMOpt '};
-    % OptModel([1,2,3],2) = {' ConstRBE '};
-    %
-    % Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
-    % Dose{2,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
-    % Dose{3,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
-    %
-    % image_ConstRBE = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
-    % %saveas(image_ConstRBE, 'DVHComp_ConstRBE.png'); close;
-    % clear OptModel Dose
-    %
-    % % Solo RBEMCN
-    % OptModel = cell(6,2);
-    % OptModel(1,1) = {' ConstRBEOpt '};
-    % OptModel(2,1) = {' RBEMCNOpt '};
-    % OptModel(3,1) = {' RBEUCMOpt '};
-    % OptModel([1,2,3],2) = {' RBEMCN '};
-    %
-    % Dose{1,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
-    % Dose{2,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
-    % Dose{3,1}= ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
-    %
-    % image_RBEMCN = prueba_compDVH ( pln , cst, Dose, Regions, OptModel);
-    %
-    % %saveas(image_RBEMCN, 'DVHComp_RBEMCN.png')
-    
-    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE midRBE ResultPhysical GraphSel DoseRecalc StatsRef
+    prueba_compDVH (pln , cst, Dose, Regions, OptModel, NumReg);
+    %saveas(image_All, 'DVHComp_All.png'); close;
+    clear OptModel Dose
+else
+    fprintf('Warning: There are no selected regions. Skipping DVH Comparation for specific VOIs');
 end
+
+clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE midRBE ResultPhysical GraphSel DoseRecalc StatsRef
 
 
 %% 11 - Calculo de las estadisticas generales de dosis
@@ -544,6 +518,7 @@ if GraphSel(5) > 0
     clear Dose Models
     
     clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics GraphSel DoseRecalc StatsRef
+    
 end
 
 

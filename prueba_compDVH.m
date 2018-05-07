@@ -1,10 +1,10 @@
 
-%%Funci�n para hacer comparaciones entre DVHs para los diferentes c�lculos
+%%Funcion para hacer comparaciones entre DVHs para los diferentes c�lculos
 %%de dosis
 
 %recomendado que la tercera sea la optimizada
 
-function image = prueba_compDVH ( pln , cst, Dose, VOI, OptModel)
+function image = prueba_compDVH ( pln , cst, Dose, VOI, OptModel, NumReg)
 
 figure('Name','DVH','Color',[0.5 0.5 0.5],'Position',([0 30 1500 650]));
 hold on
@@ -51,77 +51,26 @@ if ~isempty (VOI)
                     end
                     
                     % Line color
-                    if strcmp (cst{j,2}, 'Rectum') && strcmp (OptModel{i,2}, ' ConstRBE ')
+                    
+                    if  strcmp (OptModel{i,2}, ' ConstRBE ') && NumReg{l,1} == 1
                         ColorLine = 'b';
-                    elseif strcmp (cst{j,2}, 'Rectum') && strcmp (OptModel{i,2}, ' RBEMCN ')
-                        ColorLine = 'r';
-                    elseif strcmp (cst{j,2}, 'PTV_68') && strcmp (OptModel{i,2}, ' ConstRBE ')
-                        ColorLine = 'b';
-                    elseif strcmp (cst{j,2}, 'PTV_68') && strcmp (OptModel{i,2}, ' RBEMCN ')
-                        ColorLine = 'r';
+                    elseif strcmp (OptModel{i,2}, ' ConstRBE ') && NumReg{l,1} == 2
+                        ColorLine = 'c';
+                    elseif strcmp (OptModel{i,2}, ' ConstRBE ') && NumReg{l,1} == 3
+                        ColorLine = 'g';
+                    elseif strcmp (OptModel{i,2}, ' RBEMCN ') && NumReg{l,1} == 1
+                        ColorLine = 'r'; 
+                    elseif strcmp (OptModel{i,2}, ' RBEMCN ') && NumReg{l,1} == 2
+                        ColorLine = 'm';
+                    elseif strcmp (OptModel{i,2}, ' RBEMCN ') && NumReg{l,1} == 3
+                        ColorLine = 'k';
+
                     end
                     
                     plot(dvhPoints,dvh{i,1}, LineStyle,'MarkerSize',2,...
                             'LineWidth',2,'Color', ColorLine,'DisplayName',...
                             strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
-                        
-                        
-                    % Marcadores especificos
-                    
-                                        
-                    % Dosis del PTV
-                    if strcmp (cst{j,2}, 'PTV_68')
-                        % Línea V95 
-                        % line([64.6 64.6], [0 100.5],'LineStyle' , ':' ,'Color',[0,0.8,0],'LineWidth',1.5,'HandleVisibility','off'); hold on
-                        % Línea V98 
-                        % line([66.84 66.84], [0 100.5],'LineStyle' , ':' ,'Color','k','LineWidth',1.5,'HandleVisibility','off'); hold on
-                        
-                        % Restricciones 
-%                         for m = 1:size(cst{j,6},1)
-%                             if i==1
-%                                 if strcmp(cst{j,6}(m).type,'max DVH constraint') > 0 || strcmp(cst{j,6}(m).type,'max DVH objective') > 0
-%                                     line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'PTV 68 max DVH objective',...
-%                                         'LineStyle' , '--' ,'Color','k','LineWidth',2); hold on
-%                                 elseif strcmp(cst{j,6}(m).type,'square deviation') > 0
-%                                     line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'PTV 68 square deviation',...
-%                                         'LineStyle' , '-.' ,'Color','k','LineWidth',2); hold on
-%                                 elseif strcmp(cst{j,6}(m).type,'min DVH objective') > 0 
-%                                     line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'PTV 68 min DVH objective',...
-%                                         'LineStyle' , '--' ,'Color',[0.38,0.38,0.38],'LineWidth',2); hold on
-%                                 end
-%                             end
-%                         end
-%                     
-                    
-                    elseif strcmp (cst{j,2}, 'Rectum')
-                                              
-%                         % V_X en el recto
-%                         [~, V40] = min(abs(dvhPoints-40));
-%                         [~, V60] = min(abs(dvhPoints-60));
-%                         [~, V70] = min(abs(dvhPoints-70));
-%                         [~, V75] = min(abs(dvhPoints-75));
-%                         V_Points = [V40 V60 V70 V75];
-%                         if i==1
-%                             plot(dvhPoints(V_Points),dvh{i,1}(V_Points),'.', 'MarkerSize',15,'LineWidth',2,...
-%                                 'Color', 'k', 'DisplayName', 'Rectum V40 V60 V70 V75');hold on
-%                         else
-%                             plot(dvhPoints(V_Points),dvh{i,1}(V_Points),'.', 'MarkerSize',15,'LineWidth',2,'Color', 'k','HandleVisibility','off');hold on
-%                         end
-                        
-%                         % Restricciones maximas y m�nimas del DVH
-%                         for m = 1:size(cst{j,6},1)
-%                             if i==1
-%                                 if strcmp(cst{j,6}(m).type,'max DVH constraint') > 0 || strcmp(cst{j,6}(m).type,'max DVH objective') > 0
-%                                     line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'Rectum max DVH objective',...
-%                                         'LineStyle' , '--' ,'Color',[0,0.4,0],'LineWidth',2); hold on
-%                                 elseif strcmp(cst{j,6}(m).type,'min DVH constraint') > 0 || strcmp(cst{j,6}(m).type,'min DVH objective') > 0
-%                                     line([cst{j,6}(m).dose cst{j,6}(m).dose], [0 110],'DisplayName', 'Rectum min DVH objective',...
-%                                         'LineStyle' , '--' ,'Color',[0,1,0],'LineWidth',2); hold on
-%                                 end
-%                             end
-%                         end
-                        
-                    end                       
+
                 end
             end
         end
