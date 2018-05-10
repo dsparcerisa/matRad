@@ -473,6 +473,7 @@ clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultCon
 
 
 %% 11 - Calculo de las estadisticas generales de dosis
+DoseStatistics = 'Not Evaluated';
 
 if GraphSel(5) > 0
     
