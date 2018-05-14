@@ -128,11 +128,12 @@ pln.propOpt.runSequencing  = false;   % 1/true: run sequencing, 0/false: don't /
 %% 5 - Seleccion de calculos
 
 % Seleccion de graficas y estadisticas que mostrar (0 = Desactivado // 1 = Activado)
-perfGraphs = 1;       % Graficas de perfil de dosis
-perfRBEGraphs = 1;    % Graficas de perfil de dosis vs RBE
-DGraphs = 1;          % Graficas de dosis 2D en z = z(dij max)
-DVHGraphs = 1;        % Representacion de DVH (1 = Generales // 2 = Especificas)
-DVHStats = 1;         % Calculo de las estadisticas generales de dosis
+perfGraphs = 0;       % Graficas de perfil de dosis
+perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
+DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
+DVHGraphs = 2;        % Representacion de DVH (1 = Generales // 2 = Especificas)
+DVHStats = 0;         % Calculo de las estadisticas generales de dosis
+DVHComp = 1; % Para el futuro
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
 
@@ -152,9 +153,14 @@ ConstRBE{1,1} = 0;  ConstRBE{1,2} = 0;
 RBEMCN{1,1} = 0;    RBEMCN{1,2} = 0;
 RBEUCM{1,1} = 0;    RBEUCM{1,2} = 0;
 
+CompDVH{3,1} = [];
+
 DoseRecalc{1,1} = ConstRBE;
 DoseRecalc{2,1} = RBEMCN;
 DoseRecalc{3,1} = RBEUCM;
+
+ROIsqueDaniquieremostrarcondosisfisica = {'OuterTarget'};
+ROIsqueDaniquieremostrarcondosisRBE = {'Core'};
 
 if DVHGraphs == 2 && exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exist('ResultRBEUCM', 'var') > 0
     % Seleccion de regiones especificas para comparar DVH
@@ -179,6 +185,10 @@ if DVHGraphs == 2 && exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 
     
     Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
     Dose{2,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
+    Dose{3,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
+    Dose{4,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
+    Dose{5,1} = ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
+    Dose{6,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
     
     % Variable a traves de la que entran todas las opciones al activar DVHGraphs = 2
     CompDVH{1,1} = DVHRegions;
@@ -209,12 +219,12 @@ else
     DoseRecalc{2,1} = RBEMCN;
     DoseRecalc{3,1} = RBEUCM;
     DoseResults = [];
-    CompDVH{3,1} = [];
+    %%CompDVH{3,1} = [];
     [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
         prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH);
 end
     
-    clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP
+    clearvars -except ct cst CompDVH GraphSel phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP
 
     
 %% 7 - Exportacion de resultados a la GUI
