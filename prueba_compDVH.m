@@ -1,10 +1,11 @@
 
-%%Funcion para hacer comparaciones entre DVHs para los diferentes c�lculos
+%%Funcion para hacer comparaciones entre DVHs para los diferentes calculos
 %%de dosis
 
 %recomendado que la tercera sea la optimizada
 
-function image = prueba_compDVH ( pln , cst, Dose, VOI, OptModel, NumReg)
+function image = prueba_compDVH ( pln , cst, Dose, VOI, OptModel, VOIType)
+
 
 figure('Name','DVH','Color',[0.5 0.5 0.5],'Position',([0 30 1500 650]));
 hold on
@@ -15,6 +16,9 @@ LineStyle(1:3,1) = {'-' ':' '--'};
 colorMx    = colorcube;
 colorMx    = colorMx(1:floor(64/(numOfVois)):64,:);
 
+ColorLine    = colorcube;
+ColorLine    = ColorLine(1:floor(64/(size(VOI,1))):64,:);
+
 n = 1000;
 
 for i = 1:size(Dose,1)
@@ -23,8 +27,6 @@ for i = 1:size(Dose,1)
 end
 
 dvhPoints = linspace (0, pln.numOfFractions.* max([maxDose{i,1}])*1.05, n);
-
-
 
 
 if ~isempty (VOI)
@@ -50,27 +52,19 @@ if ~isempty (VOI)
                         LineStyle = '--';
                     end
                     
-                    % Line color
-                    
-                    if  strcmp (OptModel{i,2}, ' ConstRBE ') && NumReg{l,1} == 1
-                        ColorLine = 'b';
-                    elseif strcmp (OptModel{i,2}, ' ConstRBE ') && NumReg{l,1} == 2
-                        ColorLine = 'c';
-                    elseif strcmp (OptModel{i,2}, ' ConstRBE ') && NumReg{l,1} == 3
-                        ColorLine = 'g';
-                    elseif strcmp (OptModel{i,2}, ' RBEMCN ') && NumReg{l,1} == 1
-                        ColorLine = 'r'; 
-                    elseif strcmp (OptModel{i,2}, ' RBEMCN ') && NumReg{l,1} == 2
-                        ColorLine = 'm';
-                    elseif strcmp (OptModel{i,2}, ' RBEMCN ') && NumReg{l,1} == 3
-                        ColorLine = 'k';
+                    if strcmp (OptModel{i,2}, ' ConstRBE ') && strcmpi (VOIType{l,1},'Target') > 0
 
+                    plot(dvhPoints,dvh{i,1}, LineStyle,'MarkerSize',2,...
+                            'LineWidth',2,'Color', ColorLine(l,:),'DisplayName',...
+                            strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
+                        
+                    elseif strcmp (OptModel{i,2}, ' RBEMCN ') && strcmpi (VOIType{l,1},'OAR') > 0
+                       
+                    plot(dvhPoints,dvh{i,1}, LineStyle,'MarkerSize',2,...
+                            'LineWidth',2,'Color', ColorLine(l,:),'DisplayName',...
+                            strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
                     end
                     
-                    plot(dvhPoints,dvh{i,1}, LineStyle,'MarkerSize',2,...
-                            'LineWidth',2,'Color', ColorLine,'DisplayName',...
-                            strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
-
                 end
             end
         end

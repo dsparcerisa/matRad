@@ -186,74 +186,72 @@ DoseRecalc{1,1} = ConstRBE;
 DoseRecalc{2,1} = RBEMCN;
 DoseRecalc{3,1} = RBEUCM;
 
-if DVHGraphs == 2 && exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exist('ResultRBEUCM', 'var') > 0
-    % Seleccion de regiones especificas para comparar DVH
-    % NumReg actua como contador de VOIs Target y OAR.
-    % Ej: Si tenemos DVHRegions{i,1} = 'OAR_i' --> NumReg{i,1} = i
-    % Ej: Si tenemos DVHRegions{1,1} = 'OAR' y DVHRegions{2,1} = 'Target' --> NumReg{[1,2],1} = 1
-    %       Es decir, el numero de OAR y Target se cuenta por separado (NumReg maximo = 3)
-    
-    DVHRegions{1,1} = 'PTV_68';
-    NumReg{1,1} = 1; % Numero de Targets
-    DVHRegions{2,1} = 'Rectum';
-    NumReg{2,1} = 1; % Numero de Targets    
-    DVHRegions{3,1} = 'Rt femoral head';
-    NumReg{3,1} = 2; % Numero de Targets        
-%    DVHRegions{4,1} = 'Lt femoral head';
-    DVHRegions{4,1} = 'Bladder';
-    NumReg{4,1} = 3; % Numero de Targets        
-    % DVHRegions{3,1} = 'Bladder';
-    % NumReg{3,1} = 2; % Numero de OARs
-    
-    
-    % Seleccion de modelos en comparacion de DVH
-    % Dose{i,1} = a.b.resultGUI.RBExD --> Seleccion de la matriz de dosis
-    %                               a = ResultConstRBE // ResultRBEMCN // ResultRBEUCM
-    %                               b = Optimized // ConstRBEreCalc // RBEMCNreCalc
-    
-    
-    Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
-    Dose{2,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
-    Dose{3,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
-    Dose{4,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
-    Dose{5,1} = ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
-    Dose{6,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
-    
-    % Variable a traves de la que entran todas las opciones al activar DVHGraphs = 2
-    CompDVH{1,1} = DVHRegions;
-    CompDVH{2,1} = NumReg;
-    CompDVH{3,1} = Dose;
 
-end
+% Seleccion de regiones especificas para comparar DVH
+
+DVHRegions{1,1} = 'PTV_68';
+VOIType{1,1} = 'Target';
+
+DVHRegions{2,1} = 'Rectum';
+VOIType{2,1} = 'OAR';
+
+DVHRegions{3,1} = 'Rt femoral head';
+VOIType{3,1} = 'OAR';
+
+DVHRegions{4,1} = 'Lt femoral head';
+VOIType{4,1} = 'OAR';
+
+DVHRegions{4,1} = 'Bladder';
+VOIType{5,1} = 'OAR';
+
+
+% Variable a traves de la que entran todas las opciones al activar DVHGraphs = 2
+CompDVH{1,1} = DVHRegions;
+CompDVH{2,1} = NumReg;
+
+
+
 
 %% 6 - Calculos
-if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exist('ResultRBEUCM', 'var') > 0
-    % Si ya se ha realizado un calculo de todas las matrices de dosis y solo se quiere reevaluar alguna de ellas
-    clear DoseResults
-    DoseResults{1,1} = ResultConstRBE;
-    DoseResults{1,2} = ResultRBEMCN;
-    DoseResults{1,3} = ResultRBEUCM;
-    
-    [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
-        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH);
-else
-    % Si no se ha calculado ninguna vez los resultados, ignora DoseRecalc y calcula todas las matrices de dosis automaticamente
-    clear DoseResults
-    DoseStatistics = 'Not evaluated';
-    ConstRBE{1,1} = 1;  ConstRBE{1,2} = 0;
-    RBEMCN{1,1} = 1;    RBEMCN{1,2} = 0;
-    RBEUCM{1,1} = 1;    RBEUCM{1,2} = 0;
-    
-    DoseRecalc{1,1} = ConstRBE;
-    DoseRecalc{2,1} = RBEMCN;
-    DoseRecalc{3,1} = RBEUCM;
-    DoseResults = [];
-    CompDVH{3,1} = [];
-    [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
-        prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH);
+
+graphlaunch = 0;
+
+while graphlaunch < 1
+    if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exist('ResultRBEUCM', 'var') > 0
+        % Si ya se ha realizado un calculo de todas las matrices de dosis y solo se quiere reevaluar alguna de ellas
+        clear DoseResults
+        DoseResults{1,1} = ResultConstRBE;
+        DoseResults{1,2} = ResultRBEMCN;
+        DoseResults{1,3} = ResultRBEUCM;
+        
+        [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
+            prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH);
+        
+        graphlaunch = 1;
+    else
+        % Si no se ha calculado ninguna vez los resultados, ignora DoseRecalc y calcula todas las matrices de dosis automaticamente
+        clear DoseResults CompDVH
+        CompDVH{2,1} = [];
+        GraphSel_ignore = [0 0 0 0 0];
+        DoseStatistics = 'Not evaluated';
+        
+        ConstRBE_ig{1,1} = 1;  ConstRBE_ig{1,2} = 0;
+        RBEMCN_ig{1,1} = 1;    RBEMCN_ig{1,2} = 0;
+        RBEUCM_ig{1,1} = 1;    RBEUCM_ig{1,2} = 0;
+        
+        DoseRecalc_ig{1,1} = ConstRBE_ig;
+        DoseRecalc_ig{2,1} = RBEMCN_ig;
+        DoseRecalc_ig{3,1} = RBEUCM_ig;
+        
+        DoseResults = [];
+        [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
+            prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel_ignore, DoseRecalc_ig, DoseResults, StatsRef, []);
+        
+    end
 end
-    
-    clearvars -except CompDVH GraphSel ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP
+
+    clearvars -except ct cst CompDVH phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP
+ 
 
     
 %% 7 - Exportacion de resultados a la GUI

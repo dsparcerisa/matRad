@@ -271,7 +271,7 @@ if GraphSel(1) > 0
     % print(fig, 'prueba', '-dpng')
     %
     %
-    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical GraphSel DoseRecalc StatsRef
+    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical GraphSel DoseRecalc StatsRef CompDVH
 end
 
 
@@ -325,7 +325,7 @@ if GraphSel(3) > 0
     prueba_DoseIntens (ct, pln, ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD, IsoDose_Levels, corte, 'RBExD', 'ConstRBE');
     prueba_DoseIntens (ct, pln, ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD, IsoDose_Levels, corte, 'RBExD', 'RBEMCN');
     
-    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical GraphSel DoseRecalc StatsRef
+    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical GraphSel DoseRecalc StatsRef CompDVH
 end
 
 %% 8 - Representacion de DVH para todas las VOI
@@ -368,7 +368,7 @@ if GraphSel(4) == 1
     clear OptModel
     
     
-    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical GraphSel DoseRecalc StatsRef
+    clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical GraphSel DoseRecalc StatsRef CompDVH
 end 
 
 %% 9 - Calculo de RBE medio para RBEMCN con las diversas optimizaciones
@@ -436,33 +436,41 @@ end
 if GraphSel(4) == 2 && ~isempty(CompDVH{1,1}) > 0
     
     Regions = CompDVH{1,1};
-    Dose = CompDVH{3,1};
+    VOIType = CompDVH{2,1};
+       
+    Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
+    Dose{2,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
+    Dose{3,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
+    Dose{4,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
+    Dose{5,1} = ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
+    Dose{6,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
+    
     OptModel = cell(size(Dose,1),2);
-    NumReg = CompDVH{2,1};
+    
     
     for i = 1:size(Dose,1)
-        if Dose{i,1} == ResultConstRBE.Optimized.resultGUI.RBExD;
+        if Dose{i,1} == ResultConstRBE.Optimized.resultGUI.RBExD
             OptModel(i,1) = {' ConstRBEOpt '};
             OptModel(i,2) = {' ConstRBE '};
-        elseif Dose{i,1} == ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
+        elseif Dose{i,1} == ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD
             OptModel(i,1) = {' ConstRBEOpt '};
             OptModel(i,2) = {' RBEMCN '};
-        elseif Dose{i,1} == ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
+        elseif Dose{i,1} == ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD
             OptModel(i,1) = {' RBEMCNOpt '};
             OptModel(i,2) = {' ConstRBE '};
-        elseif  Dose{i,1} == ResultRBEMCN.Optimized.resultGUI.RBExD;
+        elseif  Dose{i,1} == ResultRBEMCN.Optimized.resultGUI.RBExD
             OptModel(i,1) = {' RBEMCNOpt '};
             OptModel(i,2) = {' RBEMCN '};
-        elseif Dose{i,1} == ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
+        elseif Dose{i,1} == ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD
             OptModel(i,1) = {' RBEUCMOpt '};
             OptModel(i,2) = {' ConstRBE '};
-        elseif Dose{i,1} == ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
+        elseif Dose{i,1} == ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD
             OptModel(i,1) = {' RBEUCMOpt '};
             OptModel(i,2) = {' RBEMCN '};
         end
     end
     
-    prueba_compDVH (pln , cst, Dose, Regions, OptModel, NumReg);
+    prueba_compDVH (pln , cst, Dose, Regions, OptModel, VOIType);
     %saveas(image_All, 'DVHComp_All.png'); close;
     clear OptModel Dose
 else
