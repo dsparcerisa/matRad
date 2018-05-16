@@ -188,7 +188,7 @@ while graphlaunch < 1
     end
 end
 
-    clearvars -except ct cst CompDVH phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP
+    clearvars -except ct cst CompDVH GraphSel phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP
 
     
 %% 7 - Exportacion de resultados a la GUI
