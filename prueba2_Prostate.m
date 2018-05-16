@@ -203,13 +203,11 @@ VOIType{4,1} = 'OAR';
 
 DVHRegions{4,1} = 'Bladder';
 VOIType{5,1} = 'OAR';
-
+    
 
 % Variable a traves de la que entran todas las opciones al activar DVHGraphs = 2
 CompDVH{1,1} = DVHRegions;
-CompDVH{2,1} = NumReg;
-
-
+CompDVH{2,1} = VOIType;
 
 
 %% 6 - Calculos
