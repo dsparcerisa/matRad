@@ -144,17 +144,15 @@ VOIType{2,1} = 'OAR';
 % VOIType{3,1} = 'OAR';
 
 
-% Variable a traves de la que entran todas las opciones al activar DVHGraphs = 2
-CompDVH{1,1} = DVHRegions;
-CompDVH{2,1} = VOIType;
-
-
-
 %% 6 - Calculos
 
 graphlaunch = 0;
 
 while graphlaunch < 1
+    
+    CompDVH{1,1} = DVHRegions;
+    CompDVH{2,1} = VOIType;
+    
     if exist('ResultConstRBE','var') > 0 && exist('ResultRBEMCN', 'var') > 0 && exist('ResultRBEUCM', 'var') > 0
         % Si ya se ha realizado un calculo de todas las matrices de dosis y solo se quiere reevaluar alguna de ellas
         clear DoseResults
@@ -168,8 +166,7 @@ while graphlaunch < 1
         graphlaunch = 1;
     else
         % Si no se ha calculado ninguna vez los resultados, ignora DoseRecalc y calcula todas las matrices de dosis automaticamente
-        clear DoseResults CompDVH
-        CompDVH{2,1} = [];
+        clear DoseResults
         GraphSel_ignore = [0 0 0 0 0];
         DoseStatistics = 'Not evaluated';
         
