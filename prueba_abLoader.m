@@ -49,9 +49,14 @@ else
         TumorAlphaXBetaX = {'PTV', [0.026 0.024], 'Bentzen and Ritter (2005)+Chapman(2015)', 'Prostate cancer';
             'prostate_bed', [0.026 0.024], 'Bentzen and Ritter (2005)+Chapman(2015)', 'Prostate Cancer'};
         
-    else strcmp (phantomtype, 'Head and Neck')
+    elseif strcmp (phantomtype, 'Head and Neck')
         TumorAlphaXBetaX = {'PTV', [0.4 0.21], 'Bj�rk-Eriksson (2000)', 'H&N carcinoma'};
         
+    elseif
+        TumorAlphaXBetaX = {'CTV', [0.08 0.01], 'Han et al (2013)', 'Arbitrario (HPC carcinoma)';
+            'GTV', [0.08 0.01], 'Han et al (2013)', 'Arbitrario (HPC carcinoma)';
+            'PTV', [0.08 0.01], 'Han et al (2013)', 'Arbitrario (HPC carcinoma)';
+                'Liver-CTV', [0.08 0.01], 'Han et al (2013)', 'Arbitrario (HPC carcinoma)'};
     end
 end
 
