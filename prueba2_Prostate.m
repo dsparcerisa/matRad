@@ -81,10 +81,10 @@ cst{8,6}(2).robustness = 'none';
 % Rectum
 cst{1,5}.Priority = 3;
 cst{1,6}.type = 'max DVH objective';
-cst{1,6}.dose = 40;
-cst{1,6}.penalty = 500;
+cst{1,6}.dose = 70;
+cst{1,6}.penalty = 2500;
 cst{1,6}.EUD = NaN;
-cst{1,6}.volume = 20;
+cst{1,6}.volume = 5;
 cst{1,6}.robustness = 'none';
 
 % Femoral heads
@@ -140,8 +140,8 @@ pln.propOpt.runSequencing  = false;   % 1/true: run sequencing, 0/false: don't /
 perfGraphs = 0;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
 DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
-DVHGraphs = 2;        % Representacion de DVH (1 = Generales // 2 = Especificas)
-DVHStats = 0;         % Calculo de las estadisticas generales de dosis
+DVHGraphs = 1;        % Representacion de DVH (1 = Generales // 2 = Especificas)
+DVHStats = 1;         % Calculo de las estadisticas generales de dosis
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
 

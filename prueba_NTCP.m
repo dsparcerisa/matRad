@@ -236,6 +236,8 @@ if DoseRecalc{3,1}{1,1} > 0
 
 end
 
+% 4.5 probar a renormalizar
+
 %% 5 - Graficas de perfil de dosis
 
 if GraphSel(1) > 0
@@ -524,7 +526,54 @@ if GraphSel(5) > 0
     %Models{3,1} = 'RBEUCM';Models{3,2} = 'Optimized';
     
     DoseStatistics.RBEUCMOpt = prueba_DVHstatsComp(pln, cst, Dose,refVol,refGy, Models, 'RBEUCMOpt',0);
+    clear Dose Models    
+    
+    %% RENORMALIZAR Y RECALCULAR ESTADÍSTICAS
+    meanDoseTargetUCM = DoseStatistics.RBEUCMOpt.ConstRBEreCalc(6).mean;
+    meanDoseTargetConst = DoseStatistics.ConstRBEOpt.Optimized(6).mean;
+    meanDoseTargetMCN = DoseStatistics.RBEMCNOpt.ConstRBEreCalc(6).mean;
+    meanDoseTargetPrescription = 78;
+    FnormUCM = meanDoseTargetPrescription / meanDoseTargetUCM;
+    FnormConst = meanDoseTargetPrescription / meanDoseTargetConst;
+    FnormMCN = meanDoseTargetPrescription / meanDoseTargetMCN;
+    
+    ResultConstRBE.Optimized.resultGUI.RBExD = FnormConst * ResultConstRBE.Optimized.resultGUI.RBExD;
+    ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD = FnormConst * ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
+    ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD = FnormMCN * ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
+    ResultRBEMCN.Optimized.resultGUI.RBExD = FnormMCN * ResultRBEMCN.Optimized.resultGUI.RBExD;
+    ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD = FnormUCM * ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
+    ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD = FnormUCM * ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
+
+     % Estadisticas de dosis para el caso de ConstRBE optimizado
+    Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
+    Dose{2,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
+    Models{1,1} = 'ConstRBE'; Models{1,2} = 'Optimized';
+    Models{2,1} = 'RBEMCN';Models{2,2} = 'RBEMCNreCalc';
+    
+    DoseStatistics.ConstRBEOpt = prueba_DVHstatsComp(pln, cst, Dose,refVol,refGy, Models, 'ConstRBEOpt',0);
     clear Dose Models
+    
+    % Estadisticas de dosis para el modelo de McNamara optimizado
+    Dose{1,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
+    Dose{2,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
+    Models{1,1} = 'ConstRBE'; Models{1,2} = 'ConstRBEreCalc';
+    Models{2,1} = 'RBEMCN';Models{2,2} = 'Optimized';
+    
+    DoseStatistics.RBEMCNOpt = prueba_DVHstatsComp(pln, cst, Dose,refVol,refGy, Models, 'RBEMCNOpt',0);
+    clear Dose Models
+    
+    % Estadisticas de dosis para el modelo UCM optimizado
+    Dose{1,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
+    Dose{2,1} = ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
+    %Dose{3,1} = ResultRBEUCM.Optimized.resultGUI.RBExD;
+    Models{1,1} = 'ConstRBE'; Models{1,2} = 'ConstRBEreCalc';
+    Models{2,1} = 'RBEMCN';Models{2,2} = 'RBEMCNreCalc';
+    %Models{3,1} = 'RBEUCM';Models{3,2} = 'Optimized';
+    
+    DoseStatistics.RBEUCMOpt = prueba_DVHstatsComp(pln, cst, Dose,refVol,refGy, Models, 'RBEUCMOpt',0);
+    clear Dose Models 
+    
+    %% -Fin codigo renormalizacion
     
     clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics GraphSel DoseRecalc StatsRef
     
