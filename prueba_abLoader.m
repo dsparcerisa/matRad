@@ -9,7 +9,7 @@ cst = evalin('base','cst');
 % Datos casos especiales
 if strcmp (phantomtype, 'TG119')
     AvailableAlphaXBetaX = {'BODY', [0.06 0.02], 'Ninguno', 'Arbitrario';
-        'Core', [0.03 0.01], 'Ninguno', 'Arbitrario'};
+        'Core', [0.06 0.02], 'Ninguno', 'Arbitrario'};
     
     TumorAlphaXBetaX = {'OuterTarget', [0.2 0.02], 'Ninguno', 'Arbitrario'};
 else

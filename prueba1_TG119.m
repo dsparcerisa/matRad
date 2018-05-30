@@ -53,10 +53,10 @@ cst = prueba_abLoader (cst, phantomtype);
 % New version
 cst{1,5}.Priority = 2;
 cst{1,6}.type = 'max DVH objective';
-cst{1,6}.dose = 15; %25;
+cst{1,6}.dose = 10; %25;
 cst{1,6}.volume = 5;
 cst{1,6}.EUD = NaN;
-cst{1,6}.penalty = 3000;
+cst{1,6}.penalty = 1000;
 cst{1,6}.robustness = 'none';
 
 % OuterTarget
@@ -85,7 +85,7 @@ cst{2,6}(2).type = 'min DVH objective';
 cst{2,6}(2).dose = 50;
 cst{2,6}(2).volume = 99;
 cst{2,6}(2).EUD = NaN;
-cst{2,6}(2).penalty = 1000;
+cst{2,6}(2).penalty = 3000;
 cst{2,6}(2).robustness = 'none';
 
 cst{2,6}(3).type = 'max DVH objective';
@@ -132,7 +132,7 @@ perfGraphs = 0;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
 DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
 DVHGraphs = 2;        % Representacion de DVH (1 = Generales // 2 = Especificas)
-DVHStats = 0;         % Calculo de las estadisticas generales de dosis
+DVHStats = 1;         % Calculo de las estadisticas generales de dosis
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
 
@@ -167,8 +167,8 @@ VOIType{1,1} = 'OAR';
 DVHRegions{2,1} = 'OuterTarget';
 VOIType{2,1} = 'Target';
 
-DVHRegions{3,1} = 'Body';
-VOIType{3,1} = 'OAR';
+%DVHRegions{3,1} = 'Body';
+%VOIType{3,1} = 'OAR';
 
 
 %% 6 - Calculos
