@@ -9,14 +9,14 @@ cst = evalin('base','cst');
 % Datos casos especiales
 if strcmp (phantomtype, 'TG119')
     AvailableAlphaXBetaX = {'BODY', [0.06 0.02], 'Ninguno', 'Arbitrario';
-        'Core', [0.03 0.01], 'Ninguno', 'Arbitrario'};
+        'Core', [0.06 0.02], 'Ninguno', 'Arbitrario'};
     
     TumorAlphaXBetaX = {'OuterTarget', [0.2 0.02], 'Ninguno', 'Arbitrario'};
 else
     % Datos generales
     AvailableAlphaXBetaX = {'BODY', [0.035 0.01],  'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
         'LIPS', [0.0474  0.0206], 'Emami(1985)', 'Skin(late reactions)';
-        'Skin', [0.0474 0.0206], 'Emami(1985)', 'Skin(late reactions)';
+        'Skin', [0.0499 0.0238], 'Emami (1985)', 'Brain'; % Skin significa BODY en el H&N, que es en realidad tejido cerebral casi todo.
         'Heart', [0.0702 0.0351], 'Emami (1985)', 'Heart';
         'Liver', [0.0683 0.0455], 'Emami(1985)+D�rr (2009', 'Liver';
         'Bladder', [0.0878 0.0146],'Emami (1985)', 'Bladder';

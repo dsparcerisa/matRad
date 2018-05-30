@@ -13,11 +13,14 @@ numOfVois = size(cst,1);
 LineStyle(1:3,1) = {'-' ':' '--'};
 
 % calculate and print the dvh
-colorMx    = colorcube;
-colorMx    = colorMx(1:floor(64/(numOfVois)):64,:);
 
-ColorLine    = colorcube;
-ColorLine    = ColorLine(1:floor(64/(size(VOI,1))):64,:);
+if isempty(VOI) > 0;
+    colorMx    = colorcube;
+    colorMx    = colorMx(1:floor(64/(numOfVois)):64,:);
+else
+    ColorLine    = colorcube;
+    ColorLine    = ColorLine(1:floor(64/(size(VOI,1))):64,:);
+end
 
 n = 1000;
 
@@ -98,9 +101,9 @@ end
 
 
 fontSizeValue = 11;
-myLegend = legend('show','location','NorthWestOutside');
-set(myLegend,'FontSize',7,'Interpreter','none');
-legend boxoff
+myLegend = legend('show','location','NorthEast');
+set(myLegend,'FontSize',8,'Interpreter','none');
+%legend boxoff
 
 ylim([0 110]);
 xlim([0 1.2*max(dvhPoints)]);

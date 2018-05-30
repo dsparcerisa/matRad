@@ -267,6 +267,7 @@ if strcmp (phantomtype, 'Prostate')>0
                 doseInVoi = pln.numOfFractions .* Dose(indices);
                 VX = @(x) numel(doseInVoi(doseInVoi >= x)) / numOfVoxels;
                 V70_anorectum = VX(refGy) * 100;
+                disp(V70_anorectum);
         end
      end
      for delta = 1:2
