@@ -45,59 +45,120 @@ cst = prueba_abLoader (cst, phantomtype);
 
 % VOLUMEN EN TANTO POR CIENTO SIEMPRE!
 
-% DEFAULT VALUES -------------------------% Parotid_LT
+%% Objetivos
+
+% Brainstem
+cst{1,5}.Priority = 3;
+cst{1,6}.type = 'max DVH objective';
+cst{1,6}.dose = 54;
+cst{1,6}.penalty = 100;
+cst{1,6}.EUD = NaN;
+cst{1,6}.volume = 1;
+cst{1,6}.robustness = 'none';
+
+% Optic Chiasm
+cst{4,5}.Priority = 3;
+cst{4,6}.type = 'max DVH objective';
+cst{4,6}.dose = 54;
+cst{4,6}.penalty = 100;
+cst{4,6}.EUD = NaN;
+cst{4,6}.volume = 1;
+cst{4,6}.robustness = 'none';
+
+% Larynx
+cst{7,5}.Priority = 3;
+cst{7,6}.type = 'square overdosing';
+cst{7,6}.dose = 40;
+cst{7,6}.penalty = 100;
+cst{7,6}.EUD = NaN;
+cst{7,6}.volume = NaN;
+cst{7,6}.robustness = 'none';
+
+% Parotid LT
+cst{13,5}.Priority = 3;
 cst{13,6}.type = 'square overdosing';
-cst{13,6}.dose = 25;
-cst{13,6}.EUD = NaN;
+cst{13,6}.dose = 20;
 cst{13,6}.penalty = 100;
+cst{13,6}.EUD = NaN;
 cst{13,6}.volume = NaN;
 cst{13,6}.robustness = 'none';
 
-% Parotid_RT
+% Parotid RT
+cst{14,5}.Priority = 3;
 cst{14,6}.type = 'square overdosing';
-cst{14,6}.dose = 25;
-cst{14,6}.EUD = NaN;
+cst{14,6}.dose = 20;
 cst{14,6}.penalty = 100;
+cst{14,6}.EUD = NaN;
 cst{14,6}.volume = NaN;
 cst{14,6}.robustness = 'none';
 
 % PTV63
+cst{15,5}.Priority = 2;
 cst{15,6}.type = 'square deviation';
 cst{15,6}.dose = 63;
-cst{15,6}.EUD = NaN;
 cst{15,6}.penalty = 1000;
+cst{15,6}.EUD = NaN;
 cst{15,6}.volume = NaN;
 cst{15,6}.robustness = 'none';
 
-% PTV70
+% PTV 70
+cst{16,5}.Priority = 1;
 cst{16,6}.type = 'square deviation';
-cst{16,6}.dose = 63;
-cst{16,6}.EUD = NaN;
+cst{16,6}.dose = 70;
 cst{16,6}.penalty = 1000;
+cst{16,6}.EUD = NaN;
 cst{16,6}.volume = NaN;
 cst{16,6}.robustness = 'none';
 
-% SKIN
+% Skin (body)
+cst{17,5}.Priority = 4;
 cst{17,6}.type = 'square overdosing';
 cst{17,6}.dose = 30;
-cst{17,6}.EUD = NaN;
 cst{17,6}.penalty = 800;
+cst{17,6}.EUD = NaN;
 cst{17,6}.volume = NaN;
 cst{17,6}.robustness = 'none';
+
+% Spinal cord
+cst{18,5}.Priority = 3;
+cst{18,6}.type = 'max DVH objective';
+cst{18,6}.dose = 50;
+cst{18,6}.penalty = 100;
+cst{18,6}.EUD = NaN;
+cst{18,6}.volume = 1;
+cst{18,6}.robustness = 'none';
+
+% Temporal lobe LT
+cst{20,5}.Priority = 3;
+cst{20,6}.type = 'max DVH objective';
+cst{20,6}.dose = 60;
+cst{20,6}.penalty = 100;
+cst{20,6}.EUD = NaN;
+cst{20,6}.volume = 1;
+cst{20,6}.robustness = 'none';
+
+% Temporal lobe RT
+cst{21,5}.Priority = 3;
+cst{21,6}.type = 'max DVH objective';
+cst{21,6}.dose = 60;
+cst{21,6}.penalty = 100;
+cst{21,6}.EUD = NaN;
+cst{21,6}.volume = 1;
+cst{21,6}.robustness = 'none';
 
 % ----------------------------------------
 
 %% 4 - Introduccion de los datos basicos
 
 % meta information for treatment plan 
-pln.numOfFractions = 30;
+pln.numOfFractions = 35;
 pln.radiationMode = 'protons';           % either photons / protons / helium / carbon
 pln.machine = 'Generic';
 
 % beam geometry settings
 pln.propStf.bixelWidth     = 5; % [mm] / also corresponds to lateral spot spacing for particles
-pln.propStf.gantryAngles   = [0]; % [?];
-pln.propStf.couchAngles    = [0]; % [?];
+pln.propStf.gantryAngles   = [60 300]; % [?];
+pln.propStf.couchAngles    = [0 0]; % [?];
 pln.propStf.numOfBeams     = numel(pln.propStf.gantryAngles);
 pln.propStf.isoCenter      = ones(pln.propStf.numOfBeams,1) * matRad_getIsoCenter(cst,ct,0);
 % optimization settings
