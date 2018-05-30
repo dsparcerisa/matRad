@@ -15,7 +15,7 @@
 % 13 - "Resumen" de valores de NTCP
 
 
-function  [ResultPhysical, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP] = ...
+function  [ResultPhysical, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP, NTCPMCNall] = ...
     prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH)
 
 if ~isempty(DoseResults)
