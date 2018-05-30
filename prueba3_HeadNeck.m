@@ -171,7 +171,7 @@ pln.propOpt.runSequencing  = false;   % 1/true: run sequencing, 0/false: don't /
 % Seleccion de graficas y estadisticas que mostrar (0 = Desactivado // 1 = Activado)
 perfGraphs = 0;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
-DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
+DGraphs = 1;          % Graficas de dosis 2D en z = z(dij max)
 DVHGraphs = 2;        % Representacion de DVH (1 = Generales // 2 = Especificas)
 DVHStats = 0;         % Calculo de las estadisticas generales de dosis
 
@@ -197,9 +197,19 @@ DoseRecalc{3,1} = RBEUCM;
  
 
 DVHRegions{1,1} = 'PTV70';
-VOIType{1,1} = 'Target';
-DVHRegions{2,1} = 'Parotid_RT';
-VOIType{2,1} = 'OAR';
+DVHRegions{2,1} = 'PTV63';
+DVHRegions{3,1} = 'BRAIN_STEM';
+DVHRegions{4,1} = 'LARYNX';
+DVHRegions{5,1} = 'PAROTID_LT';
+DVHRegions{6,1} = 'PAROTID_RT';
+DVHRegions{7,1} = 'SPINAL_CORD';
+VOIType{1,1}    = 'TARGET';
+VOIType{2,1}    = 'TARGET';
+VOIType{3,1}    = 'OAR';
+VOIType{4,1}    = 'OAR';
+VOIType{5,1}    = 'OAR';
+VOIType{6,1}    = 'OAR';
+VOIType{7,1}    = 'OAR';
 
 % DVHRegions{3,1} = 'Parotid_LT';
 % VOIType{3,1} = 'OAR';
