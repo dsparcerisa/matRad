@@ -13,11 +13,14 @@ numOfVois = size(cst,1);
 LineStyle(1:3,1) = {'-' ':' '--'};
 
 % calculate and print the dvh
-colorMx    = colorcube;
-colorMx    = colorMx(1:floor(64/(numOfVois)):64,:);
 
-ColorLine    = colorcube;
-ColorLine    = ColorLine(1:floor(64/(size(VOI,1))):64,:);
+if isempty(VOI) > 0;
+    colorMx    = colorcube;
+    colorMx    = colorMx(1:floor(64/(numOfVois)):64,:);
+else
+    ColorLine    = colorcube;
+    ColorLine    = ColorLine(1:floor(64/(size(VOI,1))):64,:);
+end
 
 n = 1000;
 
