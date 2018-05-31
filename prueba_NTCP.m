@@ -11,11 +11,12 @@
 % 9 - (Deshabilitado) Calculo de RBE medio para RBEMCN con las diversas optimizaciones
 % 10 - Comparacion de DVH para VOIs especificas
 % 11 - Calculo de las estadisticas generales de dosis
-% 12 - Calculo de NTCP
-% 13 - "Resumen" de valores de NTCP
+% 12 - Renormalizacion y recalculo de estadisticas
+% 13 - Calculo de NTCP
+% 14 - "Resumen" de valores de NTCP
 
 
-function  [ResultPhysical, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP, NTCPMCNall] = ...
+function  [ResultPhysical, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP, NTCPMCNall, Renorm] = ...
     prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH)
 
 if ~isempty(DoseResults)
@@ -485,8 +486,22 @@ clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultCon
 %% 11 - Calculo de las estadisticas generales de dosis
 DoseStatistics = 'Not Evaluated';
 
-if GraphSel(5) > 0
-    
+if exist('Renorm','var')>0
+    if strcmp(Renorm,'Renormalized')>0
+        Renorm = 'Renormalized';
+    elseif DoseRecalc{1,1}{1,1} > 0 && DoseRecalc{2,1}{1,1} > 0 && DoseRecalc{3,1}{1,1} > 0
+        Renorm = 'Not renormalized';
+    elseif strcmp(Renorm,'Not renormalized')>0
+        Renorm = 'Not renormalized';
+    else
+        Renorm = 'Not all result are renormalized';
+    end
+else
+    Renorm = 'Not renormalized';
+end
+
+if GraphSel(5) > 0  
+        
     if isempty(StatsRef)
         refVol = [];
         refGy = [];
@@ -528,11 +543,24 @@ if GraphSel(5) > 0
     DoseStatistics.RBEUCMOpt = prueba_DVHstatsComp(pln, cst, Dose,refVol,refGy, Models, 'RBEUCMOpt',0);
     clear Dose Models    
     
-    %% RENORMALIZAR Y RECALCULAR ESTADÍSTICAS
+    %% 12 - Renormalizacion y recalculo de estadisticas
+    
+  if GraphSel(5) == 2 && exist('DoseStatistics', 'var')
+      
+    Renorm = 'Renormalized';
+    
     meanDoseTargetUCM = DoseStatistics.RBEUCMOpt.ConstRBEreCalc(6).mean;
     meanDoseTargetConst = DoseStatistics.ConstRBEOpt.Optimized(6).mean;
     meanDoseTargetMCN = DoseStatistics.RBEMCNOpt.ConstRBEreCalc(6).mean;
-    meanDoseTargetPrescription = 78;
+    
+    if strcmpi(phantomtype, 'Head and Neck') > 0
+        meanDoseTargetPrescription = 70;
+    elseif strcmpi(phantomtype, 'Prostate') > 0
+        meanDoseTargetPrescription = 78;
+    elseif strcmpi(phantomtype, 'TG119') > 0
+        meanDoseTargetPrescription = 55;
+    end 
+    
     FnormUCM = meanDoseTargetPrescription / meanDoseTargetUCM;
     FnormConst = meanDoseTargetPrescription / meanDoseTargetConst;
     FnormMCN = meanDoseTargetPrescription / meanDoseTargetMCN;
@@ -572,15 +600,13 @@ if GraphSel(5) > 0
     
     DoseStatistics.RBEUCMOpt = prueba_DVHstatsComp(pln, cst, Dose,refVol,refGy, Models, 'RBEUCMOpt',0);
     clear Dose Models 
-    
-    %% -Fin codigo renormalizacion
-    
-    clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics GraphSel DoseRecalc StatsRef
+  end
+    clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics GraphSel DoseRecalc StatsRef Renorm
     
 end
 
 
-%% 12 - Calculo de NTCP
+%% 13 - Calculo de NTCP
 
 if strcmpi(phantomtype, 'TG119') > 0
     NTCP = 'No models';
@@ -604,12 +630,12 @@ else
     NTCP.RBEUCMOpt.ConstRBEreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD);
     NTCP.RBEUCMOpt.RBEMCNreCalc = prueba_NTCPcalc(pln, cst, phantomtype, ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD);
     
-    clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP GraphSel DoseRecalc StatsRef
+    clearvars -except ct cst phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP GraphSel DoseRecalc StatsRef Renorm
     
 end
 
 
-%% 13 - "Resumen" de valores de NTCP
+%% 14 - "Resumen" de valores de NTCP
 
 clear meanNTCP
 
