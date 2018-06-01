@@ -477,7 +477,7 @@ if GraphSel(4) == 2 && ~isempty(CompDVH{1,1}) > 0
     %saveas(image_All, 'DVHComp_All.png'); close;
     clear OptModel Dose
 else
-    fprintf('Warning: There are no selected regions. Skipping DVH Comparation for specific VOIs');
+    fprintf('Warning: There are no selected regions. Skipping DVH comparison for specific VOIs');
 end
 
 clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE midRBE ResultPhysical GraphSel DoseRecalc StatsRef
