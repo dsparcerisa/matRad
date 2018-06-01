@@ -116,10 +116,10 @@ set(gca,'LineWidth',1.5,'FontSize',fontSizeValue);
 ylabel('Volume [%]','FontSize',fontSizeValue);
 
 if ~isempty (VOI)
-    title(sprintf('DVH comparation'));
+    title(sprintf('DVH comparison'));
     xlabel('Dose [RBEGy]','FontSize',fontSizeValue);
 else
-    title(sprintf('DVH comparation for %s',OptModel{1,1}));
+    title(sprintf('DVH comparison for %s',OptModel{1,1}));
     if size(Dose,1) == 2
         xlabel(sprintf('Dose [RBEGy]  [%s (Solid) // %s (Dotted)]', OptModel{1,2}, OptModel{2,2}),'FontSize',fontSizeValue);
     elseif size(Dose,1) == 3

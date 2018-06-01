@@ -8,7 +8,7 @@ if isempty(refVol) && isempty(refGy)
     refGy = linspace(0,max(pln.numOfFractions.*Dose{1,1}(:)),6);
 end
 
-figure('Color',[0.5 0.5 0.5],'Position',([0 30 1500 650]), 'name',sprintf('DVH comparation for %s', Name));
+figure('Color',[0.5 0.5 0.5],'Position',([0 30 1500 650]), 'name',sprintf('DVH comparison for %s', Name));
 Num = size(Dose,1);
 
 
