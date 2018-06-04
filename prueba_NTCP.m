@@ -494,7 +494,7 @@ if exist('Renorm','var')>0
     elseif strcmp(Renorm,'Not renormalized')>0
         Renorm = 'Not renormalized';
     else
-        Renorm = 'Not all result are renormalized';
+        Renorm = 'Not all results are renormalized';
     end
 else
     Renorm = 'Not renormalized';
@@ -545,25 +545,34 @@ if GraphSel(5) > 0
     
     %% 12 - Renormalizacion y recalculo de estadisticas
     
-  if GraphSel(5) == 2 && exist('DoseStatistics', 'var')
+  if (GraphSel(5) == 2 || GraphSel(5) == 3) && exist('DoseStatistics', 'var')
       
     Renorm = 'Renormalized';
     
-    meanDoseTargetUCM = DoseStatistics.RBEUCMOpt.ConstRBEreCalc(6).mean;
-    meanDoseTargetConst = DoseStatistics.ConstRBEOpt.Optimized(6).mean;
-    meanDoseTargetMCN = DoseStatistics.RBEMCNOpt.ConstRBEreCalc(6).mean;
-    
     if strcmpi(phantomtype, 'Head and Neck') > 0
         meanDoseTargetPrescription = 70;
+        meanDoseTargetUCM = DoseStatistics.RBEUCMOpt.ConstRBEreCalc(16).mean;
+        meanDoseTargetConst = DoseStatistics.ConstRBEOpt.Optimized(16).mean;
+        meanDoseTargetMCN = DoseStatistics.RBEMCNOpt.ConstRBEreCalc(16).mean;
     elseif strcmpi(phantomtype, 'Prostate') > 0
         meanDoseTargetPrescription = 78;
+        meanDoseTargetUCM = DoseStatistics.RBEUCMOpt.ConstRBEreCalc(6).mean;
+        meanDoseTargetConst = DoseStatistics.ConstRBEOpt.Optimized(6).mean;ç
+        meanDoseTargetMCN = DoseStatistics.RBEMCNOpt.ConstRBEreCalc(6).mean;
     elseif strcmpi(phantomtype, 'TG119') > 0
-        meanDoseTargetPrescription = 55;
+        meanDoseTargetPrescription = 50;
+        meanDoseTargetUCM = DoseStatistics.RBEUCMOpt.ConstRBEreCalc(2).mean;
+        meanDoseTargetConst = DoseStatistics.ConstRBEOpt.Optimized(2).mean;
+        meanDoseTargetMCN = DoseStatistics.RBEMCNOpt.ConstRBEreCalc(2).mean;        
     end 
     
     FnormUCM = meanDoseTargetPrescription / meanDoseTargetUCM;
     FnormConst = meanDoseTargetPrescription / meanDoseTargetConst;
     FnormMCN = meanDoseTargetPrescription / meanDoseTargetMCN;
+    % Si es modo 3, solo UCM y const
+    if (GraphSel(5) == 3)
+        FnormMCN = 1;
+    end
     
     ResultConstRBE.Optimized.resultGUI.RBExD = FnormConst * ResultConstRBE.Optimized.resultGUI.RBExD;
     ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD = FnormConst * ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
