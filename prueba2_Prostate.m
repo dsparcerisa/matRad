@@ -140,8 +140,8 @@ pln.propOpt.runSequencing  = false;   % 1/true: run sequencing, 0/false: don't /
 perfGraphs = 0;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
 DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
-DVHGraphs = 1;        % Representacion de DVH (1 = Generales // 2 = Especificas)
-DVHStats = 1;         % Calculo de las estadisticas generales de dosis (1 = Cálculo de estadísticas // 2 = Renormalizacion de dosis )
+DVHGraphs = 2;        % Representacion de DVH (1 = Generales // 2 = Especificas)
+DVHStats = 0;         % Calculo de las estadisticas generales de dosis (1 = Cï¿½lculo de estadï¿½sticas // 2 = Renormalizacion de dosis )
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
 
