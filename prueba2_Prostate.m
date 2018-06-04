@@ -180,7 +180,7 @@ VOIType{3,1} = 'OAR';
 DVHRegions{4,1} = 'Lt femoral head';
 VOIType{4,1} = 'OAR';
 
-DVHRegions{4,1} = 'Bladder';
+DVHRegions{5,1} = 'Bladder';
 VOIType{5,1} = 'OAR';
     
 
