@@ -443,10 +443,10 @@ if GraphSel(4) == 2 && ~isempty(CompDVH{1,1}) > 0
        
     Dose{1,1} = ResultConstRBE.Optimized.resultGUI.RBExD;
     Dose{2,1} = ResultConstRBE.RBEMCNreCalc.resultGUI.RBExD;
-    Dose{3,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
-    Dose{4,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
-    Dose{5,1} = ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
-    Dose{6,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
+    Dose{4,1} = ResultRBEMCN.Optimized.resultGUI.RBExD;
+    Dose{3,1} = ResultRBEMCN.ConstRBEreCalc.resultGUI.RBExD;
+    Dose{6,1} = ResultRBEUCM.RBEMCNreCalc.resultGUI.RBExD;
+    Dose{5,1} = ResultRBEUCM.ConstRBEreCalc.resultGUI.RBExD;
     
     OptModel = cell(size(Dose,1),2);
     
