@@ -557,7 +557,7 @@ if GraphSel(5) > 0
     elseif strcmpi(phantomtype, 'Prostate') > 0
         meanDoseTargetPrescription = 78;
         meanDoseTargetUCM = DoseStatistics.RBEUCMOpt.ConstRBEreCalc(6).mean;
-        meanDoseTargetConst = DoseStatistics.ConstRBEOpt.Optimized(6).mean;ç
+        meanDoseTargetConst = DoseStatistics.ConstRBEOpt.Optimized(6).mean;
         meanDoseTargetMCN = DoseStatistics.RBEMCNOpt.ConstRBEreCalc(6).mean;
     elseif strcmpi(phantomtype, 'TG119') > 0
         meanDoseTargetPrescription = 50;
@@ -776,6 +776,7 @@ elseif strcmpi(phantomtype, 'Head and Neck') > 0
     
     elseif strcmpi(phantomtype, 'TG119') > 0
          meanNTCP = 'No models';  
+         NTCPMCNall = 'No models';
 end
 
 
