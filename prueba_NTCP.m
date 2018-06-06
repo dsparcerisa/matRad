@@ -563,7 +563,12 @@ if GraphSel(5) > 0
         meanDoseTargetPrescription = 50;
         meanDoseTargetUCM = DoseStatistics.RBEUCMOpt.ConstRBEreCalc(2).mean;
         meanDoseTargetConst = DoseStatistics.ConstRBEOpt.Optimized(2).mean;
-        meanDoseTargetMCN = DoseStatistics.RBEMCNOpt.ConstRBEreCalc(2).mean;        
+        meanDoseTargetMCN = DoseStatistics.RBEMCNOpt.ConstRBEreCalc(2).mean;
+    elseif strcmpi(phantomtype, 'Liver') > 0
+        meanDoseTargetPrescription = 48;
+        meanDoseTargetUCM = DoseStatistics.RBEUCMOpt.ConstRBEreCalc(15).mean;
+        meanDoseTargetConst = DoseStatistics.ConstRBEOpt.Optimized(15).mean;
+        meanDoseTargetMCN = DoseStatistics.RBEMCNOpt.ConstRBEreCalc(15).mean;
     end 
     
     FnormUCM = meanDoseTargetPrescription / meanDoseTargetUCM;
