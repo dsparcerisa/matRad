@@ -56,42 +56,104 @@ cst{15,6}.EUD = NaN;
 cst{15,6}.volume = NaN;
 cst{15,6}.robustness = 'none';
 
+% GTV
+cst{1,5}.Priority = 1;
+cst{1,6}.type = 'square deviation';
+cst{1,6}.dose = 48;
+cst{1,6}.penalty = 1000;
+cst{1,6}.EUD = NaN;
+cst{1,6}.volume = NaN;
+cst{1,6}.robustness = 'none';
+
+% Liver CTV
+cst{16,5}.Priority = 1;
+cst{16,6}.type = 'square deviation';
+cst{16,6}.dose = 48;
+cst{16,6}.penalty = 1000;
+cst{16,6}.EUD = NaN;
+cst{16,6}.volume = NaN;
+cst{16,6}.robustness = 'none';
+
+% CTV
+cst{13,5}.Priority = 1;
+cst{13,6}.type = 'square deviation';
+cst{13,6}.dose = 48;
+cst{13,6}.penalty = 1000;
+cst{13,6}.EUD = NaN;
+cst{13,6}.volume = NaN;
+cst{13,6}.robustness = 'none';
+
 % Skin
-cst{14,5}.Priority = 2;
-cst{14,6}.type = 'square overdosing';
+cst{14,5}.Priority = 3;
+cst{14,6}.type = 'max DVH objective';
 cst{14,6}.dose = 21;
 cst{14,6}.penalty = 300;
 cst{14,6}.EUD = NaN;
-cst{14,6}.volume = NaN;
+cst{14,6}.volume = 1;
 cst{14,6}.robustness = 'none';
 
 % Stomach
-cst{4,5}.Priority = 2;
-cst{4,6}.type = 'square overdosing';
+cst{4,5}.Priority = 3;
+cst{4,6}.type = 'max DVH objective';
 cst{4,6}.dose = 64;
 cst{4,6}.penalty = 300;
 cst{4,6}.EUD = NaN;
-cst{4,6}.volume = NaN;
+cst{4,6}.volume = 1;
 cst{4,6}.robustness = 'none';
 
 % Small Bowel
-cst{5,5}.Priority = 2;
-cst{5,6}.type = 'square overdosing';
+cst{5,5}.Priority = 3;
+cst{5,6}.type = 'max DVH objective';
 cst{5,6}.dose = 64;
 cst{5,6}.penalty = 300;
 cst{5,6}.EUD = NaN;
-cst{5,6}.volume = NaN;
+cst{5,6}.volume = 1;
 cst{5,6}.robustness = 'none';
 
 % Large Bowel
-cst{6,5}.Priority = 2;
-cst{6,6}.type = 'square overdosing';
+cst{6,5}.Priority = 3;
+cst{6,6}.type = 'max DVH objective';
 cst{6,6}.dose = 64;
 cst{6,6}.penalty = 300;
 cst{6,6}.EUD = NaN;
-cst{6,6}.volume = NaN;
+cst{6,6}.volume = 1;
 cst{6,6}.robustness = 'none';
 
+% Liver
+cst{9,5}.Priority = 2;
+cst{9,6}.type = 'square overdosing';
+cst{9,6}.dose = 18;
+cst{9,6}.penalty = 300;
+cst{9,6}.EUD = NaN;
+cst{9,6}.volume = NaN;
+cst{9,6}.robustness = 'none';
+
+% Kidney R
+cst{2,5}.Priority = 3;
+cst{2,6}.type = 'max DVH objective';
+cst{2,6}.dose = 15;
+cst{2,6}.penalty = 300;
+cst{2,6}.EUD = NaN;
+cst{2,6}.volume = 0.33;
+cst{2,6}.robustness = 'none';
+
+% Kidney L
+cst{3,5}.Priority = 3;
+cst{3,6}.type = 'max DVH objective';
+cst{3,6}.dose = 15;
+cst{3,6}.penalty = 300;
+cst{3,6}.EUD = NaN;
+cst{3,6}.volume = 0.66;
+cst{3,6}.robustness = 'none';
+
+% Spinal Cord
+cst{11,5}.Priority = 3;
+cst{11,6}.type = 'max DVH objective';
+cst{11,6}.dose = 18;
+cst{11,6}.penalty = 300;
+cst{11,6}.EUD = NaN;
+cst{11,6}.volume = 1;
+cst{11,6}.robustness = 'none';
 
 % ----------------------------------------
 
