@@ -1,4 +1,4 @@
-%% Funci�n de rec�lculo de dosis en un modelo diferente respecto a uno ya optimizado.
+%% Funcion de recalculo de dosis en un modelo diferente respecto a uno ya optimizado.
 
 function [dijreCalc,resultGUIreCalc] = prueba_RecalcDose (resultGUI, ct, stf, pln, cst, quantityOpt, modelName)
 % recalculation only makes sense if ...

@@ -50,7 +50,7 @@ cst = prueba_abLoader (cst, phantomtype);
 % PTV
 cst{15,5}.Priority = 1;
 cst{15,6}.type = 'square deviation';
-cst{15,6}.dose = 45;
+cst{15,6}.dose = 48;
 cst{15,6}.penalty = 1000;
 cst{15,6}.EUD = NaN;
 cst{15,6}.volume = NaN;
@@ -59,25 +59,53 @@ cst{15,6}.robustness = 'none';
 % Skin
 cst{14,5}.Priority = 2;
 cst{14,6}.type = 'square overdosing';
-cst{14,6}.dose = 25;
+cst{14,6}.dose = 21;
 cst{14,6}.penalty = 300;
 cst{14,6}.EUD = NaN;
 cst{14,6}.volume = NaN;
 cst{14,6}.robustness = 'none';
+
+% Stomach
+cst{4,5}.Priority = 2;
+cst{4,6}.type = 'square overdosing';
+cst{4,6}.dose = 64;
+cst{4,6}.penalty = 300;
+cst{4,6}.EUD = NaN;
+cst{4,6}.volume = NaN;
+cst{4,6}.robustness = 'none';
+
+% Small Bowel
+cst{5,5}.Priority = 2;
+cst{5,6}.type = 'square overdosing';
+cst{5,6}.dose = 64;
+cst{5,6}.penalty = 300;
+cst{5,6}.EUD = NaN;
+cst{5,6}.volume = NaN;
+cst{5,6}.robustness = 'none';
+
+% Large Bowel
+cst{6,5}.Priority = 2;
+cst{6,6}.type = 'square overdosing';
+cst{6,6}.dose = 64;
+cst{6,6}.penalty = 300;
+cst{6,6}.EUD = NaN;
+cst{6,6}.volume = NaN;
+cst{6,6}.robustness = 'none';
+
 
 % ----------------------------------------
 
 %% 4 - Introduccion de los datos basicos
 
 % meta information for treatment plan 
-pln.numOfFractions = 35;
+pln.numOfFractions = 8;
 pln.radiationMode = 'protons';           % either photons / protons / helium / carbon
 pln.machine = 'Generic';
 
 % beam geometry settings
 pln.propStf.bixelWidth     = 5; % [mm] / also corresponds to lateral spot spacing for particles
-pln.propStf.gantryAngles   = [60 300]; % [?];
-pln.propStf.couchAngles    = [0 0]; % [?];
+pln.propStf.gantryAngles   = [0]; % [?];
+pln.propStf.couchAngles    = [0]; % [?];
 pln.propStf.numOfBeams     = numel(pln.propStf.gantryAngles);
 pln.propStf.isoCenter      = ones(pln.propStf.numOfBeams,1) * matRad_getIsoCenter(cst,ct,0);
 % optimization settings
@@ -91,7 +119,7 @@ pln.propOpt.runSequencing  = false;   % 1/true: run sequencing, 0/false: don't /
 perfGraphs = 0;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
 DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
-DVHGraphs = 2;        % Representacion de DVH (1 = Generales // 2 = Especificas)
+DVHGraphs = 0;        % Representacion de DVH (1 = Generales // 2 = Especificas)
 DVHStats = 0;         % Calculo de las estadisticas generales de dosis (1 = C�lculo de estad�sticas // 2 = Renormalizacion de dosis )
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];

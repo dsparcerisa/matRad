@@ -774,6 +774,10 @@ elseif strcmpi(phantomtype, 'Head and Neck') > 0
     NTCPMCNall = [ NTCP_bio_phys(mascara), NTCP_bio_const(mascara), NTCP_bio_MCN(mascara), NTCP_bio_UCM(mascara)]
     meanNTCP = [mean(NTCP_bio_phys(mascara)),mean(NTCP_bio_const(mascara)), mean(NTCP_bio_MCN(mascara)), mean(NTCP_bio_UCM(mascara))]
     
+    elseif strcmpi(phantomtype, 'Liver') > 0
+         meanNTCP = 'No programado';  
+         NTCPMCNall = 'No programado';
+    
     elseif strcmpi(phantomtype, 'TG119') > 0
          meanNTCP = 'No models';  
          NTCPMCNall = 'No models';
