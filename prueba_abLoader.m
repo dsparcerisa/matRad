@@ -36,6 +36,7 @@ else
         'Penile bulb', [0.035 0.01], 'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
         'Celiac', [0.035 0.01], 'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
         'SMASMV', [0.035 0.01], 'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
+        'SMA_SMV', [0.035 0.01], 'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
         'BRAIN_STEM', [0.0491 0.0234], 'Emami (1985)', 'Brain stem';
         'CEREBELLUM', [0.0499 0.0238], 'Emami (1985)', 'Brain';
         'TEMP_LOBE_LT', [0.0499 0.0238], 'Emami (1985)', 'Brain';
