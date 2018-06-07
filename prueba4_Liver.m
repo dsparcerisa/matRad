@@ -74,14 +74,15 @@ cst{13,6}.EUD = NaN;
 cst{13,6}.volume = NaN;
 cst{13,6}.robustness = 'none';
 
-% Liver-CTV (Ojo!!! es el volumen Liver menos el volumen CTV)
-cst{16,5}.Priority = 1;
-cst{16,6}.type = 'max DVH objective';
-cst{16,6}.dose = 15;
-cst{16,6}.penalty = 1000;
-cst{16,6}.EUD = NaN;
-cst{16,6}.volume = 0.33;
-cst{16,6}.robustness = 'none';
+% % Liver-CTV (Ojo!!! es el volumen Liver menos el volumen CTV)
+% cst{16,5}.Priority = 1;
+% cst{16,6}.type = 'max DVH objective';
+% cst{16,6}.dose = 15;
+% cst{16,6}.penalty = 1000;
+% cst{16,6}.EUD = NaN;
+% cst{16,6}.volume = 0.33;
+% cst{16,6}.robustness = 'none';
+
 
 % Skin
 cst{14,5}.Priority = 3;
@@ -91,33 +92,6 @@ cst{14,6}.penalty = 300;
 cst{14,6}.EUD = NaN;
 cst{14,6}.volume = 1;
 cst{14,6}.robustness = 'none';
-
-% % Stomach
-% cst{4,5}.Priority = 3;
-% cst{4,6}.type = 'max DVH objective';
-% cst{4,6}.dose = 64;
-% cst{4,6}.penalty = 100;
-% cst{4,6}.EUD = NaN;
-% cst{4,6}.volume = 1;
-% cst{4,6}.robustness = 'none';
-% 
-% % Small Bowel
-% cst{5,5}.Priority = 3;
-% cst{5,6}.type = 'max DVH objective';
-% cst{5,6}.dose = 64;
-% cst{5,6}.penalty = 100;
-% cst{5,6}.EUD = NaN;
-% cst{5,6}.volume = 1;
-% cst{5,6}.robustness = 'none';
-% 
-% % Large Bowel
-% cst{6,5}.Priority = 3;
-% cst{6,6}.type = 'max DVH objective';
-% cst{6,6}.dose = 64;
-% cst{6,6}.penalty = 100;
-% cst{6,6}.EUD = NaN;
-% cst{6,6}.volume = 1;
-% cst{6,6}.robustness = 'none';
 
 % Heart
 cst{10,5}.Priority = 2;
@@ -192,7 +166,7 @@ perfGraphs = 0;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
 DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
 DVHGraphs = 2;        % Representacion de DVH (1 = Generales // 2 = Especificas)
-DVHStats = 0;         % Calculo de las estadisticas generales de dosis (1 = Calculo de estad�sticas // 2 = Renormalizacion de dosis )
+DVHStats = 0;         % Calculo de las estadisticas generales de dosis (1 = Calculo de estadasticas // 2 = Renormalizacion de dosis )
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
 
@@ -219,14 +193,12 @@ DVHRegions{1,1} = 'PTV';
 DVHRegions{2,1} = 'GTV';
 DVHRegions{3,1} = 'CTV';
 DVHRegions{4,1} = 'Liver';
-DVHRegions{5,1} = 'Liver-CTV';
-DVHRegions{6,1} = 'Heart';
+DVHRegions{5,1} = 'Heart';
 VOIType{1,1}    = 'TARGET';
 VOIType{2,1}    = 'TARGET';
 VOIType{3,1}    = 'TARGET';
 VOIType{4,1}    = 'OAR';
-VOIType{5,1}    = 'TARGET';
-VOIType{6,1}    = 'OAR';
+VOIType{5,1}    = 'OAR';
 
 
 %% 6 - Calculos

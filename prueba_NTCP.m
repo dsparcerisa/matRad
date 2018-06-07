@@ -779,13 +779,71 @@ elseif strcmpi(phantomtype, 'Head and Neck') > 0
     NTCPMCNall = [ NTCP_bio_phys(mascara), NTCP_bio_const(mascara), NTCP_bio_MCN(mascara), NTCP_bio_UCM(mascara)]
     meanNTCP = [mean(NTCP_bio_phys(mascara)),mean(NTCP_bio_const(mascara)), mean(NTCP_bio_MCN(mascara)), mean(NTCP_bio_UCM(mascara))]
     
-    elseif strcmpi(phantomtype, 'Liver') > 0
-         meanNTCP = 'No programado';  
-         NTCPMCNall = 'No programado';
+elseif strcmpi(phantomtype, 'Liver') > 0
+    NTCP_bio_phys = nan(13,1);
+    NTCP_bio_const = nan(13,1);
+    NTCP_bio_MCN = nan(13,1);
+    NTCP_bio_UCM = nan(13,1);
     
-    elseif strcmpi(phantomtype, 'TG119') > 0
-         meanNTCP = 'No models';  
-         NTCPMCNall = 'No models';
+    
+    NTCP_bio_const(1) = NTCP.ConstRBEOpt.RBEMCNreCalc.Dawson.LM.NTCP;
+    NTCP_bio_const(2) = NTCP.ConstRBEOpt.RBEMCNreCalc.Dawson.HBC.NTCP;
+    NTCP_bio_const(3) = NTCP.ConstRBEOpt.RBEMCNreCalc.ZhiYong.CPA.NTCP;
+    NTCP_bio_const(4) = NTCP.ConstRBEOpt.RBEMCNreCalc.ZhiYong.CPB.NTCP;
+    NTCP_bio_const(5) = NTCP.ConstRBEOpt.RBEMCNreCalc.Thomas.NTCP;
+    NTCP_bio_const(5) = NTCP.ConstRBEOpt.RBEMCNreCalc.Gay.LargeBowel.NTCP;
+    NTCP_bio_const(6) = NTCP.ConstRBEOpt.RBEMCNreCalc.Gay.HealthyLiver.NTCP;
+    NTCP_bio_const(7) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.LargeBowel.NTCP;
+    NTCP_bio_const(8) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.SmallBowel.NTCP;
+    NTCP_bio_const(9) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Heart.NTCP;
+    NTCP_bio_const(10) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.HealthyLiver.NTCP;
+    NTCP_bio_const(11) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Stomach.NTCP;
+    NTCP_bio_const(12) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Kidney.NTCP_Right;
+    NTCP_bio_const(13) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Kidney.NTCP_Left;
+    
+    
+    NTCP_bio_MCN(1) = NTCP.RBEMCNOpt.Optimized.Dawson.LM.NTCP;
+    NTCP_bio_MCN(2) = NTCP.RBEMCNOpt.Optimized.Dawson.HBC.NTCP;
+    NTCP_bio_MCN(3) = NTCP.RBEMCNOpt.Optimized.ZhiYong.CPA.NTCP;
+    NTCP_bio_MCN(4) = NTCP.RBEMCNOpt.Optimized.ZhiYong.CPB.NTCP;
+    NTCP_bio_MCN(5) = NTCP.RBEMCNOpt.Optimized.Thomas.NTCP;
+    NTCP_bio_MCN(5) = NTCP.RBEMCNOpt.Optimized.Gay.LargeBowel.NTCP;
+    NTCP_bio_MCN(6) = NTCP.RBEMCNOpt.Optimized.Gay.HealthyLiver.NTCP;
+    NTCP_bio_MCN(7) = NTCP.RBEMCNOpt.Optimized.Luxton.LargeBowel.NTCP;
+    NTCP_bio_MCN(8) = NTCP.RBEMCNOpt.Optimized.Luxton.SmallBowel.NTCP;
+    NTCP_bio_MCN(9) = NTCP.RBEMCNOpt.Optimized.Luxton.Heart.NTCP;
+    NTCP_bio_MCN(10) = NTCP.RBEMCNOpt.Optimized.Luxton.HealthyLiver.NTCP;
+    NTCP_bio_MCN(11) = NTCP.RBEMCNOpt.Optimized.Luxton.Stomach.NTCP;
+    NTCP_bio_MCN(12) = NTCP.RBEMCNOpt.Optimized.Luxton.Kidney.NTCP_Right;
+    NTCP_bio_MCN(13) = NTCP.RBEMCNOpt.Optimized.Luxton.Kidney.NTCP_Left;
+    
+    
+    NTCP_bio_UCM(1) = NTCP.RBEUCMOpt.RBEMCNreCalc.Dawson.LM.NTCP;
+    NTCP_bio_UCM(2) = NTCP.RBEUCMOpt.RBEMCNreCalc.Dawson.HBC.NTCP;
+    NTCP_bio_UCM(3) = NTCP.RBEUCMOpt.RBEMCNreCalc.ZhiYong.CPA.NTCP;
+    NTCP_bio_UCM(4) = NTCP.RBEUCMOpt.RBEMCNreCalc.ZhiYong.CPB.NTCP;
+    NTCP_bio_UCM(5) = NTCP.RBEUCMOpt.RBEMCNreCalc.Thomas.NTCP;
+    NTCP_bio_UCM(5) = NTCP.RBEUCMOpt.RBEMCNreCalc.Gay.LargeBowel.NTCP;
+    NTCP_bio_UCM(6) = NTCP.RBEUCMOpt.RBEMCNreCalc.Gay.HealthyLiver.NTCP;
+    NTCP_bio_UCM(7) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.LargeBowel.NTCP;
+    NTCP_bio_UCM(8) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.SmallBowel.NTCP;
+    NTCP_bio_UCM(9) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Heart.NTCP;
+    NTCP_bio_UCM(10) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.HealthyLiver.NTCP;
+    NTCP_bio_UCM(11) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Stomach.NTCP;
+    NTCP_bio_UCM(12) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Kidney.NTCP_Right;
+    NTCP_bio_UCM(13) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Kidney.NTCP_Left;
+    
+    
+    mascara = [1 2 3 4 5 6 7 8 9 10 11 12 13 13];
+    
+    NTCPMCNall = [ NTCP_bio_phys(mascara), NTCP_bio_const(mascara), NTCP_bio_MCN(mascara), NTCP_bio_UCM(mascara)]
+    meanNTCP = [mean(NTCP_bio_phys(mascara)),mean(NTCP_bio_const(mascara)), mean(NTCP_bio_MCN(mascara)), mean(NTCP_bio_UCM(mascara))]
+    
+    
+elseif strcmpi(phantomtype, 'TG119') > 0
+    meanNTCP = 'No models';
+    NTCPMCNall = 'No models';
+    
 end
 
 

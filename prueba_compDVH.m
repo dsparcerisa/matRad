@@ -14,7 +14,7 @@ LineStyle(1:3,1) = {'-' ':' '--'};
 
 % calculate and print the dvh
 
-if isempty(VOI) > 0;
+if isempty(VOI) > 0
     colorMx    = colorcube;
     colorMx    = colorMx(1:floor(64/(numOfVois)):64,:);
 else

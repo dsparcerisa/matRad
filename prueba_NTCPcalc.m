@@ -21,9 +21,10 @@
 
 % Liver
 % 1 - Dawson (2002)
-% 2 - Thomas (2005)
-% 3 - Gay (2007)
-% 4 - Luxton (2008)
+% 2 - Zhi-Yong (2006) 
+% 3 - Thomas (2005)
+% 4 - Gay (2007)
+% 5 - Luxton (2008)
   
 function [NTCP] = prueba_NTCPcalc (pln, cst, phantomtype, Dose)
 
@@ -682,7 +683,7 @@ elseif strcmp (phantomtype, 'Head and Neck')>0
         
 elseif strcmp (phantomtype, 'Liver')>0
     
-     % Dawson (2002) -> RILD 
+     % Dawson (2006) -> RILD 
     
      NTCP.Dawson.Model = 'Dawson''s Model';
      NTCP.Dawson.Risk = 'RILD';
@@ -691,7 +692,7 @@ elseif strcmp (phantomtype, 'Liver')>0
     
     for j = 1:numOfVois
         if strcmpi('Liver',cst{j,2}) > 0
-            NTCP.Dawson.LM.Case = 'Liver Metastasis';
+            NTCP.Dawson.LM.Case = 'Colorectal Liver Metastasis';
             n = 0.97;
             m = 0.12;
             TD_50 = 45.8;
@@ -713,9 +714,41 @@ elseif strcmp (phantomtype, 'Liver')>0
             NTCP.Dawson.HBC.NTCP = integral(LKM, -inf, t);
         end
     end
-        
-     
-     
+
+    
+    % Zhi-Yong (2006) -> RILD 
+    
+    NTCP.ZhiYong.Model = 'Zhi-Yong''s Model';
+    NTCP.ZhiYong.Risk = 'RILD';
+    NTCP.ZhiYong.VOI = 'Liver';
+    numOfVois = size(cst,1);
+
+        for j = 1:numOfVois
+        if strcmpi('Liver',cst{j,2}) > 0
+            NTCP.ZhiYong.CPA.Case = 'Child-Pugh A';
+            n = 1.1;
+            m = 0.28;
+            TD_50 = 40.5;
+            indices     = cst{j,4}{1};
+            EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
+            t =  (EUD - TD_50)/(m * TD_50);
+            NTCP.ZhiYong.CPA.NTCP = integral(LKM, -inf, t);
+        end
+    end
+    for j = 1:numOfVois
+        if strcmpi('Liver',cst{j,2}) > 0
+            NTCP.ZhiYong.CPB.Case = 'Child-Pugh B';
+            n = 0.7;
+            m = 0.43;
+            TD_50 = 23;
+            indices     = cst{j,4}{1};
+            EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
+            t =  (EUD - TD_50)/(m * TD_50);
+            NTCP.ZhiYong.CPB.NTCP = integral(LKM, -inf, t);
+        end
+    end
+ 
+    
      % Thomas (2005) -> Bledding
      
      NTCP.Thomas.Model = 'Thomas''s Model';
@@ -754,7 +787,7 @@ elseif strcmp (phantomtype, 'Liver')>0
              
          elseif strcmpi('Liver',cst{j,2}) > 0
              NTCP.Gay.HealthyLiver.Risk = 'Liver Failure';
-             NTCP.Gay.HealthyLiver.VOI = 'Healthy Liver';
+             NTCP.Gay.HealthyLiver.VOI = 'Liver';
              a = 3;
              gamma_50 = 3;
              TD_50 = 40;
@@ -808,7 +841,7 @@ elseif strcmp (phantomtype, 'Liver')>0
             
         elseif strcmpi('Liver',cst{j,2}) > 0
             NTCP.Luxton.HealthyLiver.Risk = 'Liver Failure';
-            NTCP.Luxton.HealthyLiver.VOI = 'Healthy Liver';
+            NTCP.Luxton.HealthyLiver.VOI = 'Liver';
             n = 0.32;
             m = 0.15;
             TD_50 = 40;
@@ -838,7 +871,7 @@ elseif strcmp (phantomtype, 'Liver')>0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Luxton.OcularLens.NTCP_Right = integral(LKM, -inf, t);
+            NTCP.Luxton.Kidney.NTCP_Right = integral(LKM, -inf, t);
  
         elseif strcmpi('Kidney_L',cst{j,2}) > 0
             NTCP.Luxton.Kidneys.Risk = 'Clinical Nephritis';
@@ -849,7 +882,7 @@ elseif strcmp (phantomtype, 'Liver')>0
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Luxton.OcularLens.NTCP_Left = integral(LKM, -inf, t); 
+            NTCP.Luxton.Kidney.NTCP_Left = integral(LKM, -inf, t); 
             
         end
     end
