@@ -17,7 +17,7 @@
 
 
 function  [ResultPhysical, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP, NTCPMCNall, Renorm] = ...
-    prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH)
+    prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH,Renorm)
 
 if ~isempty(DoseResults)
     ResultConstRBE = DoseResults{1,1};
@@ -486,7 +486,7 @@ clearvars -except ct phantomtype cst pln stf ResultRBEMCN ResultRBEUCM ResultCon
 %% 11 - Calculo de las estadisticas generales de dosis
 DoseStatistics = 'Not Evaluated';
 
-if exist('Renorm','var')>0
+if exist('Renorm','var') 
     if strcmp(Renorm,'Renormalized')>0
         Renorm = 'Renormalized';
     elseif DoseRecalc{1,1}{1,1} > 0 && DoseRecalc{2,1}{1,1} > 0 && DoseRecalc{3,1}{1,1} > 0
@@ -502,7 +502,7 @@ end
 
 if GraphSel(5) > 0  
         
-    if isempty(StatsRef)
+    if isempty(StatsRef) > 0
         refVol = [];
         refGy = [];
     else
@@ -565,7 +565,7 @@ if GraphSel(5) > 0
         meanDoseTargetConst = DoseStatistics.ConstRBEOpt.Optimized(2).mean;
         meanDoseTargetMCN = DoseStatistics.RBEMCNOpt.ConstRBEreCalc(2).mean;
     elseif strcmpi(phantomtype, 'Liver') > 0
-        meanDoseTargetPrescription = 48;
+        meanDoseTargetPrescription = 100;
         meanDoseTargetUCM = DoseStatistics.RBEUCMOpt.ConstRBEreCalc(15).mean;
         meanDoseTargetConst = DoseStatistics.ConstRBEOpt.Optimized(15).mean;
         meanDoseTargetMCN = DoseStatistics.RBEMCNOpt.ConstRBEreCalc(15).mean;
@@ -792,11 +792,11 @@ elseif strcmpi(phantomtype, 'Liver') > 0
     NTCP_bio_const(4) = NTCP.ConstRBEOpt.RBEMCNreCalc.ZhiYong.CPB.NTCP;
     NTCP_bio_const(5) = NTCP.ConstRBEOpt.RBEMCNreCalc.Thomas.NTCP;
     NTCP_bio_const(5) = NTCP.ConstRBEOpt.RBEMCNreCalc.Gay.LargeBowel.NTCP;
-    NTCP_bio_const(6) = NTCP.ConstRBEOpt.RBEMCNreCalc.Gay.HealthyLiver.NTCP;
+    NTCP_bio_const(6) = NTCP.ConstRBEOpt.RBEMCNreCalc.Gay.Liver.NTCP;
     NTCP_bio_const(7) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.LargeBowel.NTCP;
     NTCP_bio_const(8) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.SmallBowel.NTCP;
     NTCP_bio_const(9) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Heart.NTCP;
-    NTCP_bio_const(10) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.HealthyLiver.NTCP;
+    NTCP_bio_const(10) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Liver.NTCP;
     NTCP_bio_const(11) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Stomach.NTCP;
     NTCP_bio_const(12) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Kidney.NTCP_Right;
     NTCP_bio_const(13) = NTCP.ConstRBEOpt.RBEMCNreCalc.Luxton.Kidney.NTCP_Left;
@@ -808,11 +808,11 @@ elseif strcmpi(phantomtype, 'Liver') > 0
     NTCP_bio_MCN(4) = NTCP.RBEMCNOpt.Optimized.ZhiYong.CPB.NTCP;
     NTCP_bio_MCN(5) = NTCP.RBEMCNOpt.Optimized.Thomas.NTCP;
     NTCP_bio_MCN(5) = NTCP.RBEMCNOpt.Optimized.Gay.LargeBowel.NTCP;
-    NTCP_bio_MCN(6) = NTCP.RBEMCNOpt.Optimized.Gay.HealthyLiver.NTCP;
+    NTCP_bio_MCN(6) = NTCP.RBEMCNOpt.Optimized.Gay.Liver.NTCP;
     NTCP_bio_MCN(7) = NTCP.RBEMCNOpt.Optimized.Luxton.LargeBowel.NTCP;
     NTCP_bio_MCN(8) = NTCP.RBEMCNOpt.Optimized.Luxton.SmallBowel.NTCP;
     NTCP_bio_MCN(9) = NTCP.RBEMCNOpt.Optimized.Luxton.Heart.NTCP;
-    NTCP_bio_MCN(10) = NTCP.RBEMCNOpt.Optimized.Luxton.HealthyLiver.NTCP;
+    NTCP_bio_MCN(10) = NTCP.RBEMCNOpt.Optimized.Luxton.Liver.NTCP;
     NTCP_bio_MCN(11) = NTCP.RBEMCNOpt.Optimized.Luxton.Stomach.NTCP;
     NTCP_bio_MCN(12) = NTCP.RBEMCNOpt.Optimized.Luxton.Kidney.NTCP_Right;
     NTCP_bio_MCN(13) = NTCP.RBEMCNOpt.Optimized.Luxton.Kidney.NTCP_Left;
@@ -824,11 +824,11 @@ elseif strcmpi(phantomtype, 'Liver') > 0
     NTCP_bio_UCM(4) = NTCP.RBEUCMOpt.RBEMCNreCalc.ZhiYong.CPB.NTCP;
     NTCP_bio_UCM(5) = NTCP.RBEUCMOpt.RBEMCNreCalc.Thomas.NTCP;
     NTCP_bio_UCM(5) = NTCP.RBEUCMOpt.RBEMCNreCalc.Gay.LargeBowel.NTCP;
-    NTCP_bio_UCM(6) = NTCP.RBEUCMOpt.RBEMCNreCalc.Gay.HealthyLiver.NTCP;
+    NTCP_bio_UCM(6) = NTCP.RBEUCMOpt.RBEMCNreCalc.Gay.Liver.NTCP;
     NTCP_bio_UCM(7) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.LargeBowel.NTCP;
     NTCP_bio_UCM(8) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.SmallBowel.NTCP;
     NTCP_bio_UCM(9) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Heart.NTCP;
-    NTCP_bio_UCM(10) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.HealthyLiver.NTCP;
+    NTCP_bio_UCM(10) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Liver.NTCP;
     NTCP_bio_UCM(11) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Stomach.NTCP;
     NTCP_bio_UCM(12) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Kidney.NTCP_Right;
     NTCP_bio_UCM(13) = NTCP.RBEUCMOpt.RBEMCNreCalc.Luxton.Kidney.NTCP_Left;

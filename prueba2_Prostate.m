@@ -140,7 +140,7 @@ pln.propOpt.runSequencing  = false;   % 1/true: run sequencing, 0/false: don't /
 perfGraphs = 0;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
 DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
-DVHGraphs = 2;        % Representacion de DVH (1 = Generales // 2 = Especificas)
+DVHGraphs = 0;        % Representacion de DVH (1 = Generales // 2 = Especificas)
 DVHStats = 0;         % Calculo de las estadisticas generales de dosis (1 = C�lculo de estad�sticas // 2 = Renormalizacion de dosis )
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
@@ -201,7 +201,7 @@ while graphlaunch < 1
         DoseResults{1,3} = ResultRBEUCM;
         
         [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP, NTCPMCNall, Renorm] = ...
-            prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH);
+            prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH, Renorm);
         
         graphlaunch = 1;
     else
@@ -220,7 +220,7 @@ while graphlaunch < 1
         
         DoseResults = [];
         [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP, meanNTCP, NTCPMCNall, Renorm] = ...
-            prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel_ignore, DoseRecalc_ig, DoseResults, StatsRef, []);
+            prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel_ignore, DoseRecalc_ig, DoseResults, StatsRef, [], []);
         
     end
 end

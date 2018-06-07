@@ -786,14 +786,14 @@ elseif strcmp (phantomtype, 'Liver')>0
              NTCP.Gay.LargeBowel.NTCP = 1/(1 + (TD_50/EUD)^(4 * gamma_50));
              
          elseif strcmpi('Liver',cst{j,2}) > 0
-             NTCP.Gay.HealthyLiver.Risk = 'Liver Failure';
-             NTCP.Gay.HealthyLiver.VOI = 'Liver';
+             NTCP.Gay.Liver.Risk = 'Liver Failure';
+             NTCP.Gay.Liver.VOI = 'Liver';
              a = 3;
              gamma_50 = 3;
              TD_50 = 40;
              indices     = cst{j,4}{1};
              EUD = (sum(Dose(indices).^a)/numel(indices))^(1/a) *(pln.numOfFractions);
-             NTCP.Gay.HealthyLiver.NTCP = 1/(1 + (TD_50/EUD)^(4 * gamma_50));      
+             NTCP.Gay.Liver.NTCP = 1/(1 + (TD_50/EUD)^(4 * gamma_50));      
              
          end
      end 
@@ -840,15 +840,15 @@ elseif strcmp (phantomtype, 'Liver')>0
             NTCP.Luxton.Heart.NTCP = integral(LKM, -inf, t);
             
         elseif strcmpi('Liver',cst{j,2}) > 0
-            NTCP.Luxton.HealthyLiver.Risk = 'Liver Failure';
-            NTCP.Luxton.HealthyLiver.VOI = 'Liver';
+            NTCP.Luxton.Liver.Risk = 'Liver Failure';
+            NTCP.Luxton.Liver.VOI = 'Liver';
             n = 0.32;
             m = 0.15;
             TD_50 = 40;
             indices     = cst{j,4}{1};
             EUD = (sum(Dose(indices).^(1/n))/numel(indices))^n *(pln.numOfFractions);
             t =  (EUD - TD_50)/(m * TD_50);
-            NTCP.Luxton.HealthyLiver.NTCP = integral(LKM, -inf, t);
+            NTCP.Luxton.Liver.NTCP = integral(LKM, -inf, t);
             
         elseif strcmpi('Stomach',cst{j,2}) > 0
             NTCP.Luxton.Stomach.Risk = 'Ulceration/Perforation';
