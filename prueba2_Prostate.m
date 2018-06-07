@@ -200,7 +200,7 @@ while graphlaunch < 1
         DoseResults{1,2} = ResultRBEMCN;
         DoseResults{1,3} = ResultRBEUCM;
         
-        [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP, Renorm] = ...
+        [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP, NTCPMCNall, Renorm] = ...
             prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel, DoseRecalc, DoseResults, StatsRef, CompDVH);
         
         graphlaunch = 1;
@@ -219,13 +219,13 @@ while graphlaunch < 1
         DoseRecalc_ig{3,1} = RBEUCM_ig;
         
         DoseResults = [];
-        [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP, NTCPMCNall, Renorm] = ...
+        [~, ResultConstRBE, ResultRBEMCN, ResultRBEUCM, DoseStatistics, NTCP, meanNTCP, meanNTCP, NTCPMCNall, Renorm] = ...
             prueba_NTCP(cst, pln, ct, phantomtype, DoseStatistics, GraphSel_ignore, DoseRecalc_ig, DoseResults, StatsRef, []);
         
     end
 end
 
-    clearvars -except ct cst CompDVH phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP meanNTCP GraphSel
+    clearvars -except ct cst CompDVH phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP meanNTCP GraphSel meanNTCP NTCPMCNall Renorm
  
 
     
