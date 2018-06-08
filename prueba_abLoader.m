@@ -48,16 +48,16 @@ else
     
     % Datos de tumores
     if strcmp (phantomtype, 'Prostate') > 0
-        TumorAlphaXBetaX = {'PTV', [0.026 0.024], 'Bentzen and Ritter (2005)+Chapman(2015)', 'Prostate cancer';
-            'prostate_bed', [0.026 0.024], 'Bentzen and Ritter (2005)+Chapman(2015)', 'Prostate Cancer'};
+        TumorAlphaXBetaX = {'PTV', [0.026 0.018], 'Mirabell et al. (2012) + Dasu & Dasu (2012)', '(Arbitrario) Prostate cancer';
+            'prostate_bed', [0.026 0.018], 'Mirabell et al. (2012) + Dasu & Dasu (2012)', '(Arbitrario) Prostate Cancer'};
         
     elseif strcmp (phantomtype, 'Head and Neck') > 0
-        TumorAlphaXBetaX = {'PTV', [0.4 0.21], 'Bj�rk-Eriksson (2000)', 'H&N carcinoma'};
+        TumorAlphaXBetaX = {'PTV', [0.4  0.38], 'Stuschke & Thames (1999) + Rezvani et al. (1993)', '(Arbitrario) H&N carcinoma/Oropharingeal carcinoma'};
         
     elseif strcmp (phantomtype, 'Liver') > 0
-        TumorAlphaXBetaX = {'CTV', [0.08 0.01], 'Han et al (2013)', 'Arbitrario (HPC carcinoma)';
-            'GTV', [0.08 0.01], 'Han et al (2013)', 'Arbitrario (HPC carcinoma)';
-            'PTV', [0.08 0.01], 'Han et al (2013)', 'Arbitrario (HPC carcinoma)'};
+        TumorAlphaXBetaX = {'CTV', [0.08 0.01], 'Son, Jang et al (2013)', 'Arbitrario (HPC carcinoma)';
+            'GTV', [0.08 0.01], 'Son, Jang et al (2013)', 'Arbitrario (HPC carcinoma)';
+            'PTV', [0.08 0.01], 'Son, Jang et al (2013)', 'Arbitrario (HPC carcinoma)'};
     end
 end
 
