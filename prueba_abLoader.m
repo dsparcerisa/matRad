@@ -18,8 +18,8 @@ else
         'LIPS', [0.0474  0.0206], 'Emami(1985)', 'Skin(late reactions)';
         'Skin', [0.0499 0.0238], 'Emami (1985)', 'Brain'; % Skin significa BODY en el H&N, que es en realidad tejido cerebral casi todo.
         'Heart', [0.0702 0.0351], 'Emami (1985)', 'Heart';
-        'Liver', [0.0683 0.0455], 'Emami(1985)+D�rr (2009', 'Liver';
-        'Liver-CTV', [0.0683 0.0455], 'Emami(1985)+D�rr (2009', 'Liver';
+        'Liver', [0.0683 0.0455], 'Emami(1985)+D�rr (2009)', 'Liver';
+        'Liver-CTV', [0.0683 0.0455], 'Emami(1985)+D�rr (2009)', 'Liver';
         'Bladder', [0.0878 0.0146],'Emami (1985)', 'Bladder';
         'KidneyL', [0.0106 0.0036], 'Emami(1985)+Beyzadeoglu (2010)', 'Kidney';
         'Stomach', [0.0927 0.01112], 'Emami (1985)', 'Stomach';
