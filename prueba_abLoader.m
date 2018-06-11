@@ -14,37 +14,37 @@ if strcmp (phantomtype, 'TG119')
     TumorAlphaXBetaX = {'OuterTarget', [0.2 0.02], 'Ninguno', 'Arbitrario'};
 else
     % Datos generales
-    AvailableAlphaXBetaX = {'BODY', [0.035 0.01],  'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
-        'LIPS', [0.0474  0.0206], 'Emami(1985)', 'Skin(late reactions)';
-        'Skin', [0.0499 0.0238], 'Emami (1985)', 'Brain'; % Skin significa BODY en el H&N, que es en realidad tejido cerebral casi todo.
-        'Heart', [0.0702 0.0351], 'Emami (1985)', 'Heart';
-        'Liver', [0.0683 0.0455], 'Emami(1985)+D�rr (2009)', 'Liver';
-        'Liver-CTV', [0.0683 0.0455], 'Emami(1985)+D�rr (2009)', 'Liver';
-        'Bladder', [0.0878 0.0146],'Emami (1985)', 'Bladder';
-        'KidneyL', [0.0106 0.0036], 'Emami(1985)+Beyzadeoglu (2010)', 'Kidney';
-        'Stomach', [0.0927 0.01112], 'Emami (1985)', 'Stomach';
-        'LargeBowel', [0.0845 0.0141], 'Emami (1985)', 'Small intestine';
-        'SmallBowel', [0.0845 0.0141], 'Emami (1985)', 'Small intestine';
-        'duodenum', [0.0845 0.0141], 'Emami (1985)', 'Small intestine';
-        'Rectum', [0.0484 0.0124], 'Emami(1985)+Fowler (2001)', 'Rectum';
-        'PAROTID_LT', [0.0628 0.0209], 'Emami(1985)', 'Parotid';
-        'LARYNX', [0.0875 0.0208], 'Emami (1985)', 'Larynx';
-        'Lt femoral head', [0.03 0.01], 'Sfjro (2010)', 'Bone';
-        'Rt femoral head', [0.03 0.01], 'Sfjro (2010)', 'Bone';
-        'SPINAL_CORD', [0.0445 0.0136], 'Emami (1985) + Dische (1999)(VdK-2009)', 'Spinal Cord';
-        'SPINL_CRD_PRV', [0.0445 0.0136], 'Emami (1985) + Dische (1999)(VdK-2009)', 'Spinal Cord';
-        'Lymph Nodes', [0.035 0.01], 'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
-        'Penile bulb', [0.035 0.01], 'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
-        'Celiac', [0.035 0.01], 'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
-        'SMASMV', [0.035 0.01], 'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
-        'SMA_SMV', [0.035 0.01], 'Bentzen (1988)(VdK-2009)', 'Arbitrario (musc-vascular)';
-        'BRAIN_STEM', [0.0491 0.0234], 'Emami (1985)', 'Brain stem';
-        'CEREBELLUM', [0.0499 0.0238], 'Emami (1985)', 'Brain';
-        'TEMP_LOBE_LT', [0.0499 0.0238], 'Emami (1985)', 'Brain';
-        'TM_JOINT_LT', [0.0761 0.0217], 'Emami (1985)', 'Temporomandibular & mandible';
-        'CHIASMA', [0.0586 0.0195], 'Emami(1985) +Jiang (1994) (VdK-2009)', 'Optic Chiasma (Eye)';
-        'LENS_LT', [0.0686 0.0572], 'Emami (1985)+D�rr (2009)', 'Eye lens';
-        'OPTIC_NRV_LT', [0.0586 0.0195], 'Emami(1985)', 'Optic nerve'};
+    AvailableAlphaXBetaX = {'BODY', [0.031 0.01],  'Withers et al.,1995', 'Arbitrario (musc-vascular)';
+        'LIPS', [0.0474  0.0206], 'Emami(1991)', 'Skin(late reactions)';
+        'Skin', [0.0499 0.0238], 'Emami (1991)', 'Brain'; % Skin significa BODY en el H&N, que es en realidad tejido cerebral casi todo.
+        'Heart', [0.0702 0.0351], 'Emami (1991)', 'Heart';
+        'Liver', [0.0683 0.0455], 'Emami(1991)+Dorr (2009)', 'Liver';
+        'Liver-CTV', [0.0683 0.0455], 'Emami(1991)+Dorr (2009)', 'Liver';
+        'Bladder', [0.0878 0.0146],'Emami (1991)', 'Bladder';
+        'KidneyL', [0.0106 0.0036], 'Emami(1991)+Beyzadeoglu (2010)', 'Kidney';
+        'Stomach', [0.0927 0.01112], 'Emami (1991)', 'Stomach';
+        'LargeBowel', [0.1046 0.0209], 'Emami(1991)+Fowler (2001)', 'Small intestine';
+        'SmallBowel', [0.0845 0.0141], 'Emami (1991)', 'Small intestine';
+        'duodenum', [0.0845 0.0141], 'Emami (1991)', 'Small intestine';
+        'Rectum', [0.0484 0.0124], 'Emami(1991)+Fowler (2001)', 'Rectum';
+        'PAROTID_LT', [0.0628 0.0209], 'Emami(1991)', 'Parotid';
+        'LARYNX', [0.0875 0.0208], 'Emami (1991)', 'Larynx';
+        'Lt femoral head', [0.035 0.039], 'Emami(1991)', 'Femoral Head';
+        'Rt femoral head', [0.035 0.039], 'Emami(1991)', 'Femoral Head';
+        'SPINAL_CORD', [0.0445 0.0136], 'Emami (1991) + Dische (1999)(VdK-2009)', 'Spinal Cord';
+        'SPINL_CRD_PRV', [0.0445 0.0136], 'Emami (1991) + Dische (1999)(VdK-2009)', 'Spinal Cord';
+        'Lymph Nodes', [0.031 0.01],  'Withers et al.,1995', 'Arbitrario (musc-vascular)';
+        'Penile bulb', [0.031 0.01],  'Withers et al.,1995', 'Arbitrario (musc-vascular)';
+        'Celiac', [0.031 0.01], 'Withers et al.,1995', 'Arbitrario (musc-vascular)';
+        'SMASMV', [0.031 0.01], 'Withers et al.,1995', 'Arbitrario (musc-vascular)';
+        'SMA_SMV', [0.031 0.01], 'Withers et al.,1995', 'Arbitrario (musc-vascular)';
+        'BRAIN_STEM', [0.0491 0.0234], 'Emami (1991)', 'Brain stem';
+        'CEREBELLUM', [0.0499 0.0238], 'Emami (1991)', 'Brain';
+        'TEMP_LOBE_LT', [0.0499 0.0238], 'Emami (1991)', 'Brain';
+        'TM_JOINT_LT', [0.0761 0.0217], 'Emami (1991)', 'Temporomandibular & mandible';
+        'CHIASMA', [0.0586 0.0195], 'Emami(1991) +Jiang (1994) (VdK-2009)', 'Optic Chiasma (Eye)';
+        'LENS_LT', [0.0686 0.0572], 'Emami (1991)+Dorr (2009)', 'Eye lens';
+        'OPTIC_NRV_LT', [0.0586 0.0195], 'Emami(1991)', 'Optic nerve'};
     
     % Datos de tumores
     if strcmp (phantomtype, 'Prostate') > 0
@@ -52,7 +52,7 @@ else
             'prostate_bed', [0.026 0.018], 'Mirabell et al. (2012) + Dasu & Dasu (2012)', '(Arbitrario) Prostate Cancer'};
         
     elseif strcmp (phantomtype, 'Head and Neck') > 0
-        TumorAlphaXBetaX = {'PTV', [0.4  0.38], 'Stuschke & Thames (1999) + Rezvani et al. (1993)', '(Arbitrario) H&N carcinoma/Oropharingeal carcinoma'};
+        TumorAlphaXBetaX = {'PTV', [0.4  0.038], 'Stuschke & Thames (1999) + Rezvani et al. (1993)', '(Arbitrario) H&N carcinoma/Oropharingeal carcinoma'};
         
     elseif strcmp (phantomtype, 'Liver') > 0
         TumorAlphaXBetaX = {'CTV', [0.08 0.01], 'Son, Jang et al (2013)', 'Arbitrario (HPC carcinoma)';
