@@ -141,14 +141,14 @@ perfGraphs = 0;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
 DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
 DVHGraphs = 0;        % Representacion de DVH (1 = Generales // 2 = Especificas)
-DVHStats = 0;         % Calculo de las estadisticas generales de dosis (1 = C�lculo de estad�sticas // 2 = Renormalizacion de dosis )
+DVHStats = 1;         % Calculo de las estadisticas generales de dosis (1 = C�lculo de estad�sticas // 2 = Renormalizacion de dosis // 3 - solo constante y multi )
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
 
 
 % Seleccion de estadisticas V_X y D_X
-refVol = []; % Valores D_X
-refGy = []; % Valores V_X
+refVol = [95]; % Valores D_X
+refGy = [70]; % Valores V_X
 
 StatsRef{1,1} = refVol;
 StatsRef{2,1} = refGy;
@@ -265,3 +265,9 @@ resultGUI = ResultRBEMCN.Optimized.resultGUI;
 % matRadGUI
 
 %% 9 - Giomme my stats bro!
+
+%% Arrows
+ annotation('textarrow',[20/95 20/95], [40/105 50/105], 'String', 'Bladder', 'FontSize', 14);
+ annotation('textarrow',[35/95 42/95], [20/105 20/105], 'String', 'Femoral Heads   ', 'FontSize', 14)
+ annotation('textarrow',[42/95 42/95], [70/105 60/105], 'String', 'Rectum', 'FontSize', 14)
+ annotation('textarrow',[80/95 75/95], [65/105 65/105], 'String', '   PTV', 'FontSize', 14)

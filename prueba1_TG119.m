@@ -131,7 +131,7 @@ pln.propOpt.runSequencing  = false;   % 1/true: run sequencing, 0/false: don't /
 perfGraphs = 0;       % Graficas de perfil de dosis
 perfRBEGraphs = 0;    % Graficas de perfil de dosis vs RBE
 DGraphs = 0;          % Graficas de dosis 2D en z = z(dij max)
-DVHGraphs = 0;        % Representacion de DVH (1 = Generales // 2 = Especificas)
+DVHGraphs = 2;        % Representacion de DVH (1 = Generales // 2 = Especificas)
 DVHStats = 0;         % Calculo de las estadisticas generales de dosis (1 = Calculo de estadisticas // 2 = Renormalizacion de dosis )
 
 GraphSel = [perfGraphs perfRBEGraphs DGraphs DVHGraphs DVHStats];
@@ -212,7 +212,7 @@ while graphlaunch < 1
     end
 end
 
-    clearvars -except ct cst CompDVH phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP meanNTCP NTCPMCNall Renorm
+    clearvars -except ct cst GraphSel DVHRegions VOIType CompDVH phantomtype pln stf ResultRBEMCN ResultRBEUCM ResultConstRBE ResultPhysical midRBE  DoseStatistics NTCP meanNTCP NTCPMCNall Renorm
 
     
 %% 7 - Exportacion de resultados a la GUI

@@ -29,7 +29,7 @@ for i = 1:size(Dose,1)
     dvh{i,1} = nan(1,n);
 end
 
-dvhPoints = linspace (0, pln.numOfFractions.* max([maxDose{i,1}])*1.05, n);
+dvhPoints = linspace (0, pln.numOfFractions.* max([maxDose{i,1}])*1.01, n);
 
 
 if ~isempty (VOI)
@@ -49,23 +49,26 @@ if ~isempty (VOI)
                     % Line type
                     if strcmp (OptModel{i,1}, ' ConstRBEOpt ')
                         LineStyle = '-';
+                        LegendName = 'Uniform RBE Optimization';
                     elseif strcmp (OptModel{i,1}, ' RBEMCNOpt ')
                         LineStyle = ':';
+                        LegendName = 'Variable RBE Optimization';
                     elseif strcmp(OptModel{i,1}, ' RBEUCMOpt ')
                         LineStyle = '--';
+                        LegendName = 'MultiRBE Optimization';
                     end
                     
                     if strcmp (OptModel{i,2}, ' ConstRBE ') && strcmpi (VOIType{l,1},'Target') > 0
 
                     plot(dvhPoints,dvh{i,1}, LineStyle,'MarkerSize',2,...
                             'LineWidth',2,'Color', ColorLine(l,:),'DisplayName',...
-                            strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
+                            strcat(cst{j,2}, OptModel{i,2},' (', LegendName,')'));hold on
                         
                     elseif strcmp (OptModel{i,2}, ' RBEMCN ') && strcmpi (VOIType{l,1},'OAR') > 0
                        
                     plot(dvhPoints,dvh{i,1}, LineStyle,'MarkerSize',2,...
                             'LineWidth',2,'Color', ColorLine(l,:),'DisplayName',...
-                            strcat(cst{j,2}, OptModel{i,2},' (', OptModel{i,1},')'));hold on
+                            strcat(cst{j,2}, OptModel{i,2},' (', LegendName,')'));hold on
                     end
                     
                 end
@@ -100,13 +103,13 @@ else
 end
 
 
-fontSizeValue = 11;
+fontSizeValue = 14;
 myLegend = legend('show','location','NorthEast');
-set(myLegend,'FontSize',8,'Interpreter','none');
+set(myLegend,'FontSize',fontSizeValue,'Interpreter','none');
 %legend boxoff
 
-ylim([0 110]);
-xlim([0 1.2*max(dvhPoints)]);
+ylim([0 105]);
+xlim([0 max(dvhPoints)]);
 set(gca,'YTick',0:20:120)
 
 grid on,grid minor
@@ -128,5 +131,5 @@ else
 end
 
 image = figure(1);
-
+image.Position = [100 100 900 500];
 end
